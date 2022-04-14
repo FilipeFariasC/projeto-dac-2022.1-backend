@@ -1,4 +1,4 @@
-package br.edu.ifpb.dac.groupd;
+package br.edu.ifpb.dac.groupd.model;
 
 import java.io.Serializable;
 
