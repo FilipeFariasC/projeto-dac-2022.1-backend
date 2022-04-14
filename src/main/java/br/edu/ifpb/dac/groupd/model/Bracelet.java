@@ -44,6 +44,14 @@ public class Bracelet implements Serializable{
 	private List<String> locations;
 
 	
+	public Long getIdBracelet() {
+		return idBracelet;
+	}
+
+	public void setIdBracelet(Long idBracelet) {
+		this.idBracelet = idBracelet;
+	}
+
 	public String getName() {
 		return name;
 	}
