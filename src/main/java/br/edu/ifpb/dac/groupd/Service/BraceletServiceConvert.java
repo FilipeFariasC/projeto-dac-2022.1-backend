@@ -1,9 +1,9 @@
-package br.edu.ifpb.groupd.model.Service;
+package br.edu.ifpb.dac.groupd.Service;
 
 import br.edu.ifpb.dac.groupd.model.Bracelet;
-import br.edu.ifpb.groupd.model.dto.BraceletDTO;
+import br.edu.ifpb.dac.groupd.model.dto.BraceletDTO;
 
-public class BraceletSeviceConvet {
+public class BraceletServiceConvert {
 	
 	public Bracelet dtoToLinha(BraceletDTO dto) {
 		Bracelet bracelet = new Bracelet();

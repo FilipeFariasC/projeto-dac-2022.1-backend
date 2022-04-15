@@ -1,4 +1,4 @@
-package br.edu.ifpb.groupd.model.repository;
+package br.edu.ifpb.dac.groupd.model.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

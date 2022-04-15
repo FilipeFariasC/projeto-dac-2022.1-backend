@@ -1,4 +1,4 @@
-package br.edu.ifpb.groupd.model.Service;
+package br.edu.ifpb.dac.groupd.Service;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.model.Bracelet;
-import br.edu.ifpb.groupd.model.repository.BraceletRepository;
+import br.edu.ifpb.dac.groupd.model.repository.BraceletRepository;
 
 @Service
 public class BraceletService {
