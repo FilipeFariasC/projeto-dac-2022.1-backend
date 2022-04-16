@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.platform.commons.annotation.Testable;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.edu.ifpb.dac.groupd.model.User;
+import br.edu.ifpb.dac.groupd.User;
 
 @Testable
 @DisplayName("Teste unitário da entidade usuário")

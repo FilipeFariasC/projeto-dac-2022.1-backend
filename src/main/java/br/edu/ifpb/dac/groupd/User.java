@@ -1,4 +1,4 @@
-package br.edu.ifpb.dac.groupd.model;
+package br.edu.ifpb.dac.groupd;
 
 import java.io.Serializable;
 
@@ -24,61 +24,45 @@ public class User implements Serializable {
 	
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="user_id")
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	@NotNull
 	@NotEmpty
 	@NotBlank
-	@Column(name="name")
-	private String name;
-	
-	@NotNull
-	@NotEmpty
-	@NotBlank
 	@Email
-	@Column(name="email", unique=true, nullable=false)
 	private String email;
 	
 	@NotNull
 	@NotEmpty
 	@NotBlank
-	@Column(name="password", nullable=false)
 	private String password;
+	
+	
 
 	public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
 	public String getPassword() {
 		return password;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
 	
 }
