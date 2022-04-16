@@ -10,12 +10,16 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="bracelet")
@@ -34,15 +38,22 @@ public class Bracelet implements Serializable{
 	@NotNull
 	@NotEmpty
 	@NotBlank
+	@Size(max=50)
 	private String name;
 	
 	//Lista com tipo String provisorio, entquanto as entidades não são criadas
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<Fence> fences;
+	@ManyToMany
+	@JoinTable(name = "bracelet_fence",
+		joinColumns = @JoinColumn(name = "bracelet_id"),
+		inverseJoinColumns = @JoinColumn(name = "fence_id"))
+	private Set<@Valid Fence> fences;
 	
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<Location> locations;
+	@JoinTable(name = "bracelet_location",
+		joinColumns = @JoinColumn(name = "bracelet_id"),
+		inverseJoinColumns = @JoinColumn(name = "location_id"))
+	private Set<@Valid Location> locations;
 
 	
 	public Long getIdBracelet() {

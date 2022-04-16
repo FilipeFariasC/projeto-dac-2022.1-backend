@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -46,6 +47,7 @@ public class User implements Serializable {
 	@NotBlank
 	@Email
 	@Column(name="email", unique=true, nullable=false)
+	@Size(max=255)
 	private String email;
 	
 	@NotNull
@@ -58,8 +60,16 @@ public class User implements Serializable {
 	
 	
 	@OneToMany
-	@JoinColumn(name="user_id")
+	@JoinTable(name="user_bracelet",
+			joinColumns = @JoinColumn(name="user_id"),
+			inverseJoinColumns = @JoinColumn(name="bracelet_id"))
 	private Set<@Valid Bracelet> bracelets;
+	
+	@OneToMany
+	@JoinTable(name="user_fence",
+		joinColumns = @JoinColumn(name="user_id"),
+		inverseJoinColumns = @JoinColumn(name="fence_id"))
+	private Set<@Valid Fence> fences;
 
 	public Long getId() {
 		return id;
@@ -99,6 +109,14 @@ public class User implements Serializable {
 
 	public void setBracelets(Set<Bracelet> bracelets) {
 		this.bracelets = bracelets;
+	}
+
+	public Set<Fence> getFences() {
+		return fences;
+	}
+
+	public void setFences(Set<Fence> fences) {
+		this.fences = fences;
 	}
 	
 	

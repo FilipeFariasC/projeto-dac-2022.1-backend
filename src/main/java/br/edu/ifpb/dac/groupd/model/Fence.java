@@ -36,23 +36,22 @@ public class Fence  implements Serializable{
 	@Embedded
 	private Coordinate coordinates;
 	
+	@Column(name="start_time")
+	private LocalDateTime startTime;
 	
-	private LocalDateTime start;
-	
-	private LocalDateTime finish;
+	@Column(name="finish_time")
+	private LocalDateTime finishTime;
 	
 	@Enumerated(EnumType.STRING)
 	private FenceStatus status;
 	
-	@ManyToMany
-	@JoinTable(name="fence_bracelet",
-			joinColumns = @JoinColumn(name="fence_id"),
-			inverseJoinColumns = @JoinColumn(name="bracelet_id"))
-	private Set<Bracelet> bracelets;
-	
 	@NotNull
 	@Min(1)
 	private Double radius;
+	@ManyToMany(mappedBy="fences")
+	private Set<Bracelet> bracelets;
+	
+
 
 	public Long getId() {
 		return id;
@@ -70,20 +69,22 @@ public class Fence  implements Serializable{
 		this.coordinates = coordinates;
 	}
 
-	public LocalDateTime getStart() {
-		return start;
+
+
+	public LocalDateTime getStartTime() {
+		return startTime;
 	}
 
-	public void setStart(LocalDateTime start) {
-		this.start = start;
+	public void setStartTime(LocalDateTime startTime) {
+		this.startTime = startTime;
 	}
 
-	public LocalDateTime getFinish() {
-		return finish;
+	public LocalDateTime getFinishTime() {
+		return finishTime;
 	}
 
-	public void setFinish(LocalDateTime finish) {
-		this.finish = finish;
+	public void setFinishTime(LocalDateTime finishTime) {
+		this.finishTime = finishTime;
 	}
 
 	public FenceStatus getStatus() {

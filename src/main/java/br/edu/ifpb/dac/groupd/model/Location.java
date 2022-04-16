@@ -9,6 +9,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -30,11 +33,13 @@ public class Location implements Serializable{
 	private Coordinate coordinates;
 	
 	@NotNull
-	@Column(name="timestamp")
-	private LocalDateTime timestamp;
+	@Column(name="creation_date")
+	private LocalDateTime creationDate;
 	
 	@Valid
 	@NotNull
+	@OneToOne
+	@JoinColumn(name="bracelet_id")
 	private Bracelet bracelet;
 	
 	public Long getId() {
@@ -52,13 +57,14 @@ public class Location implements Serializable{
 	public void setCoordinates(Coordinate coordinates) {
 		this.coordinates = coordinates;
 	}
+	
 
-	public LocalDateTime getTimestamp() {
-		return timestamp;
+	public LocalDateTime getCreationDate() {
+		return creationDate;
 	}
 
-	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	public Bracelet getBracelet() {
