@@ -17,7 +17,7 @@ public class BraceletService {
 	@Autowired
 	private BraceletRepository braceletyRepositori;
 	
-	public Bracelet save(Bracelet bracelet) throws Exception{
+	public Bracelet SaveBracelet(Bracelet bracelet) throws Exception{
 		Bracelet brc = braceletyRepositori.findByname(bracelet.getName()); 
 		if(brc == null) {
 			return braceletyRepositori.save(bracelet);
@@ -29,7 +29,7 @@ public class BraceletService {
 		return braceletyRepositori.findAll();
 	}
 	
-	public Bracelet findByID(Long idBracelet) throws Exception {
+	public Bracelet getBraceletID(Long idBracelet) throws Exception {
 		Bracelet brac = braceletyRepositori.getById(idBracelet);
 		if(brac == null) {
 			throw new Exception("Bracelet Not Exist");
@@ -55,12 +55,12 @@ public class BraceletService {
 			brac.setName(bracelet.getName());
 			brac.setFences(bracelet.getFences());
 			brac.setLocations(bracelet.getLocations());
-			delete(bracelet.getIdBracelet());
+			deleteBracelet(bracelet.getIdBracelet());
 			return braceletyRepositori.save(brac);
 		}
 	}
 	
-	public void delete(Long idBracelet) throws Exception {
+	public void deleteBracelet(Long idBracelet) throws Exception {
 		Bracelet brac = braceletyRepositori.getById(idBracelet);
 		if(brac == null) {
 			throw new Exception("Bracelet Not Exist");
