@@ -1,4 +1,4 @@
-package br.edu.ifpb.dac.groupd.model.dto;
+package br.edu.ifpb.dac.groupd.dto;
 
 public class BraceletDTO {
 	
