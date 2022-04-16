@@ -4,17 +4,17 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name="t_location")
+@Table(name="location")
 public class Location implements Serializable{
 	
 	private static final long serialVersionUID = -5412450641940365923L;
@@ -25,22 +25,17 @@ public class Location implements Serializable{
 	private Long id;
 	
 	@NotNull
-	@Min(-90)
-	@Max(90)
-	@Column(name="latitude")
-	private Double latitude;
-	
-	@NotNull
-	@Min(-180)
-	@Max(180)
-	@Column(name="longitude")
-	private Double longitude;
+	@Valid
+	@Embedded
+	private Coordinate coordinates;
 	
 	@NotNull
 	@Column(name="timestamp")
 	private LocalDateTime timestamp;
 	
-//	private Bracelet bracelet;
+	@Valid
+	@NotNull
+	private Bracelet bracelet;
 	
 	public Long getId() {
 		return id;
@@ -50,20 +45,12 @@ public class Location implements Serializable{
 		this.id = id;
 	}
 	
-	public Double getLatitude() {
-		return latitude;
+	public Coordinate getCoordinates() {
+		return coordinates;
 	}
 
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
-
-	public Double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
+	public void setCoordinates(Coordinate coordinates) {
+		this.coordinates = coordinates;
 	}
 
 	public LocalDateTime getTimestamp() {
@@ -74,5 +61,14 @@ public class Location implements Serializable{
 		this.timestamp = timestamp;
 	}
 
+	public Bracelet getBracelet() {
+		return bracelet;
+	}
+
+	public void setBracelet(Bracelet bracelet) {
+		this.bracelet = bracelet;
+	}
+	
+	
 	
 }

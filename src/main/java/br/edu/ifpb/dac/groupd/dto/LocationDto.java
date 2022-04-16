@@ -2,19 +2,12 @@ package br.edu.ifpb.dac.groupd.dto;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import br.edu.ifpb.dac.groupd.model.Coordinate;
 
 public class LocationDto {
 
 	private Long id;
-	private Double latitude;
-	private Double longitude;
+	private Coordinate coordinate;
 	private LocalDateTime timestamp;
 	public Long getId() {
 		return id;
@@ -22,17 +15,11 @@ public class LocationDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Double getLatitude() {
-		return latitude;
+	public Coordinate getCoordinate() {
+		return coordinate;
 	}
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
-	public Double getLongitude() {
-		return longitude;
-	}
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
+	public void setCoordinate(Coordinate coordinate) {
+		this.coordinate = coordinate;
 	}
 	public LocalDateTime getTimestamp() {
 		return timestamp;

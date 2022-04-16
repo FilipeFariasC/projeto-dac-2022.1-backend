@@ -2,9 +2,10 @@ package br.edu.ifpb.dac.groupd.dto.post;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import br.edu.ifpb.dac.groupd.model.Coordinate;
 
 public class LocationPostDto {
 	
@@ -12,14 +13,8 @@ public class LocationPostDto {
 	private Long braceletId;
 	
 	@NotNull
-	@Min(-90)
-	@Max(90)
-	private Double latitude;
-	
-	@NotNull
-	@Min(-180)
-	@Max(180)
-	private Double longitude;
+	@Valid
+	private Coordinate coordinate;
 	
 	@NotNull
 	private LocalDateTime timestamp;
@@ -33,21 +28,12 @@ public class LocationPostDto {
 	public void setBraceletId(Long braceletId) {
 		this.braceletId = braceletId;
 	}
-
-	public Double getLatitude() {
-		return latitude;
+	public Coordinate getCoordinate() {
+		return coordinate;
 	}
 
-	public void setLatitude(Double latitude) {
-		this.latitude = latitude;
-	}
-
-	public Double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(Double longitude) {
-		this.longitude = longitude;
+	public void setCoordinate(Coordinate coordinate) {
+		this.coordinate = coordinate;
 	}
 
 	public LocalDateTime getTimestamp() {

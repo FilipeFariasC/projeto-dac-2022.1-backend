@@ -35,10 +35,10 @@ public class BraceletResouce {
 	public ResponseEntity saveBracelet(@RequestBody BraceletDTO dto) {
 		try {
 			Bracelet bracelet = braceletServiceConvert.dtoToBracelet(dto);
-			bracelet = braceletService.saveBracelet(bracelet);
+			bracelet = braceletService.save(bracelet);
 			dto = braceletServiceConvert.braceletToDTO(bracelet);
 			
-			return new ResponseEntity(dto,HttpStatus.CREATED);
+			return new ResponseEntity(dto, HttpStatus.CREATED);
 			
 		} catch (Exception e) {
 			
@@ -51,7 +51,7 @@ public class BraceletResouce {
 		try {
 			dto.setIdBracelet(idBracelet);
 			Bracelet bracelet = braceletServiceConvert.dtoToBracelet(dto);
-			bracelet = braceletService.updateBracelet(idBracelet,bracelet);
+			bracelet = braceletService.update(idBracelet,bracelet);
 			dto = braceletServiceConvert.braceletToDTO(bracelet);
 			
 			return ResponseEntity.ok(dto);
@@ -65,7 +65,7 @@ public class BraceletResouce {
 	@DeleteMapping("id")
 	public ResponseEntity deleteBracelet(@PathVariable("id") Long idBracelete) {
 		try {
-			braceletService.deleteBracelet(idBracelete);
+			braceletService.delete(idBracelete);
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}catch(Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
@@ -82,7 +82,7 @@ public class BraceletResouce {
 			filter.setIdBracelet(idBracelet);
 			filter.setName(name);
 			
-			List<Bracelet> bracelets = braceletService.find(filter);
+			List<Bracelet> bracelets = braceletService.findFilter(filter);
 			List<BraceletDTO> dtos = braceletServiceConvert.braceletToDTO(bracelets);
 			
 			return ResponseEntity.ok(dtos);
