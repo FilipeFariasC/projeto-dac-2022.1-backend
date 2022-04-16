@@ -12,6 +12,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="t_user")
@@ -31,6 +33,7 @@ public class User implements Serializable {
 	@NotNull
 	@NotEmpty
 	@NotBlank
+	@Size(min=3, max=50)
 	@Column(name="name")
 	private String name;
 	
@@ -45,6 +48,8 @@ public class User implements Serializable {
 	@NotEmpty
 	@NotBlank
 	@Column(name="password", nullable=false)
+	@Size(min=8, max=30)
+	@Pattern(regexp="^[^\\s]+$")
 	private String password;
 
 	public Long getId() {
@@ -60,7 +65,7 @@ public class User implements Serializable {
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	public String getEmail() {
@@ -78,7 +83,5 @@ public class User implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
 	
 }
