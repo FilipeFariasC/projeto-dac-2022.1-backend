@@ -1,4 +1,4 @@
-package br.edu.ifpb.dac.groupd.model.repository;
+package br.edu.ifpb.dac.groupd.repository;
 
 import java.util.List;
 

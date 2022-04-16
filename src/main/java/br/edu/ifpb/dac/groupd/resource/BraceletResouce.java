@@ -35,7 +35,7 @@ public class BraceletResouce {
 	public ResponseEntity saveBracelet(@RequestBody BraceletDTO dto) {
 		try {
 			Bracelet bracelet = braceletServiceConvert.dtoToBracelet(dto);
-			bracelet = braceletService.SaveBracelet(bracelet);
+			bracelet = braceletService.saveBracelet(bracelet);
 			dto = braceletServiceConvert.braceletToDTO(bracelet);
 			
 			return new ResponseEntity(dto,HttpStatus.CREATED);

@@ -9,7 +9,7 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.model.Bracelet;
-import br.edu.ifpb.dac.groupd.model.repository.BraceletRepository;
+import br.edu.ifpb.dac.groupd.repository.BraceletRepository;
 
 @Service
 public class BraceletService {
@@ -17,7 +17,7 @@ public class BraceletService {
 	@Autowired
 	private BraceletRepository braceletyRepositori;
 	
-	public Bracelet SaveBracelet(Bracelet bracelet) throws Exception{
+	public Bracelet saveBracelet(Bracelet bracelet) throws Exception{
 		Bracelet brc = braceletyRepositori.findByname(bracelet.getName()); 
 		if(brc == null) {
 			return braceletyRepositori.save(bracelet);
