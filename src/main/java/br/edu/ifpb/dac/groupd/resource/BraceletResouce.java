@@ -35,7 +35,7 @@ public class BraceletResouce {
 	public ResponseEntity saveBracelet(@RequestBody BraceletDTO dto) {
 		try {
 			Bracelet bracelet = braceletServiceConvert.dtoToBracelet(dto);
-			bracelet = braceletService.SaveBracelet(bracelet);
+			bracelet = braceletService.save(bracelet);
 			dto = braceletServiceConvert.braceletToDTO(bracelet);
 			
 			return new ResponseEntity(dto,HttpStatus.CREATED);
@@ -65,7 +65,7 @@ public class BraceletResouce {
 	@DeleteMapping("id")
 	public ResponseEntity deleteBracelet(@PathVariable("id") Long idBracelete) {
 		try {
-			braceletService.deleteBracelet(idBracelete);
+			braceletService.delete(idBracelete);
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}catch(Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
