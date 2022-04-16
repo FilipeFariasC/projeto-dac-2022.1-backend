@@ -39,9 +39,9 @@ public class Bracelet implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<String> fences;
 	
-	//Lista com tipo String provisorio, entquanto as entidades não são criadas
+	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<String> locations;
+	private List<Location> locations;
 
 	
 	public Long getIdBracelet() {
@@ -68,11 +68,11 @@ public class Bracelet implements Serializable{
 		this.fences = fences;
 	}
 
-	public List<String> getLocations() {
+	public List<Location> getLocations() {
 		return locations;
 	}
 
-	public void setLocations(List<String> locations) {
+	public void setLocations(List<Location> locations) {
 		this.locations = locations;
 	}
 	

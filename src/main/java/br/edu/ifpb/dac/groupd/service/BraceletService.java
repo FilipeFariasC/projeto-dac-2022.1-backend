@@ -1,8 +1,11 @@
-package br.edu.ifpb.dac.groupd.Service;
+package br.edu.ifpb.dac.groupd.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.model.Bracelet;
@@ -14,7 +17,7 @@ public class BraceletService {
 	@Autowired
 	private BraceletRepository braceletyRepositori;
 	
-	public Bracelet SaveBracelet(Bracelet bracelet) throws Exception{
+	public Bracelet save(Bracelet bracelet) throws Exception{
 		Bracelet brc = braceletyRepositori.findByname(bracelet.getName()); 
 		if(brc == null) {
 			return braceletyRepositori.save(bracelet);
@@ -26,7 +29,7 @@ public class BraceletService {
 		return braceletyRepositori.findAll();
 	}
 	
-	public Bracelet getBraceletID(Long idBracelet) throws Exception {
+	public Bracelet findByID(Long idBracelet) throws Exception {
 		Bracelet brac = braceletyRepositori.getById(idBracelet);
 		if(brac == null) {
 			throw new Exception("Bracelet Not Exist");
@@ -52,12 +55,12 @@ public class BraceletService {
 			brac.setName(bracelet.getName());
 			brac.setFences(bracelet.getFences());
 			brac.setLocations(bracelet.getLocations());
-			deleteBracelet(bracelet.getIdBracelet());
+			delete(bracelet.getIdBracelet());
 			return braceletyRepositori.save(brac);
 		}
 	}
 	
-	public void deleteBracelet(Long idBracelet) throws Exception {
+	public void delete(Long idBracelet) throws Exception {
 		Bracelet brac = braceletyRepositori.getById(idBracelet);
 		if(brac == null) {
 			throw new Exception("Bracelet Not Exist");
@@ -66,5 +69,11 @@ public class BraceletService {
 		}
 	}
 	
+	public List<Bracelet> find(Bracelet filter){
+		Example example = Example.of(filter, ExampleMatcher.matching()
+				.withIgnoreCase()
+				.withStringMatcher(StringMatcher.CONTAINING));
+		return braceletyRepositori.findAll(example);
+	}
 
 }
