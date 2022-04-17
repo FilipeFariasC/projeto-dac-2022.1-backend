@@ -69,7 +69,7 @@ public class User implements Serializable {
 	@JoinTable(name="user_fence",
 		joinColumns = @JoinColumn(name="user_id"),
 		inverseJoinColumns = @JoinColumn(name="fence_id"))
-	private Set<@Valid Fence> fences = new HashSet<>();;
+	private Set<@Valid Fence> fences = new HashSet<>();
 
 	public Long getId() {
 		return id;

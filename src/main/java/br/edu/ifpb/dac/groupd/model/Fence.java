@@ -12,8 +12,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
@@ -34,7 +32,7 @@ public class Fence  implements Serializable{
 	
 	@NotNull
 	@Embedded
-	private Coordinate coordinates;
+	private Coordinate coordinate;
 	
 	@Column(name="start_time")
 	private LocalDateTime startTime;
@@ -61,16 +59,12 @@ public class Fence  implements Serializable{
 		this.id = id;
 	}
 
-	public Coordinate getCoordinates() {
-		return coordinates;
+	public Coordinate getCoordinate() {
+		return coordinate;
 	}
-
-	public void setCoordinates(Coordinate coordinates) {
-		this.coordinates = coordinates;
+	public void setCoordinate(Coordinate coordinate) {
+		this.coordinate = coordinate;
 	}
-
-
-
 	public LocalDateTime getStartTime() {
 		return startTime;
 	}

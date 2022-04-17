@@ -29,7 +29,7 @@ public class Location implements Serializable{
 	
 	@NotNull
 	@Valid
-	@Embedded
+	@Embedded 
 	private Coordinate coordinate;
 	
 	@NotNull

@@ -1,8 +1,8 @@
 package br.edu.ifpb.dac.groupd.exception;
 
-import java.time.LocalDateTime;
-
 public class LocationCreationDateInFutureException extends Exception {
+	private static final long serialVersionUID = 4486573287675907621L;
+
 	public LocationCreationDateInFutureException(String criacao, String agora) {
 		super(String.format(
 		"""

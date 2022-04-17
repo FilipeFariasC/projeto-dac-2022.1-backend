@@ -1,12 +1,8 @@
 package br.edu.ifpb.dac.groupd.enums;
 
-import java.util.Arrays;
-
 import javax.persistence.AttributeConverter;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-
-import br.edu.ifpb.dac.groupd.model.Fence;
 
 public enum FenceStatus {
 	DISABLE("Disabled", 0L),
@@ -25,15 +21,15 @@ public enum FenceStatus {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	void setStatus(String status) {
 		this.status = status;
 	}
 
-	public Long getId() {
+	Long getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	void setId(Long id) {
 		this.id = id;
 	}
 	

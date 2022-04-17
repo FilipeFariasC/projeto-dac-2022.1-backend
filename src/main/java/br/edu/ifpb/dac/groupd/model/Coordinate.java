@@ -1,5 +1,7 @@
 package br.edu.ifpb.dac.groupd.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Max;
@@ -7,7 +9,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Embeddable
-public class Coordinate {
+public class Coordinate  implements Serializable{
+	private static final long serialVersionUID = 1213024495538646400L;
+
 	@NotNull
 	@Min(-90)
 	@Max(90)

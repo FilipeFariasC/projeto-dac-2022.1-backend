@@ -64,7 +64,7 @@ public class BraceletService {
 	}
 	
 	public List<Bracelet> findFilter(Bracelet filter){
-		Example example = Example.of(filter, ExampleMatcher.matching()
+		Example<Bracelet> example = Example.of(filter, ExampleMatcher.matching()
 				.withIgnoreCase()
 				.withStringMatcher(StringMatcher.CONTAINING));
 		return braceletRepository.findAll(example);

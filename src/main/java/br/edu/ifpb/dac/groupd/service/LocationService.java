@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +27,6 @@ public class LocationService {
 	
 	@Autowired
 	private BraceletRepository braceletRepo;
-	
-	@Autowired
-	private ModelMapper mapper;
 	
 	public Location create(LocationPostDto dto) throws BraceletNotFoundException, LocationCreationDateInFutureException {
 		if(dto.getCreationDate() == null){
@@ -90,10 +86,9 @@ public class LocationService {
 	}
 	
 	private String formatDate(LocalDateTime time){
-		LocalDateTime agora = LocalDateTime.now();
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-		return agora.format(formatter);
+		return time.format(formatter);
 	}
 }

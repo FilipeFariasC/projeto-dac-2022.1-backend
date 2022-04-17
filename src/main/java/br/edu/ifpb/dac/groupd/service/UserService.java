@@ -108,15 +108,13 @@ public class UserService {
 			throw new UserNotFoundException(userId);
 		
 		User user = register.get();
-		List<Bracelet> bracelets = 
-				user.getBracelets()
+				
+		return user.getBracelets()
 				.stream()
 				.filter(
 					bracelet->bracelet.getName().toLowerCase().contains(name.toLowerCase())
 					)
 				.toList();
-		
-		return bracelets;
 	}
 	
 	public Bracelet updateBracelet(Long userId, Long braceletId, BraceletPostDto dto) throws UserNotFoundException, BraceletNotFoundException, BraceletNotRegisteredException {
@@ -131,13 +129,11 @@ public class UserService {
 		for(Bracelet braceletRegister : user.getBracelets()) {
 			entrou = braceletRegister.getId().equals(braceletId);
 		}
-		if(entrou == false) {
+		if(!entrou) {
 			throw new BraceletNotRegisteredException();
 		}
 		
-		Bracelet bracelet = braceletService.update(braceletId, dto);
-		
-		return bracelet;
+		return braceletService.update(braceletId, dto);
 	}
 	public void deleteBracelet(Long userId, Long braceletId) throws UserNotFoundException, BraceletNotFoundException, BraceletNotRegisteredException {
 		Optional<User> register = userRepo.findById(userId);
@@ -156,7 +152,7 @@ public class UserService {
 				entrou = true;
 			}
 		}
-		if(entrou == false) {
+		if(entrou) {
 			throw new BraceletNotRegisteredException();
 		}
 		bracelets.remove(bracelet);

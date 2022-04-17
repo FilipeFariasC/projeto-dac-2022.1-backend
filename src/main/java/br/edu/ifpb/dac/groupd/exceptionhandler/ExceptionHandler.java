@@ -68,8 +68,8 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 		private String messageDeveloper;
 		
 		public Error (String messageUser, String messageDeveloper){
-			this.messageUser = messageUser;
-			this.messageDeveloper = messageDeveloper;
+			setMessageDeveloper(messageDeveloper);;
+			setMessageUser(messageUser);
 		}
 
 		public String getMessageUser() {

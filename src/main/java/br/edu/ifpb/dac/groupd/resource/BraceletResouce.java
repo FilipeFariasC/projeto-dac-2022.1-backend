@@ -35,7 +35,7 @@ public class BraceletResouce {
 	private BraceletServiceConvert braceletServiceConvert;
 	
 	@PostMapping
-	public ResponseEntity saveBracelet(
+	public ResponseEntity<?> saveBracelet(
 			@Valid
 			@RequestBody BraceletPostDto postDto) {
 		try {
@@ -52,7 +52,7 @@ public class BraceletResouce {
 	}
 	
 	@PutMapping("{id}")
-	public ResponseEntity updateBracelet(@PathVariable("id") Long idBracelet, BraceletPostDto postDto) {
+	public ResponseEntity<?> updateBracelet(@PathVariable("id") Long idBracelet, BraceletPostDto postDto) {
 		try {
 			Bracelet bracelet = braceletService.update(idBracelet, postDto);
 			BraceletDto dto = mapToDto(bracelet);
