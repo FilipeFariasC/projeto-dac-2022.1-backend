@@ -9,6 +9,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 
+import br.edu.ifpb.dac.groupd.dto.post.BraceletPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.repository.BraceletRepository;
@@ -19,7 +20,9 @@ public class BraceletService {
 	@Autowired
 	private BraceletRepository braceletRepository;
 	
-	public Bracelet save(Bracelet bracelet){
+	public Bracelet save(BraceletPostDto dto){
+		Bracelet bracelet = mapFromDto(dto);
+		
 		return braceletRepository.save(bracelet);
 	}
 	
@@ -44,16 +47,14 @@ public class BraceletService {
 		
 	}
 	
-	public Bracelet update(Long idBracelet, Bracelet bracelet) throws BraceletNotFoundException {
+	public Bracelet update(Long idBracelet, BraceletPostDto bracelet) throws BraceletNotFoundException {
 		if(!braceletRepository.existsById(idBracelet)) {
 			throw new BraceletNotFoundException("Bracelet Not Exist");
-		}else {
-			return braceletRepository.save(bracelet);
 		}
+		return braceletRepository.save(mapFromDto(bracelet));
 	}
 	
 	public void delete(Long idBracelet) throws BraceletNotFoundException  {
-		Bracelet brac = braceletRepository.getById(idBracelet);
 		if(!braceletRepository.existsById(idBracelet)) 
 			throw new BraceletNotFoundException(idBracelet);
 		
@@ -66,5 +67,10 @@ public class BraceletService {
 				.withStringMatcher(StringMatcher.CONTAINING));
 		return braceletRepository.findAll(example);
 	}
-
+	
+	private Bracelet mapFromDto(BraceletPostDto dto){
+		Bracelet bracelet = new Bracelet();
+		bracelet.setName(dto.getName());
+		return bracelet;
+	}
 }

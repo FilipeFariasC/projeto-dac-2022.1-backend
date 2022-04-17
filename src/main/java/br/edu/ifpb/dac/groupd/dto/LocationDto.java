@@ -9,6 +9,8 @@ public class LocationDto {
 	private Long id;
 	private Coordinate coordinate;
 	private LocalDateTime timestamp;
+	private Long braceletId;
+	
 	public Long getId() {
 		return id;
 	}
@@ -26,6 +28,12 @@ public class LocationDto {
 	}
 	public void setTimestamp(LocalDateTime timestamp) {
 		this.timestamp = timestamp;
+	}
+	public Long getBraceletId() {
+		return braceletId;
+	}
+	public void setBraceletId(Long braceletId) {
+		this.braceletId = braceletId;
 	}
 	
 	

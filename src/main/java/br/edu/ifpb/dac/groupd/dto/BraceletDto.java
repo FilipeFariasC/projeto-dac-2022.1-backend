@@ -1,6 +1,6 @@
 package br.edu.ifpb.dac.groupd.dto;
 
-public class BraceletDTO {
+public class BraceletDto {
 	
 	private Long idBracelet;
 	private String name;

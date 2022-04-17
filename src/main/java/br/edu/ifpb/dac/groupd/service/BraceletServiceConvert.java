@@ -5,32 +5,32 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import br.edu.ifpb.dac.groupd.dto.BraceletDTO;
+import br.edu.ifpb.dac.groupd.dto.BraceletDto;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 
 @Service
 public class BraceletServiceConvert {
 	
-	public Bracelet dtoToBracelet(BraceletDTO dto) {
+	public Bracelet dtoToBracelet(BraceletDto dto) {
 		Bracelet bracelet = new Bracelet();
 		bracelet.setName(dto.getName());
 		bracelet.setIdBracelet(dto.getIdBracelet());
 		return bracelet;
 	}
 	
-	public BraceletDTO braceletToDTO(Bracelet bracelet) {
-		BraceletDTO dto = new BraceletDTO();
+	public BraceletDto braceletToDTO(Bracelet bracelet) {
+		BraceletDto dto = new BraceletDto();
 		dto.setName(bracelet.getName());
 		dto.setIdBracelet(bracelet.getIdBracelet());
 		return dto;
 	}
 	
-	public List<BraceletDTO> braceletToDTO(List<Bracelet> bracelets){
+	public List<BraceletDto> braceletToDTO(List<Bracelet> bracelets){
 		
-		List<BraceletDTO> dtos = new ArrayList<>();
+		List<BraceletDto> dtos = new ArrayList<>();
 		
 		for(Bracelet bracelet : bracelets) {
-			BraceletDTO braceletDTO = braceletToDTO(bracelet);
+			BraceletDto braceletDTO = braceletToDTO(bracelet);
 			dtos.add(braceletDTO);
 		}
 		

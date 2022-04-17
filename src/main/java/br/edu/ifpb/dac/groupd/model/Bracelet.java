@@ -39,6 +39,7 @@ public class Bracelet implements Serializable{
 	@NotEmpty
 	@NotBlank
 	@Size(max=50)
+	@Column(name="name")
 	private String name;
 	
 	//Lista com tipo String provisorio, entquanto as entidades não são criadas

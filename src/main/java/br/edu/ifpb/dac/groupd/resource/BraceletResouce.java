@@ -2,6 +2,8 @@ package br.edu.ifpb.dac.groupd.resource;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +15,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.edu.ifpb.dac.groupd.dto.BraceletDTO;
+import br.edu.ifpb.dac.groupd.dto.BraceletDto;
+import br.edu.ifpb.dac.groupd.dto.post.BraceletPostDto;
+import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.service.BraceletService;
 import br.edu.ifpb.dac.groupd.service.BraceletServiceConvert;
@@ -32,13 +35,15 @@ public class BraceletResouce {
 	private BraceletServiceConvert braceletServiceConvert;
 	
 	@PostMapping
-	public ResponseEntity saveBracelet(@RequestBody BraceletDTO dto) {
+	public ResponseEntity saveBracelet(
+			@Valid
+			@RequestBody BraceletPostDto postDto) {
 		try {
-			Bracelet bracelet = braceletServiceConvert.dtoToBracelet(dto);
-			bracelet = braceletService.save(bracelet);
-			dto = braceletServiceConvert.braceletToDTO(bracelet);
+
+			Bracelet bracelet = braceletService.save(postDto);
+			BraceletDto dto = mapToDto(bracelet);
 			
-			return new ResponseEntity(dto, HttpStatus.CREATED);
+			return ResponseEntity.status(HttpStatus.CREATED).body(dto);
 			
 		} catch (Exception e) {
 			
@@ -47,33 +52,31 @@ public class BraceletResouce {
 	}
 	
 	@PutMapping("{id}")
-	public ResponseEntity updateBracelet(@PathVariable("id") Long idBracelet, BraceletDTO dto) {
+	public ResponseEntity updateBracelet(@PathVariable("id") Long idBracelet, BraceletPostDto postDto) {
 		try {
-			dto.setIdBracelet(idBracelet);
-			Bracelet bracelet = braceletServiceConvert.dtoToBracelet(dto);
-			bracelet = braceletService.update(idBracelet,bracelet);
-			dto = braceletServiceConvert.braceletToDTO(bracelet);
+			Bracelet bracelet = braceletService.update(idBracelet, postDto);
+			BraceletDto dto = mapToDto(bracelet);
 			
 			return ResponseEntity.ok(dto);
-		} catch (Exception e) {
+		} catch (BraceletNotFoundException exception) {
 			
-			return ResponseEntity.badRequest().body(e.getMessage());
+			return ResponseEntity.badRequest().body(exception.getMessage());
 		}
 	}
 	
 	
 	@DeleteMapping("id")
-	public ResponseEntity deleteBracelet(@PathVariable("id") Long idBracelete) {
+	public ResponseEntity<?> deleteBracelet(@PathVariable("id") Long idBracelete) {
 		try {
 			braceletService.delete(idBracelete);
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
+			return ResponseEntity.noContent().build();
 		}catch(Exception e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
 	
 	@GetMapping
-	public ResponseEntity find(
+	public ResponseEntity<?> find(
 			@RequestParam(value = "idBracelet",required = true) Long idBracelet,
 			@RequestParam(value = "nome", required = true)String name) {
 		
@@ -83,13 +86,21 @@ public class BraceletResouce {
 			filter.setName(name);
 			
 			List<Bracelet> bracelets = braceletService.findFilter(filter);
-			List<BraceletDTO> dtos = braceletServiceConvert.braceletToDTO(bracelets);
+			List<BraceletDto> dtos = braceletServiceConvert.braceletToDTO(bracelets);
 			
 			return ResponseEntity.ok(dtos);
 		}catch(Exception e) {
 			
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
+	}
+	private BraceletDto mapToDto(Bracelet bracelet){
+		BraceletDto dto = new BraceletDto();
+		
+		dto.setIdBracelet(bracelet.getIdBracelet());
+		dto.setName(bracelet.getName());
+		
+		return dto;
 	}
 
 }

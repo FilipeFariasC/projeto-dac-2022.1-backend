@@ -1,6 +1,7 @@
 package br.edu.ifpb.dac.groupd.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -63,13 +64,13 @@ public class User implements Serializable {
 	@JoinTable(name="user_bracelet",
 			joinColumns = @JoinColumn(name="user_id"),
 			inverseJoinColumns = @JoinColumn(name="bracelet_id"))
-	private Set<@Valid Bracelet> bracelets;
+	private Set<@Valid Bracelet> bracelets = new HashSet<>();
 	
 	@OneToMany
 	@JoinTable(name="user_fence",
 		joinColumns = @JoinColumn(name="user_id"),
 		inverseJoinColumns = @JoinColumn(name="fence_id"))
-	private Set<@Valid Fence> fences;
+	private Set<@Valid Fence> fences = new HashSet<>();;
 
 	public Long getId() {
 		return id;
