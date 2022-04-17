@@ -112,7 +112,8 @@ public class UserService {
 				user.getBracelets()
 				.stream()
 				.filter(
-					bracelet->bracelet.getName().contains(name))
+					bracelet->bracelet.getName().toLowerCase().contains(name.toLowerCase())
+					)
 				.toList();
 		
 		return bracelets;
@@ -147,12 +148,19 @@ public class UserService {
 		User user = register.get();
 		Set<Bracelet> bracelets = user.getBracelets();
 		boolean entrou = false;
+		
+		Bracelet bracelet = null;
 		for(Bracelet braceletRegister : bracelets) {
-			entrou = braceletRegister.getId().equals(braceletId);
+			if(braceletRegister.getId().equals(braceletId)) {
+				bracelet = braceletRegister;
+				entrou = true;
+			}
 		}
 		if(entrou == false) {
 			throw new BraceletNotRegisteredException();
 		}
+		bracelets.remove(bracelet);
+		userRepo.save(user);
 		braceletService.delete(braceletId);
 	}
 }

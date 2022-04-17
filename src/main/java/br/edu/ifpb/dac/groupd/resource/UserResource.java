@@ -199,14 +199,14 @@ public class UserResource {
 			@RequestBody
 			BraceletPostDto postDto){
 		try {
-			Bracelet bracelet = userService.createBracelet(id, postDto);
+			Bracelet bracelet = userService.updateBracelet(id, braceletId, postDto);
 			
 			BraceletDto dto = mapToBraceletDto(bracelet);
 			
-			return ResponseEntity.status(HttpStatus.CREATED).body(dto);
-		} catch (UserNotFoundException exception) {
+			return ResponseEntity.ok(dto);
+		} catch (UserNotFoundException| BraceletNotFoundException | BraceletNotRegisteredException  exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+		} 
 	}
 	@DeleteMapping("/{id}/bracelets/{braceletId}")
 	public ResponseEntity<?> deleteUserBracelet(

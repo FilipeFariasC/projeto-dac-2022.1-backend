@@ -1,6 +1,7 @@
 package br.edu.ifpb.dac.groupd.model;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -43,18 +44,18 @@ public class Bracelet implements Serializable{
 	private String name;
 	
 	//Lista com tipo String provisorio, entquanto as entidades não são criadas
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "bracelet_fence",
 		joinColumns = @JoinColumn(name = "bracelet_id"),
 		inverseJoinColumns = @JoinColumn(name = "fence_id"))
-	private Set<@Valid Fence> fences;
+	private Set<@Valid Fence> fences = new HashSet<>();
 	
 	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "bracelet_location",
 		joinColumns = @JoinColumn(name = "bracelet_id"),
 		inverseJoinColumns = @JoinColumn(name = "location_id"))
-	private Set<@Valid Location> locations;
+	private Set<@Valid Location> locations = new HashSet<>();
 
 	
 
@@ -91,6 +92,9 @@ public class Bracelet implements Serializable{
 		this.locations = locations;
 	}
 	
-	
+	public void addLocation(Location location) {
+		if(location != null)
+			locations.add(location);
+	}
 
 }

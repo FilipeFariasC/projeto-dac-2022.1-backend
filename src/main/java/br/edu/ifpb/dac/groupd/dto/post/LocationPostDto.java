@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import br.edu.ifpb.dac.groupd.model.Coordinate;
 
 public class LocationPostDto {
@@ -16,10 +18,9 @@ public class LocationPostDto {
 	@Valid
 	private Coordinate coordinate;
 	
-	@NotNull
-	private LocalDateTime timestamp;
+	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	private LocalDateTime creationDate;
 
-	
 	
 	public Long getBraceletId() {
 		return braceletId;
@@ -36,13 +37,14 @@ public class LocationPostDto {
 		this.coordinate = coordinate;
 	}
 
-	public LocalDateTime getTimestamp() {
-		return timestamp;
+	public LocalDateTime getCreationDate() {
+		return creationDate;
 	}
 
-	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
 	}
-	
+
+
 	
 }

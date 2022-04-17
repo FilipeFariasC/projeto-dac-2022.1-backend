@@ -1,5 +1,7 @@
 package br.edu.ifpb.dac.groupd.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,9 +11,11 @@ import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.post.LocationPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
+import br.edu.ifpb.dac.groupd.exception.LocationCreationDateInFutureException;
 import br.edu.ifpb.dac.groupd.exception.LocationNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.model.Location;
+import br.edu.ifpb.dac.groupd.repository.BraceletRepository;
 import br.edu.ifpb.dac.groupd.repository.LocationRepository;
 
 @Service
@@ -23,13 +27,35 @@ public class LocationService {
 	private BraceletService braceletService;
 	
 	@Autowired
+	private BraceletRepository braceletRepo;
+	
+	@Autowired
 	private ModelMapper mapper;
 	
-	public Location create(LocationPostDto dto) throws BraceletNotFoundException {
+	public Location create(LocationPostDto dto) throws BraceletNotFoundException, LocationCreationDateInFutureException {
+		if(dto.getCreationDate() == null){
+			dto.setCreationDate(LocalDateTime.now());
+		} else {
+			LocalDateTime now = LocalDateTime.now();
+					
+			if(dto.getCreationDate().isAfter(now)) {
+				throw new LocationCreationDateInFutureException( 
+						formatDate(dto.getCreationDate()),
+						formatDate(now)
+						);
+			}
+		}
+		
 		Bracelet bracelet = braceletService.findById(dto.getBraceletId());
 		
-		Location location = mapfromDto(dto);
-		location.setBracelet(bracelet);
+		Location mapped = mapfromDto(dto);
+		mapped.setBracelet(bracelet);
+		
+		Location location =locationRepo.save(mapped);
+		
+		bracelet.getLocations().add(mapped);
+		
+		braceletRepo.save(bracelet);
 		
 		return location;
 	}
@@ -55,7 +81,19 @@ public class LocationService {
 	
 	
 	public Location mapfromDto(LocationPostDto dto) {
-		return mapper.map(dto, Location.class);
+		Location location = new Location();
+		
+		location.setCoordinate(dto.getCoordinate());
+		location.setCreationDate(dto.getCreationDate());
+		
+		return location;
 	}
 	
+	private String formatDate(LocalDateTime time){
+		LocalDateTime agora = LocalDateTime.now();
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+		return agora.format(formatter);
+	}
 }

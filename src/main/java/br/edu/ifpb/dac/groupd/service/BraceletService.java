@@ -47,11 +47,13 @@ public class BraceletService {
 		
 	}
 	
-	public Bracelet update(Long idBracelet, BraceletPostDto bracelet) throws BraceletNotFoundException {
+	public Bracelet update(Long idBracelet, BraceletPostDto dto) throws BraceletNotFoundException {
 		if(!braceletRepository.existsById(idBracelet)) {
 			throw new BraceletNotFoundException("Bracelet Not Exist");
 		}
-		return braceletRepository.save(mapFromDto(bracelet));
+		Bracelet bracelet = mapFromDto(dto);
+		bracelet.setId(idBracelet);
+		return braceletRepository.save(bracelet);
 	}
 	
 	public void delete(Long idBracelet) throws BraceletNotFoundException  {

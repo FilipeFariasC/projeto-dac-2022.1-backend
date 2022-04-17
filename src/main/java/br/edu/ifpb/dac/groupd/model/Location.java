@@ -2,6 +2,7 @@ package br.edu.ifpb.dac.groupd.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -10,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -30,7 +30,7 @@ public class Location implements Serializable{
 	@NotNull
 	@Valid
 	@Embedded
-	private Coordinate coordinates;
+	private Coordinate coordinate;
 	
 	@NotNull
 	@Column(name="creation_date")
@@ -50,14 +50,13 @@ public class Location implements Serializable{
 		this.id = id;
 	}
 	
-	public Coordinate getCoordinates() {
-		return coordinates;
+	public Coordinate getCoordinate() {
+		return coordinate;
 	}
 
-	public void setCoordinates(Coordinate coordinates) {
-		this.coordinates = coordinates;
+	public void setCoordinate(Coordinate coordinate) {
+		this.coordinate = coordinate;
 	}
-	
 
 	public LocalDateTime getCreationDate() {
 		return creationDate;
@@ -73,6 +72,23 @@ public class Location implements Serializable{
 
 	public void setBracelet(Bracelet bracelet) {
 		this.bracelet = bracelet;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Location other = (Location) obj;
+		return Objects.equals(id, other.id);
 	}
 	
 	

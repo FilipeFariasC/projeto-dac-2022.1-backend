@@ -17,7 +17,5 @@ public class BraceletDto {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
 
 }

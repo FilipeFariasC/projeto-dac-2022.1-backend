@@ -23,6 +23,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import br.edu.ifpb.dac.groupd.dto.LocationDto;
 import br.edu.ifpb.dac.groupd.dto.post.LocationPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
+import br.edu.ifpb.dac.groupd.exception.LocationCreationDateInFutureException;
 import br.edu.ifpb.dac.groupd.exception.LocationNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Location;
 import br.edu.ifpb.dac.groupd.service.LocationService;
@@ -56,7 +57,7 @@ public class LocationResource {
 					.toUri();
 			
 			return ResponseEntity.created(uri).body(dto);
-		} catch (BraceletNotFoundException exception) {
+		} catch (BraceletNotFoundException | LocationCreationDateInFutureException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}
