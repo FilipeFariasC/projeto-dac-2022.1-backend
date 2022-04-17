@@ -33,7 +33,7 @@ public class Bracelet implements Serializable{
 	@Id
 	@Column(name="bracelet_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long idBracelet;
+	private Long id;
 	
 	@NotNull
 	@NotEmpty
@@ -57,12 +57,14 @@ public class Bracelet implements Serializable{
 	private Set<@Valid Location> locations;
 
 	
-	public Long getIdBracelet() {
-		return idBracelet;
+
+
+	public Long getId() {
+		return id;
 	}
 
-	public void setIdBracelet(Long idBracelet) {
-		this.idBracelet = idBracelet;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {

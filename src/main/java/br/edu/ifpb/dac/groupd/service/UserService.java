@@ -2,6 +2,7 @@ package br.edu.ifpb.dac.groupd.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,7 @@ public class UserService {
 		Bracelet bracelet = braceletService.save(dto);
 
 		user.getBracelets().add(bracelet);
-		
+		userRepo.save(user);
 		return bracelet;
 	}
 	public List<Bracelet> getAllBracelets(Long userId) throws UserNotFoundException {
@@ -94,11 +95,27 @@ public class UserService {
 		User user = register.get();
 		
 		for(Bracelet bracelet : user.getBracelets()) {
-			if(bracelet.getIdBracelet().equals(braceletId)) {
+			if(bracelet.getId().equals(braceletId)) {
 				return bracelet;
 			}
 		}
 		throw new BraceletNotRegisteredException();
+	}
+	public List<Bracelet> searchBraceletByName(Long userId, String name) throws UserNotFoundException {
+		Optional<User> register = userRepo.findById(userId);
+		
+		if(register.isEmpty())
+			throw new UserNotFoundException(userId);
+		
+		User user = register.get();
+		List<Bracelet> bracelets = 
+				user.getBracelets()
+				.stream()
+				.filter(
+					bracelet->bracelet.getName().contains(name))
+				.toList();
+		
+		return bracelets;
 	}
 	
 	public Bracelet updateBracelet(Long userId, Long braceletId, BraceletPostDto dto) throws UserNotFoundException, BraceletNotFoundException, BraceletNotRegisteredException {
@@ -111,7 +128,7 @@ public class UserService {
 		
 		boolean entrou = false;
 		for(Bracelet braceletRegister : user.getBracelets()) {
-			entrou = braceletRegister.getIdBracelet().equals(braceletId);
+			entrou = braceletRegister.getId().equals(braceletId);
 		}
 		if(entrou == false) {
 			throw new BraceletNotRegisteredException();
@@ -120,5 +137,22 @@ public class UserService {
 		Bracelet bracelet = braceletService.update(braceletId, dto);
 		
 		return bracelet;
+	}
+	public void deleteBracelet(Long userId, Long braceletId) throws UserNotFoundException, BraceletNotFoundException, BraceletNotRegisteredException {
+		Optional<User> register = userRepo.findById(userId);
+		
+		if (register.isEmpty())
+			throw new UserNotFoundException(userId);
+		
+		User user = register.get();
+		Set<Bracelet> bracelets = user.getBracelets();
+		boolean entrou = false;
+		for(Bracelet braceletRegister : bracelets) {
+			entrou = braceletRegister.getId().equals(braceletId);
+		}
+		if(entrou == false) {
+			throw new BraceletNotRegisteredException();
+		}
+		braceletService.delete(braceletId);
 	}
 }

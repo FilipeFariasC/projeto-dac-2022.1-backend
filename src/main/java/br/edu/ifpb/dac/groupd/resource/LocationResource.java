@@ -83,7 +83,7 @@ public class LocationResource {
 					.map(
 						location->{
 							LocationDto dto = mapToDto(location);
-							dto.setBraceletId(location.getBracelet().getIdBracelet());
+							dto.setBraceletId(location.getBracelet().getId());
 							return dto;
 						}
 					)
@@ -98,7 +98,7 @@ public class LocationResource {
 	public LocationDto mapToDto(Location location){
 		LocationDto dto = mapper.map(location, LocationDto.class);
 		
-		dto.setBraceletId(location.getBracelet().getIdBracelet());
+		dto.setBraceletId(location.getBracelet().getId());
 		
 		return dto;
 	 }

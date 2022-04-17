@@ -82,7 +82,7 @@ public class BraceletResouce {
 		
 		try {
 			Bracelet filter = new Bracelet();
-			filter.setIdBracelet(idBracelet);
+			filter.setId(idBracelet);
 			filter.setName(name);
 			
 			List<Bracelet> bracelets = braceletService.findFilter(filter);
@@ -97,7 +97,7 @@ public class BraceletResouce {
 	private BraceletDto mapToDto(Bracelet bracelet){
 		BraceletDto dto = new BraceletDto();
 		
-		dto.setIdBracelet(bracelet.getIdBracelet());
+		dto.setIdBracelet(bracelet.getId());
 		dto.setName(bracelet.getName());
 		
 		return dto;

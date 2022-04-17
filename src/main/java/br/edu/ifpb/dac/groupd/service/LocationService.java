@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.post.LocationPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
@@ -13,6 +14,7 @@ import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.model.Location;
 import br.edu.ifpb.dac.groupd.repository.LocationRepository;
 
+@Service
 public class LocationService {
 	@Autowired
 	private LocationRepository locationRepo;

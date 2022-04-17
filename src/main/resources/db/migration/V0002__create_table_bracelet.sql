@@ -1,8 +1,5 @@
 CREATE TABLE IF NOT EXISTS bracelet (
 	bracelet_id BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
-	name VARCHAR(50) NOT NULL,
-	user_id BIGINT(20) NOT NULL,
-	
-	CONSTRAINT user_id_fk_bracelet FOREIGN KEY (user_id) REFERENCES user(user_id)
+	name VARCHAR(50) NOT NULL
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

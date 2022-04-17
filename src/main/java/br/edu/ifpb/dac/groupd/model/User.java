@@ -20,7 +20,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 @Entity
 @Table(name="user")
 public class User implements Serializable {
@@ -56,7 +55,7 @@ public class User implements Serializable {
 	@NotBlank
 	@Column(name="password", nullable=false)
 	@Size(min=8, max=30)
-	@Pattern(regexp="^[^\\s]+$")
+	@Pattern(regexp="^[^\\s]+$", message="{0} nao pode ser vazia")
 	private String password;
 	
 	
