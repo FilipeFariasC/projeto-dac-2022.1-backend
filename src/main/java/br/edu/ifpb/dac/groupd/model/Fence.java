@@ -47,6 +47,8 @@ public class Fence  implements Serializable{
 	@NotNull
 	@Min(1)
 	private Double radius;
+	
+	
 	@ManyToMany(mappedBy="fences")
 	private Set<@Valid Bracelet> bracelets;
 	
