@@ -61,7 +61,7 @@ public class LocationTests {
 		assertNotEquals(0, violations.size(), "Valid Timestamp");
 	}
 	@Test
-	@DisplayName("Future Creation Date")
+	@DisplayName("Valid Creation Date")
 	public void testValidCreationDate() {
 		LocalDateTime date = LocalDateTime.now().minusNanos(1);
 		
