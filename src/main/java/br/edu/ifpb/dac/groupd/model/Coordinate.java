@@ -23,6 +23,13 @@ public class Coordinate  implements Serializable{
 	@Max(180)
 	@Column(name="longitude", columnDefinition="Decimal(11,8)")
 	private Double longitude;
+	
+	public Coordinate() {}
+	public Coordinate(@NotNull @Min(-90) @Max(90) Double latitude, @NotNull @Min(-180) @Max(180) Double longitude) {
+		super();
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
 
 	public Double getLatitude() {
 		return latitude;

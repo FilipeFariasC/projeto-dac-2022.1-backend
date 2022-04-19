@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimestamp;
+
 @Entity
 @Table(name="location")
 public class Location implements Serializable{
@@ -34,6 +36,7 @@ public class Location implements Serializable{
 	
 	@NotNull
 	@Column(name="creation_date")
+	@ValidTimestamp
 	private LocalDateTime creationDate;
 	
 	@Valid

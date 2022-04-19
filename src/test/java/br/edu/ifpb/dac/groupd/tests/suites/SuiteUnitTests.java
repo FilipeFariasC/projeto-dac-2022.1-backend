@@ -6,6 +6,7 @@ import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
 import br.edu.ifpb.dac.groupd.tests.unittest.BraceletTests;
+import br.edu.ifpb.dac.groupd.tests.unittest.CoordinateTests;
 import br.edu.ifpb.dac.groupd.tests.unittest.LocationTests;
 import br.edu.ifpb.dac.groupd.tests.unittest.UserTests;
 
@@ -15,6 +16,7 @@ import br.edu.ifpb.dac.groupd.tests.unittest.UserTests;
 @SelectClasses({
 	UserTests.class,
 	BraceletTests.class,
+	CoordinateTests.class,
 	LocationTests.class
 })
 @SuiteDisplayName("Suite de Testes Unitários")
