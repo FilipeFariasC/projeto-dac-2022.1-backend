@@ -28,8 +28,8 @@ public class Bracelet implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 8321201080965139583L;
+
 	@Id
 	@Column(name="bracelet_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -55,8 +55,6 @@ public class Bracelet implements Serializable{
 		joinColumns = @JoinColumn(name = "bracelet_id"),
 		inverseJoinColumns = @JoinColumn(name = "location_id"))
 	private Set<@Valid Location> locations = new HashSet<>();
-
-	
 
 
 	public Long getId() {

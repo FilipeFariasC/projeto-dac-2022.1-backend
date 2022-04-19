@@ -1,4 +1,4 @@
-package br.edu.ifpb.dac.groupd.enums;
+package br.edu.ifpb.dac.groupd.model.enums;
 
 import javax.persistence.AttributeConverter;
 

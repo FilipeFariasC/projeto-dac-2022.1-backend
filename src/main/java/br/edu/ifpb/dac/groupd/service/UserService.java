@@ -61,6 +61,8 @@ public class UserService {
 		
 		userRepo.deleteById(id);
 	}
+	
+	
 	// User Bracelet
 	public Bracelet createBracelet(Long userId, BraceletPostDto dto) throws UserNotFoundException {
 		Optional<User> register = userRepo.findById(userId);

@@ -14,10 +14,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import br.edu.ifpb.dac.groupd.enums.FenceStatus;
+import br.edu.ifpb.dac.groupd.model.enums.FenceStatus;
 
 @Entity
 @Table(name="fence")
@@ -47,7 +48,7 @@ public class Fence  implements Serializable{
 	@Min(1)
 	private Double radius;
 	@ManyToMany(mappedBy="fences")
-	private Set<Bracelet> bracelets;
+	private Set<@Valid Bracelet> bracelets;
 	
 
 
