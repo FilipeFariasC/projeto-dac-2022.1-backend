@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.edu.ifpb.dac.groupd.model.Coordinate;
+import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimestamp;
 
 public class LocationPostDto {
 	
@@ -19,6 +20,7 @@ public class LocationPostDto {
 	private Coordinate coordinate;
 	
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+	@ValidTimestamp
 	private LocalDateTime creationDate;
 
 	

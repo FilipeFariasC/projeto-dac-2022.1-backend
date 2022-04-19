@@ -11,7 +11,7 @@ public class ValidTimestampValidator implements ConstraintValidator<ValidTimesta
 
 	public boolean isValid(LocalDateTime value, ConstraintValidatorContext context) {
 		if(value == null)
-			return false;
+			return true;
 		
 		return value.isBefore(LocalDateTime.now());
 	}
