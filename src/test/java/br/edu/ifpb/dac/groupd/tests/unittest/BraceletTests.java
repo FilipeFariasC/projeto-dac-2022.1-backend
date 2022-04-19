@@ -48,6 +48,8 @@ public class BraceletTests {
 		bracelet.setName(null);
 		
 		violations = validator.validateProperty(bracelet, "name");
+		violations.stream().forEach(System.out::println);
+		
 		assertNotEquals(0, violations.size(), () -> "Valid name" );
 	}
 	@DisplayName("Name is empty")

@@ -70,6 +70,8 @@ public class Bracelet implements Serializable{
 	}
 
 	public void setName(String name) {
+		if(name == null)
+			return ;
 		this.name = name.trim();
 	}
 
