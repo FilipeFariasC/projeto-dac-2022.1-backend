@@ -45,7 +45,7 @@ public class BraceletTests {
 	@Test
 	@DisplayName("Name is null")
 	void testNameNull() {
-		bracelet.setName("");
+		bracelet.setName(null);
 		
 		violations = validator.validateProperty(bracelet, "name");
 		assertNotEquals(0, violations.size(), () -> "Valid name" );

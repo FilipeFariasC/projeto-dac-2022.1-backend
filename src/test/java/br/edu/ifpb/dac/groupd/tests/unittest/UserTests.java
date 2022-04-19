@@ -50,6 +50,14 @@ public class UserTests {
 	@DisplayName("Name")
 	@TestMethodOrder(OrderAnnotation.class)
 	public class NameTests{
+		@Order(0)
+		@DisplayName("Empty Name")
+		void testNameIsNull() {
+			user.setName(null);
+			
+			violations = validator.validateProperty(user, "name");
+			assertNotEquals(0, violations.size(), () -> "Valid name" );
+		}
 		@Order(1)
 		@DisplayName("Empty Name")
 		@ParameterizedTest(name="Invalid Test {index}")
@@ -58,7 +66,7 @@ public class UserTests {
 			user.setName(name);
 			
 			violations = validator.validateProperty(user, "name");
-			assertTrue((violations.size() > 0), () -> "Valid name" );
+			assertNotEquals(0, violations.size(), () -> "Valid name" );
 		}
 		
 		@Order(2)
@@ -75,7 +83,7 @@ public class UserTests {
 			user.setName(name);
 			
 			violations = validator.validateProperty(user, "name");
-			assertTrue((violations.size() > 0), () -> "Valid name");
+			assertNotEquals(0, violations.size(), () -> "Valid name");
 		}
 		
 		@Order(3)
@@ -101,6 +109,16 @@ public class UserTests {
 	@DisplayName("Email")
 	@TestMethodOrder(OrderAnnotation.class)
 	public class EmailTests{
+		@Order(0)
+		@DisplayName("Null Email")
+		@ParameterizedTest(name="Teste inválido {index}")
+		@ValueSource(strings= {"", "    ", " \t "})
+		void testNullEmail(String email) {
+			user.setEmail(null);
+			
+			violations = validator.validateProperty(user, "email");
+			assertNotEquals(0, violations.size(), () -> "Valid email" );
+		}
 		@Order(1)
 		@DisplayName("Empty Email")
 		@ParameterizedTest(name="Teste inválido {index}")
@@ -109,7 +127,7 @@ public class UserTests {
 			user.setEmail(email);
 			
 			violations = validator.validateProperty(user, "email");
-			assertTrue((violations.size() > 0), () -> "Valid email" );
+			assertNotEquals(0, violations.size(), () -> "Valid email" );
 		}
 		
 		@Order(2)
@@ -120,7 +138,7 @@ public class UserTests {
 			user.setEmail(email);
 			
 			violations = validator.validateProperty(user, "email");
-			assertTrue((violations.size() > 0), () -> "Valid email" );
+			assertNotEquals(0, violations.size(), () -> "Valid email" );
 		}
 		@Order(3)
 		@DisplayName("Valid Email")
@@ -147,7 +165,7 @@ public class UserTests {
 			user.setPassword(password);
 			
 			violations = validator.validateProperty(user, "password");
-			assertTrue((violations.size() > 0), () -> "Valid password" );
+			assertNotEquals(0, violations.size(), () -> "Valid password" );
 		}
 		@Order(1)
 		@DisplayName("Password Character Limit")
@@ -157,7 +175,7 @@ public class UserTests {
 			user.setPassword(password);
 			
 			violations = validator.validateProperty(user, "password");
-			assertTrue((violations.size() > 0), () -> "Valid password" );
+			assertNotEquals(0, violations.size(), () -> "Valid password" );
 		}
 		@Order(3)
 		@DisplayName("Password doesn't contain spaces")
@@ -167,7 +185,7 @@ public class UserTests {
 			user.setPassword(password);
 			
 			violations = validator.validateProperty(user, "password");
-			assertTrue((violations.size() > 0), () -> "Valid password" );
+			assertNotEquals(0, violations.size(), () -> "Valid password" );
 		}
 		@Order(4)
 		@DisplayName("Password Valid")

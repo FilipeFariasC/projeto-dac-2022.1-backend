@@ -61,7 +61,7 @@ public class CoordinateTests {
 		assertEquals(0, violations.size(), () -> "Invalid latitude" );
 	}
 	
-	@DisplayName("Longitude")
+	@DisplayName("Invalid Longitude")
 	@ParameterizedTest(name="Invalid Longitude {index} -> {0}")
 	@ValueSource(doubles = {-181.0, 181.0})
 	void testInvalidLongitude(Double latitude) {
@@ -70,7 +70,7 @@ public class CoordinateTests {
 		violations = validator.validateProperty(coordinate, "longitude");
 		assertNotEquals(0, violations.size(), () -> "Valid longitude" );
 	}
-	@DisplayName("Longitude")
+	@DisplayName("Valid Longitude")
 	@ParameterizedTest(name="Valid Longitude {index} -> {0}")
 	@ValueSource(doubles = {-180.0, 180.0})
 	void testValidLongitude(Double latitude) {
