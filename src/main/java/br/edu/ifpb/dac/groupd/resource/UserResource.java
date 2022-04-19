@@ -27,6 +27,7 @@ import br.edu.ifpb.dac.groupd.dto.post.BraceletPostDto;
 import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotRegisteredException;
+import br.edu.ifpb.dac.groupd.exception.UserEmailInUseException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.model.User;
@@ -45,12 +46,17 @@ public class UserResource {
 	// User Only
 	@PostMapping
 	@ResponseStatus(code=HttpStatus.CREATED)
-	public ResponseEntity<UserDto> create(
+	public ResponseEntity<?> create(
 			@Valid
 			@RequestBody
 			UserPostDto userPostDto) {
 		
-		User created = userService.create(userPostDto);
+		User created;
+		try {
+			created = userService.create(userPostDto);
+		} catch (UserEmailInUseException exception) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
+		}
 		
 		UserDto dto = mapToUserDto(created);
 		

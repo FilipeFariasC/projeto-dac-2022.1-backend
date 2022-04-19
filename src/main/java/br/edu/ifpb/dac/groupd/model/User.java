@@ -37,25 +37,21 @@ public class User implements Serializable {
 	
 	@NotNull
 	@NotEmpty
-	@NotBlank
 	@Size(min=3, max=50)
 	@Column(name="name")
 	private String name;
 	
 	@NotNull
 	@NotEmpty
-	@NotBlank
 	@Email
 	@Column(name="email", unique=true, nullable=false)
 	@Size(max=255)
 	private String email;
 	
 	@NotNull
-	@NotEmpty
-	@NotBlank
 	@Column(name="password", nullable=false)
 	@Size(min=8, max=30)
-	@Pattern(regexp="^[^\\s]+$", message="{0} nao pode ser vazia")
+	@Pattern(regexp="^[^\\s]+$", message="{0} nao pode conter espaços")
 	private String password;
 	
 	
@@ -63,12 +59,14 @@ public class User implements Serializable {
 	@JoinTable(name="user_bracelet",
 			joinColumns = @JoinColumn(name="user_id"),
 			inverseJoinColumns = @JoinColumn(name="bracelet_id"))
+	@Valid
 	private Set<@Valid Bracelet> bracelets = new HashSet<>();
 	
 	@OneToMany
 	@JoinTable(name="user_fence",
 		joinColumns = @JoinColumn(name="user_id"),
 		inverseJoinColumns = @JoinColumn(name="fence_id"))
+	@Valid
 	private Set<@Valid Fence> fences = new HashSet<>();
 
 	public Long getId() {

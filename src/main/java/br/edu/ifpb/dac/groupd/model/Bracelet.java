@@ -16,7 +16,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -37,8 +36,7 @@ public class Bracelet implements Serializable{
 	
 	@NotNull
 	@NotEmpty
-	@NotBlank
-	@Size(max=50)
+	@Size(min=1,max=50)
 	@Column(name="name")
 	private String name;
 	
@@ -47,6 +45,7 @@ public class Bracelet implements Serializable{
 	@JoinTable(name = "bracelet_fence",
 		joinColumns = @JoinColumn(name = "bracelet_id"),
 		inverseJoinColumns = @JoinColumn(name = "fence_id"))
+	@Valid
 	private Set<@Valid Fence> fences = new HashSet<>();
 	
 	
@@ -54,6 +53,7 @@ public class Bracelet implements Serializable{
 	@JoinTable(name = "bracelet_location",
 		joinColumns = @JoinColumn(name = "bracelet_id"),
 		inverseJoinColumns = @JoinColumn(name = "location_id"))
+	@Valid
 	private Set<@Valid Location> locations = new HashSet<>();
 
 
@@ -70,7 +70,7 @@ public class Bracelet implements Serializable{
 	}
 
 	public void setName(String name) {
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	public Set<Fence> getFences() {

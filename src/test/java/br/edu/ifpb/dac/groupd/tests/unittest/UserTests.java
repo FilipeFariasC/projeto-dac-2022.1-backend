@@ -1,4 +1,4 @@
-package br.edu.ifpb.dac.groupd.unittest;
+package br.edu.ifpb.dac.groupd.tests.unittest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +27,7 @@ import br.edu.ifpb.dac.groupd.model.User;
 @Testable
 @DisplayName("User")
 @TestClassOrder(org.junit.jupiter.api.ClassOrderer.OrderAnnotation.class)
-class UserTests {
+public class UserTests {
 	
 	private User user;
 	private Set<ConstraintViolation<User>> violations;

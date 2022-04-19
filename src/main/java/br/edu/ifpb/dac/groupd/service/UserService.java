@@ -12,6 +12,7 @@ import br.edu.ifpb.dac.groupd.dto.post.BraceletPostDto;
 import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotRegisteredException;
+import br.edu.ifpb.dac.groupd.exception.UserEmailInUseException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.model.User;
@@ -28,8 +29,13 @@ public class UserService {
 	@Autowired
 	private BraceletService braceletService;
 	
-	public User create(UserPostDto userPostDto) {
+	public User create(UserPostDto userPostDto) throws UserEmailInUseException {
 		User user = mapper.map(userPostDto, User.class);
+		
+		Optional<User> register = userRepo.findByEmail(userPostDto.getEmail());
+		
+		if(register.isPresent())
+			throw new UserEmailInUseException(userPostDto.getEmail());
 		
 		return userRepo.save(user);
 	}
