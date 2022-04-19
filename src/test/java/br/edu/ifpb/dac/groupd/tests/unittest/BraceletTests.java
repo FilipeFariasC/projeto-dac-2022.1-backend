@@ -1,5 +1,6 @@
 package br.edu.ifpb.dac.groupd.tests.unittest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.Set;
@@ -51,27 +52,25 @@ public class BraceletTests {
 	}
 	@DisplayName("Name is empty")
 	@ParameterizedTest(name="Invalid Teste {index}")
-	@ValueSource(strings= {"", "\r", "\r\r"})
+	@ValueSource(strings= {"", "\r", "\r\r", " ", "\t", "\n", " \t "})
 	void testNameEmpty(String name) {
 		bracelet.setName(name);
 		violations = validator.validateProperty(bracelet, "name");
 		assertNotEquals(0, violations.size(), () -> "Valid name" );
 	}
-	@DisplayName("Name is blank")
-	@ParameterizedTest(name="Invalid Test {index}")
-	@ValueSource(strings= {"      ", "\t", "\n", " \t "})
-	void testNameBlank(String name) {
-		bracelet.setName(name);
-		violations = validator.validateProperty(bracelet, "name");
-		assertNotEquals(0, violations.size(), () -> "Valid name" );
-	}
 	@DisplayName("Name has more than 50 characters")
-	@ParameterizedTest(name="Invalid Test {index}")
-	@ValueSource(strings= {"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "\t", "\n", " \t "})
-	void testNameMoreThanFiftyCharacters(String name) {
-		bracelet.setName(name);
+	@Test
+	void testNameMoreThanFiftyCharacters() {
+		bracelet.setName("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 		violations = validator.validateProperty(bracelet, "name");
 		assertNotEquals(0, violations.size(), () -> "Valid name" );
 	}
-	
+	@DisplayName("Name is Valid")
+	@ParameterizedTest(name="Invalid Test {index} -> {0}")
+	@ValueSource(strings= {"a","1","abc", "123","abc123","123abc","\t\taaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\t\t","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"})
+	void testNameValid(String name) {
+		bracelet.setName(name);
+		violations = validator.validateProperty(bracelet, "name");
+		assertEquals(0, violations.size(), () -> "Valid name" );
+	}
 }
