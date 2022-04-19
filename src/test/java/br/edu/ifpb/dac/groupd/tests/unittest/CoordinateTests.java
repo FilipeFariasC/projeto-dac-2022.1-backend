@@ -49,6 +49,7 @@ public class CoordinateTests {
 		coordinate.setLatitude(latitude);
 		
 		violations = validator.validateProperty(coordinate, "latitude");
+//		violations.stream().forEach(System.out::println);
 		assertNotEquals(0, violations.size(), () -> "Valid latitude" );
 	}
 	@DisplayName("Valid Latitude")
@@ -64,19 +65,22 @@ public class CoordinateTests {
 	@DisplayName("Invalid Longitude")
 	@ParameterizedTest(name="Invalid Longitude {index} -> {0}")
 	@ValueSource(doubles = {-181.0, 181.0})
-	void testInvalidLongitude(Double latitude) {
-		coordinate.setLatitude(latitude);
+	void testInvalidLongitude(Double longitude) {
+		coordinate.setLongitude(longitude);
 		
 		violations = validator.validateProperty(coordinate, "longitude");
+		
+//		violations.stream().forEach(System.out::println);
 		assertNotEquals(0, violations.size(), () -> "Valid longitude" );
 	}
 	@DisplayName("Valid Longitude")
 	@ParameterizedTest(name="Valid Longitude {index} -> {0}")
 	@ValueSource(doubles = {-180.0, 180.0})
-	void testValidLongitude(Double latitude) {
-		coordinate.setLatitude(latitude);
+	void testValidLongitude(Double longitude) {
+		coordinate.setLongitude(longitude);
 		
 		violations = validator.validateProperty(coordinate, "longitude");
-		assertNotEquals(0, violations.size(), () -> "Invalid longitude" );
+		
+		assertEquals(0, violations.size(), () -> "Invalid longitude" );
 	}
 }

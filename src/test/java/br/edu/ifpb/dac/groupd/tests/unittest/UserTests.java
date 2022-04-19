@@ -51,7 +51,7 @@ public class UserTests {
 	@TestMethodOrder(OrderAnnotation.class)
 	public class NameTests{
 		@Order(0)
-		@DisplayName("Empty Name")
+		@DisplayName("Null Name")
 		void testNameIsNull() {
 			user.setName(null);
 			
