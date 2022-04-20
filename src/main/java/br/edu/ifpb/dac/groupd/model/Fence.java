@@ -41,6 +41,7 @@ public class Fence  implements Serializable{
 	@Column(name="finish_time")
 	private LocalDateTime finishTime;
 	
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private FenceStatus status;
 	
@@ -50,6 +51,7 @@ public class Fence  implements Serializable{
 	
 	
 	@ManyToMany(mappedBy="fences")
+	@Valid
 	private Set<@Valid Bracelet> bracelets;
 	
 
