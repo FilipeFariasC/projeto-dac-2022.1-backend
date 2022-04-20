@@ -5,10 +5,10 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
-import br.edu.ifpb.dac.groupd.tests.unittest.BraceletTests;
-import br.edu.ifpb.dac.groupd.tests.unittest.CoordinateTests;
-import br.edu.ifpb.dac.groupd.tests.unittest.LocationTests;
-import br.edu.ifpb.dac.groupd.tests.unittest.UserTests;
+import br.edu.ifpb.dac.groupd.tests.unit.BraceletTests;
+import br.edu.ifpb.dac.groupd.tests.unit.CoordinateTests;
+import br.edu.ifpb.dac.groupd.tests.unit.LocationTests;
+import br.edu.ifpb.dac.groupd.tests.unit.UserTests;
 
 @Suite
 @Testable
@@ -20,4 +20,4 @@ import br.edu.ifpb.dac.groupd.tests.unittest.UserTests;
 	LocationTests.class
 })
 @SuiteDisplayName("Suite de Testes Unitários")
-class SuiteUnitTests {}
+public class SuiteUnitTests {}

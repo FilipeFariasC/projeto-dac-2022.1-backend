@@ -1,4 +1,4 @@
-package br.edu.ifpb.dac.groupd.tests.unittest;
+package br.edu.ifpb.dac.groupd.tests.unit;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -37,7 +37,7 @@ public class User implements Serializable {
 	@NotNull
 	@NotEmpty
 	@Size(min=3, max=50)
-	@Column(name="name")
+	@Column(name="name", nullable=false)
 	private String name;
 	
 	@NotNull

@@ -1,0 +1,7 @@
+
+CREATE USER IF NOT EXISTS projeto_dac_2022_1 IDENTIFIED BY 'projeto_dac_2022_1';
+
+CREATE DATABASE IF NOT EXISTS projeto_dac_2022_1;
+
+GRANT ALL PRIVILEGES ON projeto_dac_2022_1 TO projeto_dac_2022_1;
+
