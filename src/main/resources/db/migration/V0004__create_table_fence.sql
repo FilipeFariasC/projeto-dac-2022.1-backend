@@ -2,9 +2,9 @@ CREATE TABLE IF NOT EXISTS fence (
 	fence_id BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
 	latitude DECIMAL(10,8) NOT NULL,
 	longitude DECIMAL(11,8) NOT NULL,
-	start_time TIMESTAMP,
-	finish_time TIMESTAMP,
-	status VARCHAR(10) NOT NULL,
+	start_time TIME,
+	finish_time TIME,
+	status BOOLEAN NOT NULL,
 	radius DOUBLE DEFAULT 0.0,
 	
 	CONSTRAINT valid_latitude_fence CHECK (latitude >= -90 AND latitude <= 90),

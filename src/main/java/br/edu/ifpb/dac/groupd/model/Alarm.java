@@ -9,7 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimestamp;
@@ -18,27 +21,35 @@ import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimestamp;
 @Table(name="alarm")
 public class Alarm implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 9023853450528858907L;
 	
 	@Id
 	@Column(name="alarm_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-
-	private Fence fence;
+	
+	
 	
 	@NotNull
-	@Column(name="data_de_registro_date")
+	@Column(name="register_date", nullable=false, columnDefinition = "TIMESTAMP")
 	@ValidTimestamp
-	private LocalDateTime dataDeRegistro;
+	private LocalDateTime registerDate;
 	
-	private Boolean visto;
+
+	@NotNull
+	@Column(name="seen", columnDefinition = "BIT")
+	private Boolean seen;
 	
+	@Valid
+	@NotNull
+	@OneToOne
+	@JoinColumn(name="fence_id")
+	private Fence fence;
 	
-	private Location loation;
+	@Valid
+	@OneToOne
+	@JoinColumn(name="location_id")
+	private Location location;
 
 	
 	public Fence getFence() {
@@ -48,31 +59,31 @@ public class Alarm implements Serializable{
 	public void setFence(Fence fence) {
 		this.fence = fence;
 	}
-
-	public LocalDateTime getData() {
-		return dataDeRegistro;
-	}
-
-	public void setData(LocalDateTime dataDeResitro) {
-		this.dataDeRegistro = dataDeResitro;
-	}
-
-	public Boolean getVisto() {
-		return visto;
-	}
-
-	public void setVisto(Boolean visto) {
-		this.visto = visto;
-	}
-
-	public Location getLoation() {
-		return loation;
-	}
-
-	public void setLoation(Location loation) {
-		this.loation = loation;
-	}
 	
+	public LocalDateTime getRegisterDate() {
+		return registerDate;
+	}
+
+	public void setRegisterDate(LocalDateTime registerDate) {
+		this.registerDate = registerDate;
+	}
+
+	public Boolean getSeen() {
+		return seen;
+	}
+
+	public void setSeen(Boolean seen) {
+		this.seen = seen;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -83,7 +94,7 @@ public class Alarm implements Serializable{
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(dataDeRegistro, fence, loation, visto);
+		return Objects.hash(id);
 	}
 
 	@Override
@@ -95,15 +106,7 @@ public class Alarm implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Alarm other = (Alarm) obj;
-		return Objects.equals(dataDeRegistro, other.dataDeRegistro) && Objects.equals(fence, other.fence)
-				&& Objects.equals(loation, other.loation) && Objects.equals(visto, other.visto);
-	}
-
-	@Override
-	public String toString() {
-		return "Alarm [fence=" + fence + ", data=" + dataDeRegistro + ", visto=" + visto + ", loation=" + loation + "]";
+		return Objects.equals(id, other.id);
 	}
 	
-	
-
 }
