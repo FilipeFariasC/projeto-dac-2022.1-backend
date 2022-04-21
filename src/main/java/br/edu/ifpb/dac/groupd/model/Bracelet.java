@@ -40,7 +40,6 @@ public class Bracelet implements Serializable{
 	@Column(name="name")
 	private String name;
 	
-	//Lista com tipo String provisorio, entquanto as entidades não são criadas
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "bracelet_fence",
 		joinColumns = @JoinColumn(name = "bracelet_id"),
