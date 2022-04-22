@@ -2,14 +2,16 @@ package br.edu.ifpb.dac.groupd.dto.post;
 
 import java.time.LocalTime;
 
-import javax.persistence.Embedded;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.edu.ifpb.dac.groupd.model.Coordinate;
+import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimer;
 
+
+@ValidTimer
 public class FencePostDto {
 
 	@NotNull
