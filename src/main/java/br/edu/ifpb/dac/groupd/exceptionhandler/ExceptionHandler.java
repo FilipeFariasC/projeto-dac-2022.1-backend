@@ -30,7 +30,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 		
 		//define a mensagem que será enviada em caso de erro de conversao de entidade
 		
-		String messageUser = messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale());
+		String messageUser = messageSource.getMessage("message.invalid", null, LocaleContextHolder.getLocale());
 		String messageDeveloper = ex.getCause().toString();
 		
 		List<Error> errors = Arrays.asList(new Error(messageUser, messageDeveloper));
