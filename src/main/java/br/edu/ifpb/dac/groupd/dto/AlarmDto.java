@@ -10,8 +10,9 @@ public class AlarmDto {
 	private Long id;
 	private LocalDateTime registerDate;
 	private Boolean seen;
-	private Fence fence;
-	private Location location;
+	private Long idFence;
+	private Long idLocation;
+	
 	public Long getId() {
 		return id;
 	}
@@ -30,17 +31,17 @@ public class AlarmDto {
 	public void setSeen(Boolean seen) {
 		this.seen = seen;
 	}
-	public Fence getFence() {
-		return fence;
+	public Long getFence() {
+		return idFence;
 	}
-	public void setFence(Fence fence) {
-		this.fence = fence;
+	public void setFence(Long idFence) {
+		this.idFence = idFence;
 	}
-	public Location getLocation() {
-		return location;
+	public Long getLocation() {
+		return idLocation;
 	}
-	public void setLocation(Location location) {
-		this.location = location;
+	public void setLocation(Long idLocation) {
+		this.idLocation = idLocation;
 	}
 	
 	

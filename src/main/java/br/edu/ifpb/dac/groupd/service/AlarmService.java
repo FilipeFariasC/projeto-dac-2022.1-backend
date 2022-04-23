@@ -17,9 +17,11 @@ public class AlarmService {
 	
 	@Autowired
 	private AlarmRepository alarmRepository;
+	@Autowired
+	private AlarmServiceConvert alarmServiceConvert;
 	
 	public Alarm saveAlarm(AlarmPostDto dto) {
-		 Alarm alarm = mapFromDto(dto);
+		 Alarm alarm = alarmServiceConvert.mapFromDto(dto);
 		 
 		return alarmRepository.save(alarm);
 	}
@@ -40,7 +42,7 @@ public class AlarmService {
 		if(!alarmRepository.existsById(idAlarm)) {
 			throw new AlarmNotFoundException(idAlarm);
 		}
-		Alarm alarm = mapFromDto(dto);
+		Alarm alarm = alarmServiceConvert.mapFromDto(dto);
 		alarm.setId(idAlarm);
 		return alarmRepository.save(alarm);
 	}
@@ -59,13 +61,6 @@ public class AlarmService {
 		return alarmRepository.findAll(example);
 	}
 	
-	private Alarm mapFromDto(AlarmPostDto dto){
-		Alarm alarm = new Alarm();
-		alarm.setLocation(dto.getLocation());
-		alarm.setRegisterDate(dto.getRegisterDate());
-		alarm.setSeen(dto.getSeen());
-		alarm.setFence(dto.getFence());
-		return alarm;
-	}
+	
 
 }
