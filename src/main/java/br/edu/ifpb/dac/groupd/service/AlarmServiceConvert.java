@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.ifpb.dac.groupd.dto.AlarmDto;
-import br.edu.ifpb.dac.groupd.dto.BraceletDto;
 import br.edu.ifpb.dac.groupd.dto.post.AlarmPostDto;
 import br.edu.ifpb.dac.groupd.model.Alarm;
-import br.edu.ifpb.dac.groupd.model.Bracelet;
 
 public class AlarmServiceConvert {
 	
