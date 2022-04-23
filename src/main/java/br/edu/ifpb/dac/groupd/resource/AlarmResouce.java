@@ -1,6 +1,5 @@
 package br.edu.ifpb.dac.groupd.resource;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -19,12 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifpb.dac.groupd.dto.AlarmDto;
-import br.edu.ifpb.dac.groupd.dto.BraceletDto;
 import br.edu.ifpb.dac.groupd.dto.post.AlarmPostDto;
 import br.edu.ifpb.dac.groupd.exception.AlarmNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Alarm;
-import br.edu.ifpb.dac.groupd.model.Bracelet;
-import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.service.AlarmService;
 import br.edu.ifpb.dac.groupd.service.AlarmServiceConvert;
 
