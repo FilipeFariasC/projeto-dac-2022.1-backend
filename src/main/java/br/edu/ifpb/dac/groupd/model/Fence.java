@@ -2,11 +2,13 @@ package br.edu.ifpb.dac.groupd.model;
 
 import java.io.Serializable;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,9 +48,9 @@ public class Fence  implements Serializable{
 	private Double radius;
 	
 	
-	@ManyToMany(mappedBy="fences")
+	@ManyToMany(mappedBy="fences", fetch = FetchType.EAGER)
 	@Valid
-	private Set<@Valid Bracelet> bracelets;
+	private Set<@Valid Bracelet> bracelets = new HashSet<>();
 	
 
 	public Long getId() {
@@ -103,6 +105,16 @@ public class Fence  implements Serializable{
 
 	public void setRadius(Double radius) {
 		this.radius = radius;
+	}
+	
+	public void addBracelet(Bracelet bracelet) {
+		this.bracelets.add(bracelet);
+		bracelet.getFences().add(this);
+	}
+	
+	public void removeBracelet(Bracelet bracelet) {
+		this.bracelets.remove(bracelet);
+		bracelet.getFences().remove(this);
 	}
 	
 }

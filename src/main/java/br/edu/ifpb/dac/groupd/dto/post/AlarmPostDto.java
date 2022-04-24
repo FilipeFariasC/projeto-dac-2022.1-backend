@@ -10,15 +10,15 @@ import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.model.Location;
 
 public class AlarmPostDto {
-	
+		
 	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime registerDate;
 	
 	@NotNull
-	private Boolean seen;
+	private Long fenceId;
 	
-	private Fence fence;
-	private Location location;
+	@NotNull
+	private Long locationId;
 	
 	public LocalDateTime getRegisterDate() {
 		return registerDate;
@@ -26,25 +26,19 @@ public class AlarmPostDto {
 	public void setRegisterDate(LocalDateTime registerDate) {
 		this.registerDate = registerDate;
 	}
-	public Boolean getSeen() {
-		return seen;
+	public Long getFenceId() {
+		return fenceId;
 	}
-	public void setSeen(Boolean seen) {
-		this.seen = seen;
+	public void setFenceId(Long fenceId) {
+		this.fenceId = fenceId;
 	}
-	public Fence getFence() {
-		return fence;
+	public Long getLocationId() {
+		return locationId;
 	}
-	public void setFence(Fence fence) {
-		this.fence = fence;
-	}
-	public Location getLocation() {
-		return location;
-	}
-	public void setLocation(Location location) {
-		this.location = location;
+	public void setLocationId(Long locationId) {
+		this.locationId = locationId;
 	}
 	
 	
-
+	
 }

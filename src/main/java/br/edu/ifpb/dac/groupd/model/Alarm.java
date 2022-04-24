@@ -28,8 +28,6 @@ public class Alarm implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	
-	
 	@NotNull
 	@Column(name="register_date", nullable=false, columnDefinition = "TIMESTAMP")
 	@ValidTimestamp

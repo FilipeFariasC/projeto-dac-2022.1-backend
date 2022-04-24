@@ -1,24 +1,30 @@
 package br.edu.ifpb.dac.groupd.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.AlarmDto;
 import br.edu.ifpb.dac.groupd.dto.post.AlarmPostDto;
 import br.edu.ifpb.dac.groupd.model.Alarm;
 
+@Service
 public class AlarmServiceConvert {
 	
 	public Alarm mapFromDto(AlarmPostDto dto){
 		Alarm alarm = new Alarm();
-		alarm.setLocation(dto.getLocation());
 		alarm.setRegisterDate(dto.getRegisterDate());
-		alarm.setSeen(dto.getSeen());
-		alarm.setFence(dto.getFence());
+		
+		if(alarm.getRegisterDate() == null) {
+			alarm.setRegisterDate(LocalDateTime.now());
+		}
+		
 		return alarm;
 	}
 	
-	public AlarmDto mapFromDto(Alarm alarm){
+	public AlarmDto mapToDto(Alarm alarm){
 		AlarmDto dto = new AlarmDto();
 		dto.setLocation(alarm.getLocation().getId());
 		dto.setRegisterDate(alarm.getRegisterDate());
@@ -32,7 +38,7 @@ public class AlarmServiceConvert {
 		List<AlarmDto> dtos = new ArrayList<>();
 		
 		for(Alarm alarm : alarms) {
-			AlarmDto alarmDTO = mapFromDto(alarm);
+			AlarmDto alarmDTO = mapToDto(alarm);
 			dtos.add(alarmDTO);
 		}
 		

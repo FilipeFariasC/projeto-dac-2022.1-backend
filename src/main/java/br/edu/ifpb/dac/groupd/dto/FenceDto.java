@@ -20,6 +20,8 @@ public class FenceDto {
 	private LocalTime finishTime;
 	private Boolean status;
 	private Double radius;
+	
+	
 	public Long getId() {
 		return id;
 	}

@@ -2,6 +2,7 @@ package br.edu.ifpb.dac.groupd.dto.post;
 
 import java.time.LocalTime;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -15,6 +16,7 @@ import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimer;
 public class FencePostDto {
 
 	@NotNull
+	@Valid
 	private Coordinate coordinate;
 	
 	@JsonFormat(pattern = "hh:mm")
