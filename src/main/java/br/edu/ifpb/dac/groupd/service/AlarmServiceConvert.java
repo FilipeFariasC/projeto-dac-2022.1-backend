@@ -25,11 +25,14 @@ public class AlarmServiceConvert {
 	}
 	
 	public AlarmDto mapToDto(Alarm alarm){
+		
 		AlarmDto dto = new AlarmDto();
+		dto.setId(alarm.getId());
 		dto.setLocation(alarm.getLocation().getId());
 		dto.setRegisterDate(alarm.getRegisterDate());
 		dto.setSeen(alarm.getSeen());
 		dto.setFence(alarm.getFence().getId());
+		
 		return dto;
 	}
 	
