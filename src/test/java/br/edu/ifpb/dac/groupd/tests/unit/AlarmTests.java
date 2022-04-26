@@ -17,8 +17,6 @@ import org.junit.platform.commons.annotation.Testable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.edu.ifpb.dac.groupd.model.Alarm;
-import br.edu.ifpb.dac.groupd.model.Fence;
-import br.edu.ifpb.dac.groupd.model.Location;
 
 @Testable
 @DisplayName("Alarm")
@@ -52,7 +50,7 @@ public class AlarmTests {
 		
 		violations = validator.validateProperty(alarm, "fence");
 		System.out.println("tamanho:"+violations.size());
-		assertEquals(1, violations.size(),"Valid not fence");
+		assertNotEquals(0, violations.size(),"Valid not fence");
 	}
 	
 	
