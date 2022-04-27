@@ -1,5 +1,6 @@
-CREATE TABLE IF NOT EXISTS bracelet (
-	bracelet_id BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
-	name VARCHAR(50) NOT NULL
-
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS t_bracelet (
+	bracelet_id BIGSERIAL,
+	name VARCHAR(50) NOT NULL,
+	
+	CONSTRAINT bracelet_pk PRIMARY KEY (bracelet_id)
+);

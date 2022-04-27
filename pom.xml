@@ -53,10 +53,11 @@
 			<optional>true</optional>
 		</dependency>
 		
-		<!-- Conector MySQL -->
+		<!-- Conector PostgreSQL -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.3.4</version>
 			<scope>runtime</scope>
 		</dependency>
 		
@@ -144,6 +145,7 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
 	</dependencies>
 
 	<build>

@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimestamp;
 
 @Entity
-@Table(name="alarm")
+@Table(name="t_alarm")
 public class Alarm implements Serializable{
 	
 	private static final long serialVersionUID = 9023853450528858907L;
@@ -27,15 +27,9 @@ public class Alarm implements Serializable{
 	@Column(name="alarm_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	
-	@NotNull
-	@Column(name="register_date", nullable=false, columnDefinition = "TIMESTAMP")
-	@ValidTimestamp
-	private LocalDateTime registerDate;
-	
 
 	@NotNull
-	@Column(name="seen", columnDefinition = "BIT")
+	@Column(name="seen")
 	private Boolean seen;
 	
 	@Valid
@@ -56,14 +50,6 @@ public class Alarm implements Serializable{
 
 	public void setFence(Fence fence) {
 		this.fence = fence;
-	}
-	
-	public LocalDateTime getRegisterDate() {
-		return registerDate;
-	}
-
-	public void setRegisterDate(LocalDateTime registerDate) {
-		this.registerDate = registerDate;
 	}
 
 	public Boolean getSeen() {

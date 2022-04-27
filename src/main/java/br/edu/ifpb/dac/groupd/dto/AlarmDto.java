@@ -8,7 +8,6 @@ import br.edu.ifpb.dac.groupd.model.Location;
 public class AlarmDto {
 	
 	private Long id;
-	private LocalDateTime registerDate;
 	private Boolean seen;
 	private Long idFence;
 	private Long idLocation;
@@ -19,12 +18,7 @@ public class AlarmDto {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public LocalDateTime getRegisterDate() {
-		return registerDate;
-	}
-	public void setRegisterDate(LocalDateTime registerDate) {
-		this.registerDate = registerDate;
-	}
+
 	public Boolean getSeen() {
 		return seen;
 	}
@@ -43,7 +37,5 @@ public class AlarmDto {
 	public void setLocation(Long idLocation) {
 		this.idLocation = idLocation;
 	}
-	
-	
 
 }

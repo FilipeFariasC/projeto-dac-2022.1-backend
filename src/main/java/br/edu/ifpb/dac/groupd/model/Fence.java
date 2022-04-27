@@ -12,6 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -19,7 +21,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name="fence")
+@Table(name="t_fence")
 public class Fence  implements Serializable{
 	
 	private static final long serialVersionUID = 1200735563660141090L;
@@ -33,23 +35,32 @@ public class Fence  implements Serializable{
 	@Embedded
 	private Coordinate coordinate;
 	
-	@Column(name="start_time", columnDefinition = "TIME")
+	@Column(name="start_time"
+//			, columnDefinition = "TIME"
+			)
 	private LocalTime startTime;
 	
-	@Column(name="finish_time", columnDefinition = "TIME")
+	@Column(name="finish_time"
+//			, columnDefinition = "TIME"
+			)
 	private LocalTime finishTime;
 	
 	@NotNull
-	@Column(name="status", columnDefinition = "BIT")
+	@Column(name="status"
+//	, columnDefinition = "BIT"
+	)
 	private Boolean status;
 	
 	@NotNull
 	@Min(1)
+	@Column(name="radius", columnDefinition = "NUMERIC(4,2)")
 	private Double radius;
 	
-	
-	@ManyToMany(mappedBy="fences", fetch = FetchType.EAGER)
 	@Valid
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "fence_bracelet",
+	joinColumns = @JoinColumn(name = "fence_id"),
+	inverseJoinColumns = @JoinColumn(name = "bracelet_id"))
 	private Set<@Valid Bracelet> bracelets = new HashSet<>();
 	
 

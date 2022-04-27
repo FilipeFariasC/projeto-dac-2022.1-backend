@@ -15,12 +15,7 @@ public class AlarmServiceConvert {
 	
 	public Alarm mapFromDto(AlarmPostDto dto){
 		Alarm alarm = new Alarm();
-		alarm.setRegisterDate(dto.getRegisterDate());
-		
-		if(alarm.getRegisterDate() == null) {
-			alarm.setRegisterDate(LocalDateTime.now());
-		}
-		
+		alarm.setSeen(false);
 		return alarm;
 	}
 	
@@ -29,7 +24,6 @@ public class AlarmServiceConvert {
 		AlarmDto dto = new AlarmDto();
 		dto.setId(alarm.getId());
 		dto.setLocation(alarm.getLocation().getId());
-		dto.setRegisterDate(alarm.getRegisterDate());
 		dto.setSeen(alarm.getSeen());
 		dto.setFence(alarm.getFence().getId());
 		

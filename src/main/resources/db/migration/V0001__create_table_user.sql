@@ -1,9 +1,11 @@
-CREATE TABLE IF NOT EXISTS user (
-	user_id BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS t_user (
+	user_id BIGSERIAL,
 	name VARCHAR(50) NOT NULL,
 	email VARCHAR(255) NOT NULL,
 	password VARCHAR(30) NOT NULL,
 	
+	
+	CONSTRAINT user_id_pk PRIMARY KEY (user_id),
 	CONSTRAINT user_email_unique UNIQUE (email)
 	
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+);

@@ -15,13 +15,17 @@ public class Coordinate  implements Serializable{
 	@NotNull
 	@Min(-90)
 	@Max(90)
-	@Column(name="latitude", columnDefinition="Decimal(10,8)")
+	@Column(name="latitude"
+	, columnDefinition="NUMERIC(10,8)"
+	)
 	private Double latitude;
 	
 	@NotNull
 	@Min(-180)
 	@Max(180)
-	@Column(name="longitude", columnDefinition="Decimal(11,8)")
+	@Column(name="longitude"
+	, columnDefinition="NUMERIC(11,8)"
+	)
 	private Double longitude;
 	
 	public Coordinate() {}
