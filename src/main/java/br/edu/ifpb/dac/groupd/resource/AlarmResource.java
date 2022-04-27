@@ -86,5 +86,22 @@ public class AlarmResource {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
-
+	@GetMapping("/fence/{id}")
+	public ResponseEntity<?> findByFence(@PathVariable("id") Long fenceId){
+		List<AlarmDto> alarms = alarmService.findByFenceId(fenceId)
+				.stream()
+				.map(alarmServiceConvert::mapToDto)
+				.toList();
+		
+		return ResponseEntity.ok(alarms);
+	}
+	@GetMapping("/bracelet/{id}")
+	public ResponseEntity<?> findByBracelet(@PathVariable("id") Long braceletId){
+		List<AlarmDto> alarms = alarmService.findByBraceletId(braceletId)
+				.stream()
+				.map(alarmServiceConvert::mapToDto)
+				.toList();
+		
+		return ResponseEntity.ok(alarms);
+	}
 }

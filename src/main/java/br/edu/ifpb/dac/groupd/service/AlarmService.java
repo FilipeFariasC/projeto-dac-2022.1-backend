@@ -41,13 +41,13 @@ public class AlarmService {
 		return alarmRepository.findAll();
 	}
 	
-	public List<Alarm> getSeen(Boolean seen){
-		return alarmRepository.findBySeen(seen);
+	public List<Alarm> findByFenceId(Long fenceId){
+		return alarmRepository.findByFence(fenceId);
+	}
+	public List<Alarm> findByBraceletId(Long braceletId){
+		return alarmRepository.findByBracelet(braceletId);
 	}
 	
-	public List<Alarm> getFence(Fence fence){
-		return alarmRepository.findByfence(fence);
-	}
 	public Alarm alarmSeen(Long idAlarm) throws AlarmNotFoundException {
 		Optional<Alarm> register = alarmRepository.findById(idAlarm);
 		

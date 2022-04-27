@@ -49,7 +49,7 @@ public class LocationService {
 		
 		Location location =locationRepo.save(mapped);
 		
-		bracelet.getLocations().add(mapped);
+		bracelet.addLocation(mapped);
 		
 		braceletRepo.save(bracelet);
 		

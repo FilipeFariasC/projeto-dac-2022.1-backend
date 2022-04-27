@@ -88,7 +88,7 @@ public class Bracelet implements Serializable{
 		this.locations = locations;
 	}
 	
-	public void addLocation(Location location) {
+	public void addLocation(@Valid Location location) {
 		if(location != null)
 			locations.add(location);
 	}

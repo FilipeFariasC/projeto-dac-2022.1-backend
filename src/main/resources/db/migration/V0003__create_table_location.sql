@@ -2,8 +2,8 @@ CREATE TABLE IF NOT EXISTS t_location (
 	location_id BIGSERIAL,
 	latitude DECIMAL(10,8) NOT NULL,
 	longitude DECIMAL(11,8) NOT NULL,
-	creation_date TIMESTAMP NOT NULL,
 	bracelet_id BIGINT NOT NULL,
+	creation_date TIMESTAMP NOT NULL,
 	
 	CONSTRAINT location_pk PRIMARY KEY (location_id),
 	CONSTRAINT bracelet_id_fk_location FOREIGN KEY (bracelet_id) REFERENCES t_bracelet(bracelet_id),
