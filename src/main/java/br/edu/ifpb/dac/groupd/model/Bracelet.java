@@ -34,7 +34,6 @@ public class Bracelet implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
 	@NotEmpty
 	@Size(min=1,max=50)
 	@Column(name="name")

@@ -34,7 +34,6 @@ public class User implements Serializable {
 	@Column(name="user_id")
 	private Long id;
 	
-	@NotNull
 	@NotEmpty
 	@Size(min=3, max=50)
 	@Column(name="name", nullable=false)
@@ -58,7 +57,6 @@ public class User implements Serializable {
 	@JoinTable(name="user_bracelet",
 			joinColumns = @JoinColumn(name="user_id"),
 			inverseJoinColumns = @JoinColumn(name="bracelet_id"))
-	@Valid
 	private Set<@Valid Bracelet> bracelets = new HashSet<>();
 	
 	@OneToMany
@@ -81,7 +79,8 @@ public class User implements Serializable {
 	}
 
 	public void setName(String name) {
-		this.name = name.trim();
+		if(name != null)
+			this.name = name.trim();
 	}
 
 	public String getEmail() {
@@ -116,14 +115,14 @@ public class User implements Serializable {
 		this.fences = fences;
 	}
 	
-	public void addFence(Fence fence) {
+	public void addFence(@Valid Fence fence) {
 		this.fences.add(fence);
 	}
 	public void removeFence(Fence fence) {
 		this.fences.remove(fence);
 	}
 	
-	public void addBracelet(Bracelet bracelet) {
+	public void addBracelet(@Valid Bracelet bracelet) {
 		this.bracelets.add(bracelet);
 	}
 	public void removeBracelet(Bracelet bracelet) {
