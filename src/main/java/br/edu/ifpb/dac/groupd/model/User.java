@@ -116,5 +116,18 @@ public class User implements Serializable {
 		this.fences = fences;
 	}
 	
+	public void addFence(Fence fence) {
+		this.fences.add(fence);
+	}
+	public void removeFence(Fence fence) {
+		this.fences.remove(fence);
+	}
+	
+	public void addBracelet(Bracelet bracelet) {
+		this.bracelets.add(bracelet);
+	}
+	public void removeBracelet(Bracelet bracelet) {
+		this.bracelets.remove(bracelet);
+	}
 	
 }

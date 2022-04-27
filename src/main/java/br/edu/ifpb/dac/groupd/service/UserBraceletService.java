@@ -33,7 +33,7 @@ public class UserBraceletService {
 		
 		Bracelet bracelet = braceletService.save(dto);
 
-		user.getBracelets().add(bracelet);
+		user.addBracelet(bracelet);
 		userRepo.save(user);
 		return bracelet;
 	}
@@ -116,7 +116,7 @@ public class UserBraceletService {
 		if(entrou) {
 			throw new BraceletNotRegisteredException();
 		}
-		bracelets.remove(bracelet);
+		user.removeBracelet(bracelet);
 		userRepo.save(user);
 		braceletService.delete(braceletId);
 	}

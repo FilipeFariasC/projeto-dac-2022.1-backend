@@ -33,7 +33,7 @@ public class UserFenceService {
 		
 		Fence fence = fenceService.create(dto);
 
-		user.getFences().add(fence);
+		user.addFence(fence);
 		userRepo.save(user);
 		return fence;
 	}
@@ -98,7 +98,7 @@ public class UserFenceService {
 		
 		Fence fence = fenceRegister.get();
 
-		fences.remove(fence);
+		user.removeFence(fence);
 		userRepo.save(user);
 		fenceService.delete(fenceId);
 	}
