@@ -52,7 +52,8 @@ public class Bracelet implements Serializable{
 	@Valid
 	private Set<@Valid Location> locations = new HashSet<>();
 
-
+	
+	
 	public Long getId() {
 		return id;
 	}

@@ -1,17 +1,15 @@
 package br.edu.ifpb.dac.groupd.validation.validator;
 
-import java.time.LocalTime;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import br.edu.ifpb.dac.groupd.dto.post.FencePostDto;
+import br.edu.ifpb.dac.groupd.interfaces.Timer;
 import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimer;
 
-public class ValidTimerValidator implements ConstraintValidator<ValidTimer, FencePostDto> {
+public class ValidTimerValidator implements ConstraintValidator<ValidTimer, Timer> {
 
 	@Override
-	public boolean isValid(FencePostDto value, ConstraintValidatorContext context) {
+	public boolean isValid(Timer value, ConstraintValidatorContext context) {
 		if(value == null) {
 			return false;
 		}

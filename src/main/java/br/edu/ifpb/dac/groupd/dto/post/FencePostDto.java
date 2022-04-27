@@ -8,12 +8,13 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import br.edu.ifpb.dac.groupd.interfaces.Timer;
 import br.edu.ifpb.dac.groupd.model.Coordinate;
 import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimer;
 
 
 @ValidTimer
-public class FencePostDto {
+public class FencePostDto implements Timer{
 
 	@NotNull
 	@Valid

@@ -1,23 +1,15 @@
 package br.edu.ifpb.dac.groupd.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.AlarmDto;
-import br.edu.ifpb.dac.groupd.dto.post.AlarmPostDto;
 import br.edu.ifpb.dac.groupd.model.Alarm;
 
 @Service
 public class AlarmServiceConvert {
-	
-	public Alarm mapFromDto(AlarmPostDto dto){
-		Alarm alarm = new Alarm();
-		alarm.setSeen(false);
-		return alarm;
-	}
 	
 	public AlarmDto mapToDto(Alarm alarm){
 		

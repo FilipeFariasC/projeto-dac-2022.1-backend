@@ -9,15 +9,12 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 
-import br.edu.ifpb.dac.groupd.dto.post.AlarmPostDto;
 import br.edu.ifpb.dac.groupd.exception.AlarmNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotInFenceException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.LocationNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Alarm;
-import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.model.Fence;
-import br.edu.ifpb.dac.groupd.model.Location;
 import br.edu.ifpb.dac.groupd.repository.AlarmRepository;
 
 @Service
@@ -34,30 +31,10 @@ public class AlarmService {
 	@Autowired
 	private LocationService locationService;
 	
-	public Alarm saveAlarm(AlarmPostDto dto) throws FenceNotFoundException, LocationNotFoundException, BraceletNotInFenceException {
-		Alarm alarm = alarmServiceConvert.mapFromDto(dto);
+	public Alarm saveAlarm(Long locationId, Long fenceId) throws FenceNotFoundException, LocationNotFoundException, BraceletNotInFenceException {
+		// TODO 
 		
-		Fence fence = fenceService.findById(dto.getFenceId());
-		Location location = locationService.findById(dto.getLocationId());
-		
-		
-		boolean inside = fence.getBracelets()
-				.stream()
-				.mapToLong(Bracelet::getId)
-				.anyMatch(
-					id -> id == location.getBracelet().getId()
-				);
-		
-		if(!inside) {
-			throw new BraceletNotInFenceException(fence.getId(), location.getBracelet().getId());
-		}
-		
-		alarm.setSeen(false);
-		alarm.setFence(fence);
-		alarm.setLocation(location);
-		
-		 
-		return alarmRepository.save(alarm);
+		return null;
 	}
 	
 	public List<Alarm> getAll(){
@@ -79,33 +56,6 @@ public class AlarmService {
 		}
 		Alarm alarm = register.get();
 		alarm.setSeen(true);
-		
-		return alarmRepository.save(alarm);
-	}
-	public Alarm updateAlarm(Long idAlarm, AlarmPostDto dto) throws AlarmNotFoundException, FenceNotFoundException, LocationNotFoundException, BraceletNotInFenceException  {
-		if(!alarmRepository.existsById(idAlarm)) {
-			throw new AlarmNotFoundException(idAlarm);
-		}
-		Alarm alarm = alarmServiceConvert.mapFromDto(dto);
-		alarm.setId(idAlarm);
-		Fence fence = fenceService.findById(dto.getFenceId());
-		Location location = locationService.findById(dto.getLocationId());
-		
-		
-		boolean inside = fence.getBracelets()
-				.stream()
-				.mapToLong(Bracelet::getId)
-				.filter(
-					id -> id == location.getBracelet().getId() 
-				).findFirst().isPresent();
-		
-		if(!inside) {
-			throw new BraceletNotInFenceException(fence.getId(), location.getBracelet().getId());
-		}
-		
-		alarm.setSeen(false);
-		alarm.setFence(fence);
-		alarm.setLocation(location);
 		
 		return alarmRepository.save(alarm);
 	}
