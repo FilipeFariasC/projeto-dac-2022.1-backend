@@ -13,6 +13,8 @@ public class LocationDto {
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
 	private LocalDateTime creationDate;
 	
+	private Long alarmId;
+	
 	public Coordinate getCoordinate() {
 		return coordinate;
 	}
@@ -31,6 +33,12 @@ public class LocationDto {
 	}
 	public void setBraceletId(Long braceletId) {
 		this.braceletId = braceletId;
+	}
+	public Long getAlarmId() {
+		return alarmId;
+	}
+	public void setAlarmId(Long alarmId) {
+		this.alarmId = alarmId;
 	}
 	
 	

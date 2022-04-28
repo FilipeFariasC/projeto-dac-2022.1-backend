@@ -65,7 +65,6 @@ public class FenceService {
 		fence.setRadius(dto.getRadius());
 		fence.setStartTime(dto.getStartTime());
 		fence.setFinishTime(dto.getFinishTime());
-		fence.setStatus(dto.getStatus());
 		
 		return fence;
 	}

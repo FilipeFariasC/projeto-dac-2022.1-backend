@@ -1,5 +1,7 @@
 package br.edu.ifpb.dac.groupd.model;
 
+import static br.edu.ifpb.dac.groupd.validation.validator.ModelValidator.validBracelet;
+
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.HashSet;
@@ -20,6 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.interfaces.Timer;
 
 @Entity
@@ -35,6 +38,7 @@ public class Fence implements Serializable, Timer{
 	
 	@NotNull
 	@Embedded
+	@Valid
 	private Coordinate coordinate;
 	
 	@Column(name="start_time"
@@ -51,7 +55,7 @@ public class Fence implements Serializable, Timer{
 	@Column(name="status"
 //	, columnDefinition = "BIT"
 	)
-	private Boolean status;
+	private Boolean active = false;
 	
 	@NotNull
 	@Min(1)
@@ -96,12 +100,15 @@ public class Fence implements Serializable, Timer{
 		this.finishTime = finishTime;
 	}
 
-	public Boolean isStatus() {
-		return status;
+	public Boolean isActive() {
+		return active;
 	}
 
-	public void setStatus(Boolean status) {
-		this.status = status;
+	public void setActive(Boolean active) throws FenceEmptyException {
+		if(active && bracelets.isEmpty()){ 
+			throw new FenceEmptyException(id);
+		}
+		this.active = active;
 	}
 
 	public Set<Bracelet> getBracelets() {
@@ -121,13 +128,21 @@ public class Fence implements Serializable, Timer{
 	}
 	
 	public void addBracelet(Bracelet bracelet) {
-		this.bracelets.add(bracelet);
-		bracelet.getFences().add(this);
+		if(validBracelet(bracelet)) {
+			this.bracelets.add(bracelet);
+			bracelet.getFences().add(this);
+		}
 	}
 	
 	public void removeBracelet(Bracelet bracelet) {
 		this.bracelets.remove(bracelet);
 		bracelet.getFences().remove(this);
+	}
+
+	@Override
+	public String toString() {
+		return "Fence [coordinate=" + coordinate.toString() + ", startTime=" + startTime + ", finishTime=" + finishTime
+				+ ", active=" + active + ", radius=" + radius + "]";
 	}
 	
 }

@@ -27,9 +27,6 @@ public class FencePostDto implements Timer{
 	private LocalTime finishTime;
 	
 	@NotNull
-	private Boolean status;
-	
-	@NotNull
 	@Min(1)
 	private Double radius;
 
@@ -55,14 +52,6 @@ public class FencePostDto implements Timer{
 
 	public void setFinishTime(LocalTime finishTime) {
 		this.finishTime = finishTime;
-	}
-
-	public Boolean getStatus() {
-		return status;
-	}
-
-	public void setStatus(Boolean status) {
-		this.status = status;
 	}
 
 	public Double getRadius() {

@@ -39,17 +39,15 @@ public class Bracelet implements Serializable{
 	@Column(name="name")
 	private String name;
 	
-	@Valid
 	@ManyToMany(fetch = FetchType.EAGER, mappedBy="bracelets")
-	private Set<@Valid Fence> fences = new HashSet<>();
+	private Set<Fence> fences = new HashSet<>();
 	
 	
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "bracelet_location",
 		joinColumns = @JoinColumn(name = "bracelet_id"),
 		inverseJoinColumns = @JoinColumn(name = "location_id"))
-	@Valid
-	private Set<@Valid Location> locations = new HashSet<>();
+	private Set<Location> locations = new HashSet<>();
 
 	
 	

@@ -50,5 +50,9 @@ public class Coordinate  implements Serializable{
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
 	}
+	@Override
+	public String toString() {
+		return "Coordinate [latitude=" + latitude + ", longitude=" + longitude + "]";
+	}
 	
 }

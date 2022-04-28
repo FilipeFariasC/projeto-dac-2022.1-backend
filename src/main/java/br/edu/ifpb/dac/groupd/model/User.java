@@ -19,8 +19,14 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import org.springframework.validation.annotation.Validated;
+
+import static br.edu.ifpb.dac.groupd.validation.validator.ModelValidator.*;
+
 @Entity
 @Table(name="t_user")
+@Validated
 public class User implements Serializable {
 
 	/**
@@ -39,7 +45,6 @@ public class User implements Serializable {
 	@Column(name="name", nullable=false)
 	private String name;
 	
-	@NotNull
 	@NotEmpty
 	@Email
 	@Column(name="email", unique=true, nullable=false)
@@ -49,7 +54,7 @@ public class User implements Serializable {
 	@NotNull
 	@Column(name="password", nullable=false)
 	@Size(min=8, max=30)
-	@Pattern(regexp="^[^\\s]+$", message="{0} nao pode conter espaços")
+	@Pattern(regexp="^[^\\s]+$", message="{password.Pattern}")
 	private String password;
 	
 	
@@ -57,14 +62,13 @@ public class User implements Serializable {
 	@JoinTable(name="user_bracelet",
 			joinColumns = @JoinColumn(name="user_id"),
 			inverseJoinColumns = @JoinColumn(name="bracelet_id"))
-	private Set<@Valid Bracelet> bracelets = new HashSet<>();
+	private Set<Bracelet> bracelets = new HashSet<>();
 	
 	@OneToMany
 	@JoinTable(name="user_fence",
 		joinColumns = @JoinColumn(name="user_id"),
 		inverseJoinColumns = @JoinColumn(name="fence_id"))
-	@Valid
-	private Set<@Valid Fence> fences = new HashSet<>();
+	private Set<Fence> fences = new HashSet<>();
 
 	public Long getId() {
 		return id;
@@ -88,7 +92,8 @@ public class User implements Serializable {
 	}
 
 	public void setEmail(String email) {
-		this.email = email;
+		if(email != null)
+			this.email = email.trim();
 	}
 
 	public String getPassword() {
@@ -96,7 +101,8 @@ public class User implements Serializable {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		if(password != null)
+			this.password = password.trim();
 	}
 
 	public Set<Bracelet> getBracelets() {
@@ -115,18 +121,26 @@ public class User implements Serializable {
 		this.fences = fences;
 	}
 	
-	public void addFence(@Valid Fence fence) {
-		this.fences.add(fence);
+	public boolean addFence(Fence fence) {
+		if(validFence(fence)) {
+			this.fences.add(fence);
+			return true;
+		}
+		return false;
 	}
-	public void removeFence(Fence fence) {
-		this.fences.remove(fence);
+	public boolean removeFence(Fence fence) {
+		return this.fences.remove(fence);
 	}
 	
-	public void addBracelet(@Valid Bracelet bracelet) {
-		this.bracelets.add(bracelet);
+	public boolean addBracelet(Bracelet bracelet) {
+		if(validBracelet(bracelet)) {
+			this.bracelets.add(bracelet);
+			return true;
+		}
+		return false;
 	}
-	public void removeBracelet(Bracelet bracelet) {
-		this.bracelets.remove(bracelet);
+	public boolean removeBracelet(Bracelet bracelet) {
+		return this.bracelets.remove(bracelet);
 	}
 	
 }
