@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.post.FencePostDto;
+import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.model.User;
+import br.edu.ifpb.dac.groupd.repository.FenceRepository;
 import br.edu.ifpb.dac.groupd.repository.UserRepository;
 
 @Service
@@ -21,6 +23,9 @@ public class UserFenceService {
 	private UserRepository userRepo;
 	@Autowired
 	private FenceService fenceService;
+	
+	@Autowired
+	private FenceRepository fenceRepo;
 	
 	
 	public Fence createFence(Long userId, FencePostDto dto) throws UserNotFoundException {
@@ -81,6 +86,18 @@ public class UserFenceService {
 		
 		return fenceService.update(fenceId, dto);
 	}
+	public Fence setActive(Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException {
+		Optional<Fence> register = fenceRepo.findById(fenceId);
+		if(register.isEmpty()) {
+			throw new FenceNotFoundException(fenceId);
+		}
+		
+		Fence fence = register.get();
+		fence.setActive(status);
+		
+		return fenceRepo.save(fence);
+	}
+	
 	public void deleteFence(Long userId, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException, FenceNotFoundException {
 		Optional<User> register = userRepo.findById(userId);
 		

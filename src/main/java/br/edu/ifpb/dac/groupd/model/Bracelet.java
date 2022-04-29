@@ -14,10 +14,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -48,7 +48,12 @@ public class Bracelet implements Serializable{
 		joinColumns = @JoinColumn(name = "bracelet_id"),
 		inverseJoinColumns = @JoinColumn(name = "location_id"))
 	private Set<Location> locations = new HashSet<>();
-
+	
+	@OneToOne
+	@JoinTable(name="bracelet_monitor",
+	joinColumns = @JoinColumn(name="bracelet_id_fk", referencedColumnName = "bracelet_id"),
+	inverseJoinColumns = @JoinColumn(name="fence_id_fk", referencedColumnName = "fence_id"))
+	private Fence monitor;
 	
 	
 	public Long getId() {
@@ -90,4 +95,12 @@ public class Bracelet implements Serializable{
 			locations.add(location);
 	}
 
+	public Fence getMonitor() {
+		return monitor;
+	}
+
+	public void setMonitor(Fence monitor) {
+		this.monitor = monitor;
+	}
+	
 }

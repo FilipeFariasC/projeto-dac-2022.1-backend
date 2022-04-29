@@ -10,11 +10,9 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.exception.AlarmNotFoundException;
-import br.edu.ifpb.dac.groupd.exception.BraceletNotInFenceException;
-import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
-import br.edu.ifpb.dac.groupd.exception.LocationNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Alarm;
 import br.edu.ifpb.dac.groupd.model.Fence;
+import br.edu.ifpb.dac.groupd.model.Location;
 import br.edu.ifpb.dac.groupd.repository.AlarmRepository;
 
 @Service
@@ -28,13 +26,16 @@ public class AlarmService {
 	@Autowired
 	private FenceService fenceService;
 	
-	@Autowired
-	private LocationService locationService;
-	
-	public Alarm saveAlarm(Long locationId, Long fenceId) throws FenceNotFoundException, LocationNotFoundException, BraceletNotInFenceException {
+	public Alarm saveAlarm(Location location, Fence fence) {
 		// TODO 
+		Alarm alarm = new Alarm();
 		
-		return null;
+		alarm.setFence(fence);
+		alarm.setLocation(location);
+		alarm.setSeen(false);
+		
+		return alarmRepository.save(alarm);
+
 	}
 	
 	public List<Alarm> getAll(){

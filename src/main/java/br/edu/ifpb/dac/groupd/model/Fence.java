@@ -52,7 +52,7 @@ public class Fence implements Serializable, Timer{
 	private LocalTime finishTime;
 	
 	@NotNull
-	@Column(name="status"
+	@Column(name="active"
 //	, columnDefinition = "BIT"
 	)
 	private Boolean active = false;
@@ -108,6 +108,20 @@ public class Fence implements Serializable, Timer{
 		if(active && bracelets.isEmpty()){ 
 			throw new FenceEmptyException(id);
 		}
+		if(active) {
+			for(Bracelet bracelet : bracelets) {
+				if(bracelet.getMonitor() == null) {
+					bracelet.setMonitor(this);
+				}
+			}
+		} else {
+			for(Bracelet bracelet : bracelets) {
+				if(bracelet.getMonitor() == this) {
+					bracelet.setMonitor(null);
+				}
+			}
+		}
+		
 		this.active = active;
 	}
 

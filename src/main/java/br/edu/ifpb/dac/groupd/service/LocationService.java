@@ -10,9 +10,12 @@ import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.post.LocationPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
+import br.edu.ifpb.dac.groupd.exception.BraceletNotInFenceException;
+import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.LocationCreationDateInFutureException;
 import br.edu.ifpb.dac.groupd.exception.LocationNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
+import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.model.Location;
 import br.edu.ifpb.dac.groupd.repository.BraceletRepository;
 import br.edu.ifpb.dac.groupd.repository.LocationRepository;
@@ -27,6 +30,13 @@ public class LocationService {
 	
 	@Autowired
 	private BraceletRepository braceletRepo;
+	
+	@Autowired
+	private AlarmService alarmService;
+	
+	
+	@Autowired
+	private CoordinateService coordinateService;
 	
 	public Location create(LocationPostDto dto) throws BraceletNotFoundException, LocationCreationDateInFutureException {
 		if(dto.getCreationDate() == null){
@@ -47,9 +57,16 @@ public class LocationService {
 		Location mapped = mapfromDto(dto);
 		mapped.setBracelet(bracelet);
 		
-		Location location =locationRepo.save(mapped);
+		Location location = locationRepo.save(mapped);
 		
-		bracelet.addLocation(mapped);
+		bracelet.addLocation(location);
+		if(bracelet.getMonitor() != null) {
+			Fence fence = bracelet.getMonitor();
+			
+			if(fence.getRadius() < coordinateService.calculateDistance(fence.getCoordinate(), location.getCoordinate()) ) {
+				alarmService.saveAlarm(location, fence);
+			}
+		}
 		
 		braceletRepo.save(bracelet);
 		

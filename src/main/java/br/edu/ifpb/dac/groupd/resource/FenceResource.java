@@ -11,17 +11,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.edu.ifpb.dac.groupd.dto.FenceDto;
 import br.edu.ifpb.dac.groupd.dto.post.FencePostDto;
+import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.service.FenceService;
@@ -87,6 +90,21 @@ public class FenceResource {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}
+	@PatchMapping("/{id}/setStatus")
+	public ResponseEntity<?> active(
+			@PathVariable("id") Long fenceId,
+			@RequestParam(name="status", required=true) boolean status){
+		try {
+			Fence fence = fenceService.setActive(fenceId, status);
+			
+			URI uri = toUri(fence);
+			
+			return ResponseEntity.created(uri).body(toDto(fence));
+		} catch (FenceNotFoundException | FenceEmptyException exception) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+		}
+	}
+	
 	@DeleteMapping("/{ìd}")
 	public ResponseEntity<?> delete(
 			@PathVariable("id")

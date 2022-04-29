@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.post.FencePostDto;
+import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.repository.FenceRepository;
@@ -50,6 +51,19 @@ public class FenceService {
 		
 		return fenceRepo.save(updated);
 	}
+	
+	public Fence setActive(Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException {
+		Optional<Fence> register = fenceRepo.findById(fenceId);
+		if(register.isEmpty()) {
+			throw new FenceNotFoundException(fenceId);
+		}
+		
+		Fence fence = register.get();
+		fence.setActive(status);
+		
+		return fenceRepo.save(fence);
+	}
+	
 	
 	public void delete(Long id) throws FenceNotFoundException {
 		if(!fenceRepo.existsById(id))

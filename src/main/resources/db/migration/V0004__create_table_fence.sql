@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS t_fence (
 	longitude DECIMAL(11,8) NOT NULL,
 	start_time TIME,
 	finish_time TIME,
-	status BOOLEAN NOT NULL,
+	active BOOLEAN NOT NULL,
 	radius NUMERIC(4,2) DEFAULT 1.0,
 	
 	CONSTRAINT fence_pk PRIMARY KEY (fence_id),
