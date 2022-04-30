@@ -7,7 +7,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import br.edu.ifpb.dac.groupd.model.Coordinate;
 
 public class LocationDto {
-
+	
+	private Long id;
 	private Long braceletId;
 	private Coordinate coordinate;
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
@@ -15,6 +16,13 @@ public class LocationDto {
 	
 	private Long alarmId;
 	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 	public Coordinate getCoordinate() {
 		return coordinate;
 	}

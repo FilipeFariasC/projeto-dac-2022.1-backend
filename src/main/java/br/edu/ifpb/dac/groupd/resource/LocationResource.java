@@ -22,10 +22,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.edu.ifpb.dac.groupd.dto.LocationDto;
 import br.edu.ifpb.dac.groupd.dto.post.LocationPostDto;
+import br.edu.ifpb.dac.groupd.exception.AlarmNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.LocationCreationDateInFutureException;
 import br.edu.ifpb.dac.groupd.exception.LocationNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Location;
+import br.edu.ifpb.dac.groupd.service.AlarmService;
 import br.edu.ifpb.dac.groupd.service.LocationService;
 
 @RestController
@@ -36,6 +38,8 @@ public class LocationResource {
 	@Autowired
 	private ModelMapper mapper;
 	
+	@Autowired
+	private AlarmService alarmService;
 	
 	@PostMapping
 	@ResponseStatus(code=HttpStatus.CREATED)
@@ -83,9 +87,7 @@ public class LocationResource {
 					.stream()
 					.map(
 						location->{
-							LocationDto dto = mapToDto(location);
-							dto.setBraceletId(location.getBracelet().getId());
-							return dto;
+							return mapToDto(location);
 						}
 					)
 					.toList();
@@ -96,10 +98,18 @@ public class LocationResource {
 		}
 	}
 	
+	private void getAlarmIdIfExists(LocationDto locationDto, Long locationId) {
+		try {
+			locationDto.setAlarmId(alarmService.findByLocationId(locationId).getId());
+		} catch (AlarmNotFoundException e) {
+		}
+	}
+	
 	public LocationDto mapToDto(Location location){
 		LocationDto dto = mapper.map(location, LocationDto.class);
 		
 		dto.setBraceletId(location.getBracelet().getId());
+		getAlarmIdIfExists(dto, location.getId());
 		
 		return dto;
 	 }

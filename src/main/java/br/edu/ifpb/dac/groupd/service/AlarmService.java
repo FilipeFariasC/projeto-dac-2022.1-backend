@@ -48,6 +48,14 @@ public class AlarmService {
 	public List<Alarm> findByBraceletId(Long braceletId){
 		return alarmRepository.findByBracelet(braceletId);
 	}
+	public Alarm findByLocationId(Long locationId) throws AlarmNotFoundException {
+		Optional<Alarm> register = alarmRepository.findByLocation(locationId);
+		
+		if(register.isEmpty())
+			throw new AlarmNotFoundException(String.format("Não foi encontrado alarmes para a location de identificador %d", locationId));
+		
+		return register.get();
+	}
 	
 	public Alarm alarmSeen(Long idAlarm) throws AlarmNotFoundException {
 		Optional<Alarm> register = alarmRepository.findById(idAlarm);

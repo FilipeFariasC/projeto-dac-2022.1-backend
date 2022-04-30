@@ -7,5 +7,8 @@ public class AlarmNotFoundException extends Exception {
 	public AlarmNotFoundException(Long id) {
 		super(String.format("O alarme com identificador %d não foi encontrado.", id));
 	}
+	public AlarmNotFoundException(String message) {
+		super(message);
+	}
 	
 }

@@ -49,7 +49,7 @@ public class FenceDto {
 	public Boolean getActive() {
 		return active;
 	}
-	public void isActive(Boolean active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 	public Double getRadius() {

@@ -1,6 +1,7 @@
 package br.edu.ifpb.dac.groupd.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,6 @@ public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 	@Query("SELECT a FROM Alarm a WHERE a.location.bracelet.id = :braceletId")
 	List<Alarm> findByBracelet(@Param("braceletId") Long braceletId);
 	
+	@Query("SELECT a FROM Alarm a WHERE a.location.id = :locationId")
+	Optional<Alarm> findByLocation(@Param("locationId") Long locationId);
 }

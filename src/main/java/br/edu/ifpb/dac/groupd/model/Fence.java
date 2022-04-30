@@ -100,7 +100,7 @@ public class Fence implements Serializable, Timer{
 		this.finishTime = finishTime;
 	}
 
-	public Boolean isActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
