@@ -2,14 +2,6 @@ package br.edu.ifpb.dac.groupd.dto;
 
 import java.time.LocalTime;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import br.edu.ifpb.dac.groupd.model.Coordinate;
 
 public class FenceDto {

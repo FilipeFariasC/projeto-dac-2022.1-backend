@@ -1,10 +1,5 @@
 package br.edu.ifpb.dac.groupd.dto;
 
-import java.time.LocalDateTime;
-
-import br.edu.ifpb.dac.groupd.model.Fence;
-import br.edu.ifpb.dac.groupd.model.Location;
-
 public class AlarmDto {
 	
 	private Long id;

@@ -105,10 +105,10 @@ public class Fence implements Serializable, Timer{
 	}
 
 	public void setActive(Boolean active) throws FenceEmptyException {
-		if(active && bracelets.isEmpty()){ 
+		if(Boolean.TRUE.equals(active) && bracelets.isEmpty()){ 
 			throw new FenceEmptyException(id);
 		}
-		if(active) {
+		if(Boolean.TRUE.equals(active)) {
 			for(Bracelet bracelet : bracelets) {
 				if(bracelet.getMonitor() == null) {
 					bracelet.setMonitor(this);

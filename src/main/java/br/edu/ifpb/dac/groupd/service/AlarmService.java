@@ -20,14 +20,8 @@ public class AlarmService {
 	
 	@Autowired
 	private AlarmRepository alarmRepository;
-	@Autowired
-	private AlarmServiceConvert alarmServiceConvert;
-	
-	@Autowired
-	private FenceService fenceService;
 	
 	public Alarm saveAlarm(Location location, Fence fence) {
-		// TODO 
 		Alarm alarm = new Alarm();
 		
 		alarm.setFence(fence);

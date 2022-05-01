@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.post.LocationPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
-import br.edu.ifpb.dac.groupd.exception.BraceletNotInFenceException;
-import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.LocationCreationDateInFutureException;
 import br.edu.ifpb.dac.groupd.exception.LocationNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;

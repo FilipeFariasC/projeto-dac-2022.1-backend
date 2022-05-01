@@ -16,20 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.edu.ifpb.dac.groupd.dto.BraceletDto;
 import br.edu.ifpb.dac.groupd.dto.UserDto;
-import br.edu.ifpb.dac.groupd.dto.post.BraceletPostDto;
 import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
-import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
-import br.edu.ifpb.dac.groupd.exception.BraceletNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.UserEmailInUseException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
-import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.model.User;
 import br.edu.ifpb.dac.groupd.service.UserService;
 
