@@ -1,7 +1,6 @@
 package br.edu.ifpb.dac.groupd.model;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -15,10 +14,8 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimestamp;
-
 @Entity
-@Table(name="t_alarm")
+@Table(name="alarms")
 public class Alarm implements Serializable{
 	
 	private static final long serialVersionUID = 9023853450528858907L;

@@ -21,7 +21,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name="t_bracelet")
+@Table(name="bracelets")
 public class Bracelet implements Serializable{
 	
 	/**

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS t_bracelet (
+CREATE TABLE IF NOT EXISTS bracelets (
 	bracelet_id BIGSERIAL,
 	name VARCHAR(50) NOT NULL,
 	

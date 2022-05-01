@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS t_fence (
+CREATE TABLE IF NOT EXISTS fences (
 	fence_id BIGSERIAL,
 	latitude DECIMAL(10,8) NOT NULL,
 	longitude DECIMAL(11,8) NOT NULL,

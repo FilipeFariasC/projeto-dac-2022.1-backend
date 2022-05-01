@@ -1,5 +1,8 @@
 package br.edu.ifpb.dac.groupd.model;
 
+import static br.edu.ifpb.dac.groupd.validation.validator.ModelValidator.validBracelet;
+import static br.edu.ifpb.dac.groupd.validation.validator.ModelValidator.validFence;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -22,10 +24,8 @@ import javax.validation.constraints.Size;
 
 import org.springframework.validation.annotation.Validated;
 
-import static br.edu.ifpb.dac.groupd.validation.validator.ModelValidator.*;
-
 @Entity
-@Table(name="t_user")
+@Table(name="users")
 @Validated
 public class User implements Serializable {
 

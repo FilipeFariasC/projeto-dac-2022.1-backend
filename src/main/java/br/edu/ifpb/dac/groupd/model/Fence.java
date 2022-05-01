@@ -26,7 +26,7 @@ import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.interfaces.Timer;
 
 @Entity
-@Table(name="t_fence")
+@Table(name="fences")
 public class Fence implements Serializable, Timer{
 	
 	private static final long serialVersionUID = 1200735563660141090L;

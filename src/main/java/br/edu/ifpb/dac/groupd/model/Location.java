@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimestamp;
 
 @Entity
-@Table(name="t_location")
+@Table(name="locations")
 public class Location implements Serializable{
 	
 	private static final long serialVersionUID = -5412450641940365923L;
