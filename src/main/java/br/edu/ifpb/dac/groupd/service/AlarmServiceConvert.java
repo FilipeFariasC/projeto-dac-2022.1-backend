@@ -1,6 +1,5 @@
 package br.edu.ifpb.dac.groupd.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -16,24 +15,16 @@ public class AlarmServiceConvert {
 		AlarmDto dto = new AlarmDto();
 		dto.setId(alarm.getId());
 		dto.setLocation(alarm.getLocation().getId());
-		dto.setSeen(alarm.getSeen());
+		dto.setSeen(alarm.isSeen());
 		dto.setFence(alarm.getFence().getId());
 		
 		return dto;
 	}
 	
-	public List<AlarmDto> alarmsToDTO(List<Alarm> alarms){
-		
-		List<AlarmDto> dtos = new ArrayList<>();
-		
-		for(Alarm alarm : alarms) {
-			AlarmDto alarmDTO = mapToDto(alarm);
-			dtos.add(alarmDTO);
-		}
-		
-		return dtos;
+	public List<AlarmDto> alarmsToDto(List<Alarm> alarms){
+		return alarms.stream()
+				.map(this::mapToDto)
+				.toList();
 	}
-	
-	
 
 }

@@ -27,7 +27,7 @@ public class Alarm implements Serializable{
 
 	@NotNull
 	@Column(name="seen")
-	private Boolean seen;
+	private boolean seen;
 	
 	@Valid
 	@NotNull
@@ -49,11 +49,11 @@ public class Alarm implements Serializable{
 		this.fence = fence;
 	}
 
-	public Boolean getSeen() {
+	public boolean isSeen() {
 		return seen;
 	}
 
-	public void setSeen(Boolean seen) {
+	public void setSeen(boolean seen) {
 		this.seen = seen;
 	}
 

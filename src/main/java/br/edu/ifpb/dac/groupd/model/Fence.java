@@ -53,9 +53,8 @@ public class Fence implements Serializable, Timer{
 	
 	@NotNull
 	@Column(name="active"
-//	, columnDefinition = "BIT"
 	)
-	private Boolean active = false;
+	private boolean active = false;
 	
 	@NotNull
 	@Min(1)
@@ -100,15 +99,15 @@ public class Fence implements Serializable, Timer{
 		this.finishTime = finishTime;
 	}
 
-	public Boolean getActive() {
+	public boolean isActive() {
 		return active;
 	}
 
-	public void setActive(Boolean active) throws FenceEmptyException {
-		if(Boolean.TRUE.equals(active) && bracelets.isEmpty()){ 
+	public void setActive(boolean active) throws FenceEmptyException {
+		if(active && bracelets.isEmpty()){
 			throw new FenceEmptyException(id);
 		}
-		if(Boolean.TRUE.equals(active)) {
+		if(active) {
 			for(Bracelet bracelet : bracelets) {
 				if(bracelet.getMonitor() == null) {
 					bracelet.setMonitor(this);
@@ -124,6 +123,7 @@ public class Fence implements Serializable, Timer{
 		
 		this.active = active;
 	}
+	
 
 	public Set<Bracelet> getBracelets() {
 		return bracelets;

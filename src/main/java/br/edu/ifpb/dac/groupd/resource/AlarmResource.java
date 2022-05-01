@@ -78,7 +78,7 @@ public class AlarmResource {
 			filter.setSeen(seen);
 			
 			List<Alarm> alarms = alarmService.findFilter(filter);
-			List<AlarmDto> dtos = alarmServiceConvert.alarmsToDTO(alarms);
+			List<AlarmDto> dtos = alarmServiceConvert.alarmsToDto(alarms);
 			
 			return ResponseEntity.ok(dtos);
 		}catch(Exception e) {

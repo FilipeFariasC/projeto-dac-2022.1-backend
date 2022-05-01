@@ -10,7 +10,7 @@ public class FenceDto {
 	private Coordinate coordinate;
 	private LocalTime startTime;
 	private LocalTime finishTime;
-	private Boolean active;
+	private boolean active;
 	private Double radius;
 	
 	
@@ -38,10 +38,10 @@ public class FenceDto {
 	public void setFinishTime(LocalTime finishTime) {
 		this.finishTime = finishTime;
 	}
-	public Boolean getActive() {
+	public boolean isActive() {
 		return active;
 	}
-	public void setActive(Boolean active) {
+	public void setActive(boolean active) {
 		this.active = active;
 	}
 	public Double getRadius() {

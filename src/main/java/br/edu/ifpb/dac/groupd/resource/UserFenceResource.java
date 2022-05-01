@@ -140,7 +140,7 @@ public class UserFenceResource {
 		dto.setStartTime(fence.getStartTime());
 		dto.setFinishTime(fence.getFinishTime());
 		dto.setRadius(fence.getRadius());
-		dto.setActive(fence.getActive());
+		dto.setActive(fence.isActive());
 		
 		return dto;
 	}
