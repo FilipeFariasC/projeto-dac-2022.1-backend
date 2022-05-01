@@ -1,8 +1,10 @@
 package br.edu.ifpb.dac.groupd.resource;
 
 import java.net.URI;
-import java.util.List;
+import java.security.Principal;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -11,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,8 +44,11 @@ public class UserResource {
 	public ResponseEntity<?> create(
 			@Valid
 			@RequestBody
-			UserPostDto userPostDto) {
+			UserPostDto userPostDto
+			,
+			HttpServletRequest request){
 		
+		System.out.println(request.getRequestURL().toString());
 		User created;
 		try {
 			created = userService.create(userPostDto);
@@ -62,6 +66,7 @@ public class UserResource {
 		
 		return ResponseEntity.created(uri).body(dto);
 	}
+	/*
 	@GetMapping
 	public ResponseEntity<?> getAll() {
 		List<UserDto> dtos = userService.getAll()
@@ -71,10 +76,11 @@ public class UserResource {
 		
 		return ResponseEntity.ok(dtos);
 	}
-	@GetMapping("/{id}")
-	public ResponseEntity<?> findById(@PathVariable("id") Long id){
+	*/
+	@GetMapping("/user")
+	public ResponseEntity<?> findById(Principal principal){
 		try {
-			User user = userService.findById(id);
+			User user = userService.findByEmail(principal.getName());
 			
 			UserDto dto = mapToUserDto(user);
 			
@@ -83,30 +89,40 @@ public class UserResource {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateById(@PathVariable("id") Long id, 
+	@PutMapping
+	public ResponseEntity<?> updateById(Principal principal, 
 			@Valid
 			@RequestBody
-			UserPostDto userPostDto){
+			UserPostDto userPostDto, HttpSession session){
 		
 		try {
-			User user = userService.update(id, userPostDto);
 			
-			UserDto dto = mapToUserDto(user);
+			User user = userService.findByEmail(principal.getName());
 			
-			URI uri = getUri(user);
+			User updated = userService.update(principal.getName(), userPostDto);
 			
+			UserDto dto = mapToUserDto(updated);
+			
+			URI uri = getUri(updated);
+			
+			
+			
+			if(!principal.getName().equals(userPostDto.getEmail()) || userPostDto.getPassword().equals(user.getPassword())) {
+				session.invalidate();
+			}
+
 			return ResponseEntity.status(HttpStatus.OK).location(uri).body(dto);
-		} catch (UserNotFoundException exception) {
+		} catch (UserNotFoundException | UserEmailInUseException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}
 	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteById(@PathVariable("id") Long id){
+	@DeleteMapping
+	public ResponseEntity<?> deleteById(Principal principal, HttpSession session){
 		try {
-			userService.deleteById(id);
-			return ResponseEntity.ok(String.format("Usuário de identificador %d deletado!", id));
+			userService.deleteByUsername(principal.getName());
+			session.invalidate();
+			return ResponseEntity.ok(String.format("Usuário de email: %s deletado!", principal.getName()));
 		} catch (UserNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}

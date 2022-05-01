@@ -23,11 +23,12 @@ public class UserBraceletService {
 	private BraceletService braceletService;
 	
 	// User bracelet
-	public Bracelet createBracelet(Long userId, BraceletPostDto dto) throws UserNotFoundException {
-		Optional<User> register = userRepo.findById(userId);
+	public Bracelet createBracelet(String username, BraceletPostDto dto) throws UserNotFoundException {
+		
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		
@@ -37,21 +38,21 @@ public class UserBraceletService {
 		userRepo.save(user);
 		return bracelet;
 	}
-	public List<Bracelet> getAllBracelets(Long userId) throws UserNotFoundException {
-		Optional<User> register = userRepo.findById(userId);
+	public List<Bracelet> getAllBracelets(String username) throws UserNotFoundException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		
 		return user.getBracelets().stream().toList();
 	}
-	public Bracelet findByBraceletId(Long userId, Long braceletId) throws UserNotFoundException, BraceletNotRegisteredException {
-		Optional<User> register = userRepo.findById(userId);
+	public Bracelet findByBraceletId(String username, Long braceletId) throws UserNotFoundException, BraceletNotRegisteredException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		
@@ -62,11 +63,11 @@ public class UserBraceletService {
 		}
 		throw new BraceletNotRegisteredException();
 	}
-	public List<Bracelet> searchBraceletByName(Long userId, String name) throws UserNotFoundException {
-		Optional<User> register = userRepo.findById(userId);
+	public List<Bracelet> searchBraceletByName(String username, String name) throws UserNotFoundException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if(register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 				
@@ -78,11 +79,11 @@ public class UserBraceletService {
 				.toList();
 	}
 	
-	public Bracelet updateBracelet(Long userId, Long braceletId, BraceletPostDto dto) throws UserNotFoundException, BraceletNotFoundException, BraceletNotRegisteredException {
-		Optional<User> register = userRepo.findById(userId);
+	public Bracelet updateBracelet(String username, Long braceletId, BraceletPostDto dto) throws UserNotFoundException, BraceletNotFoundException, BraceletNotRegisteredException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		
@@ -96,11 +97,11 @@ public class UserBraceletService {
 		
 		return braceletService.update(braceletId, dto);
 	}
-	public void deleteBracelet(Long userId, Long braceletId) throws UserNotFoundException, BraceletNotFoundException, BraceletNotRegisteredException {
-		Optional<User> register = userRepo.findById(userId);
+	public void deleteBracelet(String username, Long braceletId) throws UserNotFoundException, BraceletNotFoundException, BraceletNotRegisteredException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		Set<Bracelet> bracelets = user.getBracelets();

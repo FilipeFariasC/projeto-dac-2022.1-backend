@@ -4,30 +4,33 @@ import static br.edu.ifpb.dac.groupd.validation.validator.ModelValidator.validBr
 import static br.edu.ifpb.dac.groupd.validation.validator.ModelValidator.validFence;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 
 @Entity
 @Table(name="users")
 @Validated
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
 
 	/**
 	 * 
@@ -53,8 +56,7 @@ public class User implements Serializable {
 	
 	@NotNull
 	@Column(name="password", nullable=false)
-	@Size(min=8, max=30)
-	@Pattern(regexp="^[^\\s]+$", message="{password.Pattern}")
+	@Size(max=255)
 	private String password;
 	
 	
@@ -69,6 +71,14 @@ public class User implements Serializable {
 		joinColumns = @JoinColumn(name="user_id"),
 		inverseJoinColumns = @JoinColumn(name="fence_id"))
 	private Set<Fence> fences = new HashSet<>();
+	
+	
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(name="user_roles",
+		joinColumns = @JoinColumn(name="user_id"),
+		inverseJoinColumns = @JoinColumn(name="role_id"))
+	private Collection<Role> roles = new HashSet<>();
+	
 
 	public Long getId() {
 		return id;
@@ -141,6 +151,43 @@ public class User implements Serializable {
 	}
 	public boolean removeBracelet(Bracelet bracelet) {
 		return this.bracelets.remove(bracelet);
+	}
+
+	@Override
+	public Collection<Role> getAuthorities() {
+		return roles;
+	}
+	
+	public void addAuthority(Role role) {
+		this.roles.add(role);
+	}
+	public void removeAuthority(Role role) {
+		this.roles.remove(role);
+	}
+
+	@Override
+	public String getUsername() {
+		return getEmail();
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 	
 }

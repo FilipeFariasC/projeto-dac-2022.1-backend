@@ -28,11 +28,11 @@ public class UserFenceService {
 	private FenceRepository fenceRepo;
 	
 	
-	public Fence createFence(Long userId, FencePostDto dto) throws UserNotFoundException {
-		Optional<User> register = userRepo.findById(userId);
+	public Fence createFence(String username, FencePostDto dto) throws UserNotFoundException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		
@@ -42,21 +42,21 @@ public class UserFenceService {
 		userRepo.save(user);
 		return fence;
 	}
-	public List<Fence> getAllFences(Long userId) throws UserNotFoundException {
-		Optional<User> register = userRepo.findById(userId);
+	public List<Fence> getAllFences(String username) throws UserNotFoundException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		
 		return user.getFences().stream().toList();
 	}
-	public Fence findFenceById(Long userId, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException {
-		Optional<User> register = userRepo.findById(userId);
+	public Fence findFenceById(String username, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		
@@ -68,11 +68,11 @@ public class UserFenceService {
 		throw new FenceNotRegisteredException();
 	}
 
-	public Fence updateFence(Long userId, Long fenceId, FencePostDto dto) throws UserNotFoundException, FenceNotFoundException, FenceNotRegisteredException {
-		Optional<User> register = userRepo.findById(userId);
+	public Fence updateFence(String username, Long fenceId, FencePostDto dto) throws UserNotFoundException, FenceNotFoundException, FenceNotRegisteredException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		
@@ -86,23 +86,30 @@ public class UserFenceService {
 		
 		return fenceService.update(fenceId, dto);
 	}
-	public Fence setActive(Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException {
-		Optional<Fence> register = fenceRepo.findById(fenceId);
-		if(register.isEmpty()) {
-			throw new FenceNotFoundException(fenceId);
-		}
+	public Fence setActive(String username, Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException, UserNotFoundException {
 		
-		Fence fence = register.get();
+		Optional<User> register = userRepo.findByEmail(username);
+		if(register.isEmpty()) {
+			throw new UserNotFoundException(username);
+		}
+		User user = register.get();
+		
+		Optional<Fence> fenceRegister = user.getFences().stream().filter(f->f.getId().equals(fenceId))
+		.findFirst();
+		if(fenceRegister.isEmpty())
+			throw new FenceNotFoundException(fenceId);
+		
+		Fence fence = fenceRegister.get();
 		fence.setActive(status);
 		
 		return fenceRepo.save(fence);
 	}
 	
-	public void deleteFence(Long userId, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException, FenceNotFoundException {
-		Optional<User> register = userRepo.findById(userId);
+	public void deleteFence(String username, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException, FenceNotFoundException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		Set<Fence> fences = user.getFences();

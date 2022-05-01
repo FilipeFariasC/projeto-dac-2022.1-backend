@@ -2,6 +2,7 @@ package br.edu.ifpb.dac.groupd.resource;
 
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -32,7 +33,7 @@ import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.service.UserFenceService;
 
 @RestController
-@RequestMapping("/users/{userId}/fences")
+@RequestMapping("/users/fences")
 public class UserFenceResource {
 	// User Fence
 	@Autowired
@@ -43,25 +44,25 @@ public class UserFenceResource {
 	
 	@PostMapping
 	public ResponseEntity<?> createFence(
-			@PathVariable("userId") Long userId,
+			Principal principal,
 			@Valid
 			@RequestBody
 			FencePostDto postDto){
 		try {
-			Fence fence = userFenceService.createFence(userId, postDto);
+			Fence fence = userFenceService.createFence(principal.getName(), postDto);
 			
 			FenceDto dto = mapToFenceDto(fence);
 			
-			return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+			return ResponseEntity.status(HttpStatus.CREATED).location(toUri(fence)).body(dto);
 		} catch (UserNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}
 	@GetMapping
 	public ResponseEntity<?> getAllFences(
-			@PathVariable("iuserId") Long id){
+			Principal principal){
 		try {
-			List<FenceDto> dtos = userFenceService.getAllFences(id)
+			List<FenceDto> dtos = userFenceService.getAllFences(principal.getName())
 					.stream()
 					.map(this::mapToFenceDto)
 					.toList();
@@ -74,10 +75,10 @@ public class UserFenceResource {
 	
 	@GetMapping("/{fenceId}")
 	public ResponseEntity<?> getAllFences(
-			@PathVariable("userId") Long id,
+			Principal principal,
 			@PathVariable("fenceId") Long fenceId){
 		try {
-			Fence bracelet = userFenceService.findFenceById(id, fenceId);
+			Fence bracelet = userFenceService.findFenceById(principal.getName(), fenceId);
 			
 			FenceDto dto = mapToFenceDto(bracelet);
 			
@@ -89,13 +90,13 @@ public class UserFenceResource {
 	
 	@PutMapping("/{fenceId}")
 	public ResponseEntity<?> updateFence(
-			@PathVariable("id") Long id,
+			Principal principal,
 			@PathVariable("fenceId") Long fenceId,
 			@Valid
 			@RequestBody
 			FencePostDto postDto){
 		try {
-			Fence fence = userFenceService.updateFence(id, fenceId, postDto);
+			Fence fence = userFenceService.updateFence(principal.getName(), fenceId, postDto);
 			
 			FenceDto dto = mapToFenceDto(fence);
 			
@@ -105,26 +106,26 @@ public class UserFenceResource {
 		} 
 	}
 	@PatchMapping("/{fenceId}/setStatus")
-	public ResponseEntity<?> active(
-			@PathVariable("userId") Long fenceId,
-			@RequestParam(name="status", required=true) boolean status){
+	public ResponseEntity<?> setStatus(Principal principal,
+			@PathVariable("fenceId") Long fenceId,
+			@RequestParam(name="active", required=true) boolean active){
 		try {
-			Fence fence = userFenceService.setActive(fenceId, status);
+			Fence fence = userFenceService.setActive(principal.getName(), fenceId, active);
 			
-			URI uri = toUri(fence);
+			FenceDto dto = mapToFenceDto(fence);
 			
-			return ResponseEntity.created(uri).body(toDto(fence));
-		} catch (FenceNotFoundException | FenceEmptyException exception) {
+			return ResponseEntity.ok(dto);
+		} catch (FenceEmptyException | FenceNotFoundException | UserNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}
 	
 	@DeleteMapping("/{fenceId}")
 	public ResponseEntity<?> deleteUserFence(
-			@PathVariable("userId") Long userId,
+			Principal principal,
 			@PathVariable("fenceId") Long fenceId){
 		try {
-			userFenceService.deleteFence(userId, fenceId);
+			userFenceService.deleteFence(principal.getName(), fenceId);
 			
 			return ResponseEntity.noContent().build();
 		} catch (UserNotFoundException | FenceNotFoundException | FenceNotRegisteredException exception) {

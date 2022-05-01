@@ -20,11 +20,11 @@ public class UserFenceBraceletService {
 	private UserRepository userRepo;
 	
 	
-	public void addBraceletFence(Long userId, Long fenceId, Long braceletId) throws UserNotFoundException, FenceNotRegisteredException, BraceletNotRegisteredException {
-		Optional<User> register = userRepo.findById(userId);
+	public void addBraceletFence(String username, Long fenceId, Long braceletId) throws UserNotFoundException, FenceNotRegisteredException, BraceletNotRegisteredException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		
@@ -55,11 +55,11 @@ public class UserFenceBraceletService {
 		userRepo.save(user);
 		
 	}
-	public void removeBraceletFence(Long userId, Long fenceId, Long braceletId) throws UserNotFoundException, FenceNotRegisteredException, BraceletNotRegisteredException {
-		Optional<User> register = userRepo.findById(userId);
+	public void removeBraceletFence(String username, Long fenceId, Long braceletId) throws UserNotFoundException, FenceNotRegisteredException, BraceletNotRegisteredException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(userId);
+			throw new UserNotFoundException(username);
 		
 		User user = register.get();
 		
