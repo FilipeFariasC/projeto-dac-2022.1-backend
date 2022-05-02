@@ -26,7 +26,6 @@ import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
-import br.edu.ifpb.dac.groupd.model.User;
 import br.edu.ifpb.dac.groupd.service.UserBraceletService;
 
 @RestController

@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +38,6 @@ public class UserFenceResource {
 	@Autowired
 	private UserFenceService userFenceService;
 	
-	@Autowired
-	private ModelMapper mapper;
 	
 	@PostMapping
 	public ResponseEntity<?> createFence(
@@ -151,8 +148,5 @@ public class UserFenceResource {
 				.path("/{id}")
 				.buildAndExpand(fence.getId())
 				.toUri();
-	}
-	private FenceDto toDto(Fence fence) {
-		return mapper.map(fence, FenceDto.class);
 	}
 }

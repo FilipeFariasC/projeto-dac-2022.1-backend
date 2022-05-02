@@ -29,6 +29,7 @@ public class AlarmResource {
 	@Autowired
 	private AlarmServiceConvert alarmServiceConvert;
 	
+
 	@PatchMapping("/{id}")
 	public ResponseEntity<?> alarmSeen(@PathVariable("id") Long idAlarm){
 		try {
