@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.fasterxml.jackson.core.JsonParseException;
+
 @ControllerAdvice
 public class ExceptionHandler extends ResponseEntityExceptionHandler {
 	
@@ -32,6 +34,14 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 		ex.getMessage();
 		String messageUser = messageSource.getMessage("message.invalid", null, LocaleContextHolder.getLocale());
 		String messageDeveloper = ex.getCause().toString();
+		
+		 Throwable cause = ex.getCause();
+
+	        if (cause instanceof JsonParseException) {
+	            JsonParseException jpe = (JsonParseException) cause;
+	            jpe.getOriginalMessage();
+	            // TODO
+	        }
 		
 		List<FieldValueError> errors = Arrays.asList(new FieldValueError(messageUser, messageDeveloper));
 		
