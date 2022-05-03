@@ -22,7 +22,6 @@ public class UserPostDto {
 	
 	@NotNull
 	@NotEmpty
-	@NotBlank
 	@Size(min=8, max=30)
 	@Pattern(regexp="^[^\\s]+$", message= "{password.Pattern}")
 	private String password;

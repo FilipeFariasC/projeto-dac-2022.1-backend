@@ -5,7 +5,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.post.security.AuthenticationResponse;
@@ -20,9 +19,6 @@ import br.edu.ifpb.dac.groupd.security.UserDetailsService;
 public class LoginService {
 	@Autowired
     private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private UserDetailsService userDetailsService;

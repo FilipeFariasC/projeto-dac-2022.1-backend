@@ -22,6 +22,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,6 +58,7 @@ public class User implements Serializable, UserDetails {
 	@NotNull
 	@Column(name="password", nullable=false)
 	@Size(max=255)
+	@Pattern(regexp="'\\$2[ayb]\\$.{56}'", message="{password.Hashed")
 	private String password;
 	
 	
@@ -79,7 +81,6 @@ public class User implements Serializable, UserDetails {
 		inverseJoinColumns = @JoinColumn(name="role_id"))
 	private Collection<Role> roles = new HashSet<>();
 	
-
 	public Long getId() {
 		return id;
 	}
@@ -188,6 +189,10 @@ public class User implements Serializable, UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public void setRoles(Collection<Role> roles) {
+		this.roles = roles;
 	}
 	
 }

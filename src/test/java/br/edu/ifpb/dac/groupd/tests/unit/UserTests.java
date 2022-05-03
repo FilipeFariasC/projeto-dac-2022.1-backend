@@ -38,9 +38,11 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.model.Coordinate;
 import br.edu.ifpb.dac.groupd.model.Fence;
+import br.edu.ifpb.dac.groupd.model.Role;
 import br.edu.ifpb.dac.groupd.model.User;
 
 @Testable
@@ -88,7 +90,7 @@ public class UserTests {
 		@DisplayName("Empty Name")
 		@ParameterizedTest(name="Invalid Test {index}")
 		@ValueSource(strings= {"", "    ", " \n ", "\t"})
-		void testeNomeInvalidoSemCaracteresVazios(String name) {
+		void testInvalidNameEmptyCharacters(String name) {
 			user.setName(name);
 			
 			violations = validator.validateProperty(user, "name");
@@ -109,7 +111,7 @@ public class UserTests {
 				"aa",
 				"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 				})
-		void testeNomeInvalidoComCaracteresPoucosCaracteres(String name) {
+		void testeInvalidNameWithFewerCharacters(String name) {
 			user.setName(name);
 			
 			violations = validator.validateProperty(user, "name");
@@ -128,7 +130,7 @@ public class UserTests {
 				"\taaa\t",
 				"abc"
 				})
-		void testeNomeValido(String name) {
+		void testValidName(String name) {
 			user.setName(name);
 			
 			violations = validator.validateProperty(user, "name");
@@ -159,7 +161,7 @@ public class UserTests {
 		@DisplayName("Empty Email")
 		@ParameterizedTest(name="Teste inválido {index}")
 		@ValueSource(strings= {"", "    ", " \t "})
-		void testeEmailInvalidoSemCaracteres(String email) {
+		void testInvalidEmailEmptyCharacters(String email) {
 			user.setEmail(email);
 			
 			violations = validator.validateProperty(user, "email");
@@ -174,7 +176,7 @@ public class UserTests {
 		@DisplayName("Email out of pattern")
 		@ParameterizedTest(name="Teste inválido {index} -> {0} ")
 		@ValueSource(strings= {"filipe farias@email.com", "@gmail.com", "1filipe@"})
-		void testeEmailInvalidoComCaracteres(String email) {
+		void testInvalidEmailWithCharacters(String email) {
 			user.setEmail(email);
 			
 			violations = validator.validateProperty(user, "email");
@@ -186,7 +188,7 @@ public class UserTests {
 		@DisplayName("Valid Email")
 		@ParameterizedTest(name="Teste válido {index} -> {0} ")
 		@ValueSource(strings= {"filipe.farias@email.com", "f@f.f", "filipe@gmail"})
-		void testEmailValido(String email) {
+		void testValidEmail(String email) {
 			user.setEmail(email);
 			
 			violations = validator.validateProperty(user, "email");
@@ -195,79 +197,6 @@ public class UserTests {
 	}
 	
 	@Order(3)
-	@Nested
-	@DisplayName("Password")
-	@TestMethodOrder(OrderAnnotation.class)
-	public class PasswordTests{
-		@Order(1)
-		@DisplayName("Null Password")
-		@Test
-		void testPasswordNull() {
-			user.setPassword(null);
-			
-			violations = validator.validateProperty(user, "password");
-			ConstraintViolation<User> constraint = violations.iterator().next();
-			
-			assertNotEquals(0, violations.size(), () -> "Valid password" );
-			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
-			assertThat(constraint.getMessageTemplate(), containsString("NotNull"));
-		}
-		@Order(2)
-		@DisplayName("Empty Password")
-		@ParameterizedTest(name="Invalid test {index}")
-		@ValueSource(strings= {"", "    ", " \t\n\t\r "})
-		void testPasswordNoCharacters(String password) {
-			user.setPassword(password);
-			
-			violations = validator.validateProperty(user, "password");
-			ConstraintViolation<User> constraint = violations.iterator().next();
-			
-			assertNotEquals(0, violations.size(), () -> "Valid password" );
-			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
-			assertThat(constraint.getMessageTemplate(), either(containsString("Size")).or(containsString("Pattern")));
-		}
-		@Order(3)
-		@DisplayName("Password Character Limit")
-		@ParameterizedTest(name="Invalid test {index} -> ")
-		@ValueSource(strings= {"abcdefg", "abcdefghijklmnopqrstuvwxyzABCDE"})
-		void testPasswordCharacterLimit(String password) {
-			user.setPassword(password);
-			
-			violations = validator.validateProperty(user, "password");
-			ConstraintViolation<User> constraint = violations.iterator().next();
-			
-			assertNotEquals(0, violations.size(), () -> "Valid password" );
-			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
-			assertThat(constraint.getMessageTemplate(), containsString("Size"));
-		}
-		
-		@Order(4)
-		@DisplayName("Password doesn't contain spaces")
-		@ParameterizedTest(name="Invalid test {index} -> {0} ")
-		@ValueSource(strings= {"abcdef ghi", "a\taaaaaa\t"})
-		void testePasswordNoSpaces(String password) {
-			user.setPassword(password);
-			
-			violations = validator.validateProperty(user, "password");
-			ConstraintViolation<User> constraint = violations.iterator().next();
-			
-			assertNotEquals(0, violations.size(), () -> "Valid password" );
-			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
-			assertThat(constraint.getMessageTemplate(), containsString("Pattern"));
-		}
-		@Order(5)
-		@DisplayName("Password Valid")
-		@ParameterizedTest(name="Valid test {index} -> {0} ")
-		@ValueSource(strings= {"abcdefgh", "abcdefghijklmnopqrstuvwxyzABCD","a1b*C3d9_"})
-		void testePasswordValid(String password) {
-			user.setPassword(password);
-			
-			violations = validator.validateProperty(user, "password");
-			assertEquals(0, violations.size(), () -> "Invalid password" );
-		}
-	}
-	
-	@Order(4)
 	@Nested
 	@DisplayName("Bracelets")
 	@TestMethodOrder(OrderAnnotation.class)
@@ -294,7 +223,7 @@ public class UserTests {
 				"", 
 				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 				})
-		void testAddBraceletInvalid(String name) {
+		void testAddInvalidBracelet(String name) {
 			Bracelet bracelet = new Bracelet();
 			bracelet.setName(name);
 		
@@ -310,7 +239,7 @@ public class UserTests {
 				"a", 
 				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 				})
-		void testAddBraceletValid(String name) {
+		void testAddValidBracelet(String name) {
 			Bracelet bracelet = new Bracelet();
 			bracelet.setName(name);
 			
@@ -322,7 +251,7 @@ public class UserTests {
 			verify(bracelets, only()).add(bracelet);
 		}
 	}
-	@Order(5)
+	@Order(4)
 	@Nested
 	@DisplayName("Fences")
 	@TestMethodOrder(OrderAnnotation.class)
@@ -334,9 +263,6 @@ public class UserTests {
 		
 		@BeforeEach
 		public void setUp() {
-			user.setName("Filipe");
-			user.setEmail("filipe@filipe.com");
-			user.setPassword("abcdefghij");
 			user.setFences(fences);
 			
 			openMocks(this);
@@ -346,11 +272,8 @@ public class UserTests {
 		@DisplayName("Add Invalid Fence")
 		@ParameterizedTest(name="Invalid test {index} -> name=\"{0}\"")
 		@MethodSource("invalidFences")
-		void testAddFenceInvalid(Fence fence) {
+		void testAddInvalidFence(Fence fence) {
 			user.addFence(fence);
-			
-			violations = validator.validate(user);
-			assertEquals(0, violations.size(), () -> "Invalid bracelet" );
 			
 			verify(fences, never()).add(fence);
 		}
@@ -380,17 +303,124 @@ public class UserTests {
 			return fence;
 		}
 		
-		@Order(1)
+		@Order(2)
 		@DisplayName("Add Valid Fence")
 		@ParameterizedTest(name="Valid test {index} -> name=\"{0}\"")
 		@MethodSource("validFences")
-		void testAddBraceletValid(Fence fence) {
+		void testAddValidBracelet(Fence fence) {
 			user.addFence(fence);
 			
-			violations = validator.validateProperty(user, "bracelets");
-			
-			assertEquals(0, violations.size(), () -> "Invalid bracelet" );
 			verify(fences, only()).add(fence);
+		}
+	}
+	@Order(5)
+	@Nested
+	@DisplayName("Roles")
+	@TestMethodOrder(OrderAnnotation.class)
+	@ExtendWith(MockitoExtension.class)
+	public class RolesTests{
+		
+		@Spy
+		private Set<Role> roles;// = spy(Set.class);
+		
+		@BeforeEach
+		public void setUp() {
+			user.setRoles(roles);
+
+			openMocks(this);
+		}
+		
+		@Order(1)
+		@DisplayName("Add Role")
+		@Test
+		void testAddRole() {
+			Role role = new Role("USER");
+			
+			user.addAuthority(role);
+	
+			verify(roles, only()).add(role);
+		}
+	}
+	@Order(6)
+	@Nested
+	@DisplayName("Password")
+	@TestMethodOrder(OrderAnnotation.class)
+	public class PasswordTests{
+		
+		private UserPostDto user = new UserPostDto();
+		
+		private Set<ConstraintViolation<UserPostDto>> violations;
+		
+		
+		void setUp() {
+			user = new UserPostDto();
+		}
+		
+		@Order(1)
+		@DisplayName("Null Password")
+		@Test
+		void testPasswordNull() {
+			user.setPassword(null);
+			
+			violations = validator.validateProperty(user, "password");
+			ConstraintViolation<UserPostDto> constraint = violations.iterator().next();
+			
+			assertNotEquals(0, violations.size(), () -> "Valid password" );
+			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
+			assertThat(constraint.getMessageTemplate(), either(containsString("NotNull")).or(containsString("NotEmpty")));
+		}
+		@Order(2)
+		@DisplayName("Empty Password")
+		@ParameterizedTest(name="Invalid test {index}")
+		@ValueSource(strings= {"", "    ", " \t\n\t\r "})
+		void testPasswordNoCharacters(String password) {
+			user.setPassword(password);
+			
+			violations = validator.validateProperty(user, "password");
+			ConstraintViolation<UserPostDto> constraint = violations.iterator().next();
+			
+			assertNotEquals(0, violations.size(), () -> "Valid password" );
+			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
+			assertThat(constraint.getMessageTemplate(), either(containsString("Size")).or(containsString("Pattern")));
+		}
+		@Order(3)
+		@DisplayName("Password Character Limit")
+		@ParameterizedTest(name="Invalid test {index} -> ")
+		@ValueSource(strings= {"abcdefg", "abcdefghijklmnopqrstuvwxyzABCDE"})
+		void testPasswordCharacterLimit(String password) {
+			user.setPassword(password);
+			
+			violations = validator.validateProperty(user, "password");
+			ConstraintViolation<UserPostDto> constraint = violations.iterator().next();
+			
+			assertNotEquals(0, violations.size(), () -> "Valid password" );
+			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
+			assertThat(constraint.getMessageTemplate(), containsString("Size"));
+		}
+		
+		@Order(4)
+		@DisplayName("Password doesn't contain spaces")
+		@ParameterizedTest(name="Invalid test {index} -> {0} ")
+		@ValueSource(strings= {"abcdef ghi", "a\taaaaaa\t"})
+		void testePasswordNoSpaces(String password) {
+			user.setPassword(password);
+			
+			violations = validator.validateProperty(user, "password");
+			ConstraintViolation<UserPostDto> constraint = violations.iterator().next();
+			
+			assertNotEquals(0, violations.size(), () -> "Valid password" );
+			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
+			assertThat(constraint.getMessageTemplate(), containsString("Pattern"));
+		}
+		@Order(5)
+		@DisplayName("Password Valid")
+		@ParameterizedTest(name="Valid test {index} -> {0} ")
+		@ValueSource(strings= {"abcdefgh", "abcdefghijklmnopqrstuvwxyzABCD","a1b*C3d9_"})
+		void testePasswordValid(String password) {
+			user.setPassword(password);
+			
+			violations = validator.validateProperty(user, "password");
+			assertEquals(0, violations.size(), () -> "Invalid password" );
 		}
 	}
 }
