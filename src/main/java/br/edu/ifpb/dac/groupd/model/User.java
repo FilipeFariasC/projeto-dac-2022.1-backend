@@ -58,7 +58,7 @@ public class User implements Serializable, UserDetails {
 	@NotNull
 	@Column(name="password", nullable=false)
 	@Size(max=255)
-	@Pattern(regexp="'\\$2[ayb]\\$.{56}'", message="{password.Hashed")
+	@Pattern(regexp="'\\$2[ayb]\\$.{56}'", message="{password.Hashed}")
 	private String password;
 	
 	
