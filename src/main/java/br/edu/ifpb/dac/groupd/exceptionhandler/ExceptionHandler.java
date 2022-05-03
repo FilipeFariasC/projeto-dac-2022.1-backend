@@ -29,11 +29,11 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		
 		//define a mensagem que será enviada em caso de erro de conversao de entidade
-		
+		ex.getMessage();
 		String messageUser = messageSource.getMessage("message.invalid", null, LocaleContextHolder.getLocale());
 		String messageDeveloper = ex.getCause().toString();
 		
-		List<Error> errors = Arrays.asList(new Error(messageUser, messageDeveloper));
+		List<FieldValueError> errors = Arrays.asList(new FieldValueError(messageUser, messageDeveloper));
 		
 		return handleExceptionInternal(ex, errors, headers, HttpStatus.BAD_REQUEST, request);
 	}
@@ -42,13 +42,13 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		
-		List<Error> errors = createErrorList(ex.getBindingResult());
+		List<FieldValueError> errors = createErrorList(ex.getBindingResult());
 		
 		return handleExceptionInternal(ex, errors, headers, HttpStatus.BAD_REQUEST, request);
 	}
 	
-	private List<Error> createErrorList(BindingResult bindingResult){
-		List<Error> errors = new ArrayList<>();
+	private List<FieldValueError> createErrorList(BindingResult bindingResult){
+		List<FieldValueError> errors = new ArrayList<>();
 		
 		String messageUser = "";
 		String messageDeveloper = "";
@@ -56,37 +56,11 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 		for(FieldError field : bindingResult.getFieldErrors()) {
 			messageUser = messageSource.getMessage(field, LocaleContextHolder.getLocale());
 			messageDeveloper = field.toString();
-			errors.add(new Error(messageUser, messageDeveloper));
+			errors.add(new FieldValueError(messageUser, messageDeveloper));
 		}
 
 		return errors;
 	}
 	
-	private class Error {
-		
-		private String messageUser;
-		private String messageDeveloper;
-		
-		public Error (String messageUser, String messageDeveloper){
-			setMessageDeveloper(messageDeveloper);
-			setMessageUser(messageUser);
-		}
-
-		public String getMessageUser() {
-			return messageUser;
-		}
-
-		public void setMessageUser(String messageUser) {
-			this.messageUser = messageUser;
-		}
-
-		public String getMessageDeveloper() {
-			return messageDeveloper;
-		}
-
-		public void setMessageDeveloper(String messageDeveloper) {
-			this.messageDeveloper = messageDeveloper;
-		}
-		
-	}
+	
 }

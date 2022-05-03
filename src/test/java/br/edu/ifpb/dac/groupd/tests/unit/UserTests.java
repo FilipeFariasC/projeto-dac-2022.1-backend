@@ -245,9 +245,6 @@ public class UserTests {
 			
 			user.addBracelet(bracelet);
 			
-			violations = validator.validateProperty(user, "bracelets");
-			
-			assertEquals(0, violations.size(), () -> "Invalid bracelet" );
 			verify(bracelets, only()).add(bracelet);
 		}
 	}
