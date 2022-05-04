@@ -19,6 +19,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+
+import br.edu.ifpb.dac.groupd.exceptionhandler.errors.FieldArgumentError;
+import br.edu.ifpb.dac.groupd.exceptionhandler.errors.FieldValueError;
 
 @ControllerAdvice
 public class ExceptionHandler extends ResponseEntityExceptionHandler {
@@ -31,19 +35,22 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		
 		//define a mensagem que será enviada em caso de erro de conversao de entidade
-		ex.getMessage();
-		String messageUser = messageSource.getMessage("message.invalid", null, LocaleContextHolder.getLocale());
+		String messageUser = messageSource.getMessage("message.invalid", null, LocaleContextHolder.getLocale());;
 		String messageDeveloper = ex.getCause().toString();
 		
-		 Throwable cause = ex.getCause();
-
-	        if (cause instanceof JsonParseException) {
-	            JsonParseException jpe = (JsonParseException) cause;
-	            jpe.getOriginalMessage();
-	            // TODO
-	        }
+		Throwable cause = ex.getCause();
 		
-		List<FieldValueError> errors = Arrays.asList(new FieldValueError(messageUser, messageDeveloper));
+		FieldValueError error = null;
+		if(cause instanceof UnrecognizedPropertyException upe) {
+			messageUser = messageSource.getMessage("attribute.Unrecognized", new String[]{upe.getPropertyName()}, LocaleContextHolder.getLocale());
+			messageDeveloper = upe.getOriginalMessage();
+			error = new FieldValueError(upe.getPropertyName(), messageUser, messageDeveloper);
+
+		} else {
+			error = new FieldValueError(null, messageUser, messageDeveloper);
+		}
+		
+		List<FieldValueError> errors = Arrays.asList(error);
 		
 		return handleExceptionInternal(ex, errors, headers, HttpStatus.BAD_REQUEST, request);
 	}
@@ -66,7 +73,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 		for(FieldError field : bindingResult.getFieldErrors()) {
 			messageUser = messageSource.getMessage(field, LocaleContextHolder.getLocale());
 			messageDeveloper = field.toString();
-			errors.add(new FieldValueError(messageUser, messageDeveloper));
+			errors.add(new FieldArgumentError(field.getField(),field.getRejectedValue().toString(),messageUser, messageDeveloper));
 		}
 
 		return errors;
