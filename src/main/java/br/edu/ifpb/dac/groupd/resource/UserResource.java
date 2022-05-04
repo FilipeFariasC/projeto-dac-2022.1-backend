@@ -48,7 +48,6 @@ public class UserResource {
 			,
 			HttpServletRequest request){
 		
-		System.out.println(request.getRequestURL().toString());
 		User created;
 		try {
 			created = userService.create(userPostDto);

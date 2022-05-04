@@ -15,17 +15,20 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import br.edu.ifpb.dac.groupd.exceptionhandler.errors.FieldArgumentError;
 import br.edu.ifpb.dac.groupd.exceptionhandler.errors.FieldValueError;
 
 @ControllerAdvice
-public class ExceptionHandler extends ResponseEntityExceptionHandler {
+public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -34,6 +37,7 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		
+		System.out.println("\n\n\nDeu Merda\n\n\n");
 		//define a mensagem que será enviada em caso de erro de conversao de entidade
 		String messageUser = messageSource.getMessage("message.invalid", null, LocaleContextHolder.getLocale());;
 		String messageDeveloper = ex.getCause().toString();
@@ -44,10 +48,10 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 		if(cause instanceof UnrecognizedPropertyException upe) {
 			messageUser = messageSource.getMessage("attribute.Unrecognized", new String[]{upe.getPropertyName()}, LocaleContextHolder.getLocale());
 			messageDeveloper = upe.getOriginalMessage();
-			error = new FieldValueError(upe.getPropertyName(), messageUser, messageDeveloper);
+			error = new FieldValueError(upe.getPropertyName(), messageUser, messageDeveloper, getRequestUri(request), status.value());
 
 		} else {
-			error = new FieldValueError(null, messageUser, messageDeveloper);
+			error = new FieldValueError(null, messageUser, messageDeveloper, request.getContextPath(), status.value());
 		}
 		
 		List<FieldValueError> errors = Arrays.asList(error);
@@ -56,28 +60,40 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@Override
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	@ResponseBody
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		
-		List<FieldValueError> errors = createErrorList(ex.getBindingResult());
+		List<FieldValueError> errors = createErrorList(ex.getBindingResult(), getRequestUri(request), status.value());
 		
 		return handleExceptionInternal(ex, errors, headers, HttpStatus.BAD_REQUEST, request);
 	}
 	
-	private List<FieldValueError> createErrorList(BindingResult bindingResult){
+	private List<FieldValueError> createErrorList(BindingResult bindingResult, String path, Integer code){
 		List<FieldValueError> errors = new ArrayList<>();
 		
 		String messageUser = "";
 		String messageDeveloper = "";
 		
-		for(FieldError field : bindingResult.getFieldErrors()) {
-			messageUser = messageSource.getMessage(field, LocaleContextHolder.getLocale());
-			messageDeveloper = field.toString();
-			errors.add(new FieldArgumentError(field.getField(),field.getRejectedValue().toString(),messageUser, messageDeveloper));
+		for(FieldError fieldError : bindingResult.getFieldErrors()) {
+			messageUser = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+			messageDeveloper = fieldError.toString();
+			
+			String field = fieldError.getField();
+			String rejectedValue = null;
+			
+			if(fieldError.getRejectedValue() != null) {
+				rejectedValue = fieldError.getRejectedValue().toString();
+			}
+			
+			errors.add(new FieldArgumentError(field, rejectedValue, messageUser, messageDeveloper, path, code));
 		}
 
 		return errors;
 	}
 	
-	
+	private String getRequestUri(WebRequest request) {
+		return ((ServletWebRequest)request).getRequest().getRequestURI();
+	}
 }
