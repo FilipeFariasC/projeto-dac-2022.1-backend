@@ -19,14 +19,15 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
+
+import br.edu.ifpb.dac.groupd.validation.contraints.HashedPassword;
+import br.edu.ifpb.dac.groupd.validation.contraints.ValidEmail;
 
 @Entity
 @Table(name="users")
@@ -50,7 +51,7 @@ public class User implements Serializable, UserDetails {
 	private String name;
 	
 	@NotEmpty
-	@Email
+	@ValidEmail
 	@Column(name="email", unique=true, nullable=false)
 	@Size(max=255)
 	private String email;
@@ -58,7 +59,7 @@ public class User implements Serializable, UserDetails {
 	@NotNull
 	@Column(name="password", nullable=false)
 	@Size(max=255)
-	@Pattern(regexp="'\\$2[ayb]\\$.{56}'", message="{password.Hashed}")
+	@HashedPassword
 	private String password;
 	
 	

@@ -1,11 +1,14 @@
 package br.edu.ifpb.dac.groupd.dto.post;
 
-import javax.validation.constraints.Email;
+import java.util.Objects;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import br.edu.ifpb.dac.groupd.validation.contraints.ValidEmail;
 public class UserPostDto {
 
 	@NotNull
@@ -17,7 +20,7 @@ public class UserPostDto {
 	@NotNull
 	@NotEmpty
 	@NotBlank
-	@Email
+	@ValidEmail
 	private String email;
 	
 	@NotNull
@@ -49,6 +52,24 @@ public class UserPostDto {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(email, name, password);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserPostDto other = (UserPostDto) obj;
+		return Objects.equals(email, other.email) && Objects.equals(name, other.name)
+				&& Objects.equals(password, other.password);
 	}
 	
 }
