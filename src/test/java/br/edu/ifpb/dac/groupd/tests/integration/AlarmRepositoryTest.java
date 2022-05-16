@@ -1,4 +1,4 @@
-package br.edu.ifpb.dac.groupd.tests.unit;
+package br.edu.ifpb.dac.groupd.tests.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,7 +23,7 @@ import br.edu.ifpb.dac.groupd.repository.AlarmRepository;
 @AutoConfigureTestDatabase
 @Testable
 @DisplayName("AlarmService")
-public class AlarmServiceTest {
+public class AlarmRepositoryTest {
 	
 	@Autowired
 	private TestRestTemplate testRestTemplate;
