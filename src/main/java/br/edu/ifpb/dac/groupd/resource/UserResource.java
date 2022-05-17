@@ -57,11 +57,7 @@ public class UserResource {
 		
 		UserDto dto = mapToUserDto(created);
 		
-		URI uri = ServletUriComponentsBuilder
-				.fromCurrentRequestUri()
-				.path("/{id}")
-				.buildAndExpand(created.getId())
-				.toUri();
+		URI uri = getUri(created);
 		
 		return ResponseEntity.created(uri).body(dto);
 	}
@@ -111,8 +107,10 @@ public class UserResource {
 			}
 
 			return ResponseEntity.status(HttpStatus.OK).location(uri).body(dto);
-		} catch (UserNotFoundException | UserEmailInUseException exception) {
+		} catch (UserNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+		} catch(UserEmailInUseException exception) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
 		}
 	}
 	
@@ -134,8 +132,8 @@ public class UserResource {
 	private URI getUri(User user) {
 		return ServletUriComponentsBuilder
 				.fromCurrentRequestUri()
-				.path("/{id}")
-				.buildAndExpand(user.getId())
+				.path("/")
+				.build()
 				.toUri();
 	}
 	

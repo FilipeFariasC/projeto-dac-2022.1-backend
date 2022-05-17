@@ -16,7 +16,7 @@ import br.edu.ifpb.dac.groupd.validation.validator.HashedPasswordValidator;
 @Constraint(validatedBy = HashedPasswordValidator.class)
 @Documented
 public @interface HashedPassword {
-	String message() default "{br.edu.br.ifpb.edu.br.groupd.validation.constraints.HashedPassword}";
+	String message() default "{br.edu.ifpb.dac.groupd.validation.contraints.HashedPassword}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
