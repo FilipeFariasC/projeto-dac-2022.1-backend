@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
@@ -192,16 +193,25 @@ public class UserResourcesTests {
 	void testDeleteCurrentUser() {
 		dto = validUser();
 		
+		assertDoesNotThrow(()->
+			mockMvc.perform(
+				post(PREFIX)
+					.contentType("application/json")
+					.content(mapper.writeValueAsString(dto))
+			));
 		
-		assertDoesNotThrow(
-			()->{mockMvc.perform(
+		String response =assertDoesNotThrow(
+			()->{return mockMvc.perform(
 				delete(PREFIX)
 					.with(user(dto.getEmail()).password(dto.getPassword()))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(dto))
-				);
+				).andExpect(status().isOk())
+					.andReturn().getResponse().getContentAsString();
 			}
 		);
+		
+		assertThat(response, containsString(dto.getEmail()));
 		
 		assertThrows(UserNotFoundException.class, ()->{userService.findByEmail(dto.getEmail());});
 		
