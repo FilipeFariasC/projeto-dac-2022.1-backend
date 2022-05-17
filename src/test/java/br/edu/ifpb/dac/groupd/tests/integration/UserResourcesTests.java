@@ -36,7 +36,7 @@ import br.edu.ifpb.dac.groupd.service.UserService;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserResourcesTests {
+public class UserResourcesTests {
 	
 	private final String PREFIX = "http://localhost:8080/api/users";
 	
