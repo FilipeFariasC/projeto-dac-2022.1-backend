@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,13 +60,11 @@ public class UserResourcesTests {
 	}
 	@AfterEach
 	void tearDown() {
-		try {
-			userService.deleteByUsername(dto.getEmail());
-		} catch (UserNotFoundException e) {
-		}
+		deleteUser(dto.getEmail());
 	}
 	
 	@Test
+	@DisplayName("Register Invalid User")
 	void testInvalidUserRegister() {
 		dto.setEmail("f@f");
 		dto.setName("Fi");
@@ -90,6 +89,7 @@ public class UserResourcesTests {
 		
 	}
 	@Test
+	@DisplayName("Register Valid User")
 	void testValidUserRegister() {
 		
 		dto = validUser();
@@ -113,6 +113,7 @@ public class UserResourcesTests {
 	}
 	
 	@Test
+	@DisplayName("Register user with email already registered")
 	void testPostEmailAlreadyUsed() {
 		dto = validUser();
 		try {
@@ -139,6 +140,7 @@ public class UserResourcesTests {
 	}
 	
 	@Test
+	@DisplayName("Update user email with email already in use")
 	void testPutEmailAlreadyUsed() {
 		dto = validUser();
 		
@@ -165,7 +167,7 @@ public class UserResourcesTests {
 		} catch (Exception e) {
 		}
 		
-		validUser();
+		dto = validUser();
 		
 		String response = assertDoesNotThrow(()->{
 			return
@@ -178,11 +180,39 @@ public class UserResourcesTests {
 			.andExpect(status().isConflict())
 			.andReturn().getResponse().getContentAsString();
 		});
-		System.out.println(response);
+		
+		assertThat(response, containsString("email"));
 		assertThat(response, containsString(dto.getEmail()));
+		
+		deleteUser(differentEmail);
 	}
 	
+	@Test
+	@DisplayName("Delete User Logged In")
+	void testDeleteCurrentUser() {
+		dto = validUser();
+		
+		
+		assertDoesNotThrow(
+			()->{mockMvc.perform(
+				delete(PREFIX)
+					.with(user(dto.getEmail()).password(dto.getPassword()))
+					.contentType("application/json")
+					.content(mapper.writeValueAsString(dto))
+				);
+			}
+		);
+		
+		assertThrows(UserNotFoundException.class, ()->{userService.findByEmail(dto.getEmail());});
+		
+	}
 	
+	void deleteUser(String email) {
+		try {
+			userService.deleteByUsername(email);
+		} catch (UserNotFoundException e) {
+		}
+	}
 	
 	UserPostDto validUser() {
 		UserPostDto dto = new UserPostDto();
