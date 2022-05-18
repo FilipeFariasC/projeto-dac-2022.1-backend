@@ -62,7 +62,7 @@ public class FenceService {
 		
 		User user = register.get();
 		
-		Optional<Fence> registerFence = user.getFences().stream().filter((fence)->fence.getId().equals(fenceId)).findFirst();
+		Optional<Fence> registerFence = user.getFences().stream().filter(fence->fence.getId().equals(fenceId)).findFirst();
 		
 		if(registerFence.isEmpty()) {
 			throw new FenceNotRegisteredException();
@@ -71,7 +71,7 @@ public class FenceService {
 		return registerFence.get();
 	}
 
-	public Fence updateFence(String username, Long fenceId, FencePostDto dto) throws UserNotFoundException, FenceNotFoundException, FenceNotRegisteredException {
+	public Fence updateFence(String username, Long fenceId, FencePostDto dto) throws UserNotFoundException, FenceNotFoundException {
 		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
@@ -84,7 +84,7 @@ public class FenceService {
 				.mapToLong(Fence::getId)
 				.anyMatch(id -> id == fenceId);
 		if(!existe) {
-			throw new FenceNotRegisteredException();
+			throw new FenceNotFoundException(fenceId);
 		}
 		
 		Fence mapped = mapFromDto(dto);
@@ -110,7 +110,7 @@ public class FenceService {
 		return fenceRepo.save(fence);
 	}
 	
-	public void deleteFence(String username, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException, FenceNotFoundException {
+	public void deleteFence(String username, Long fenceId) throws UserNotFoundException, FenceNotFoundException {
 		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
@@ -122,7 +122,7 @@ public class FenceService {
 		Optional<Fence> fenceRegister = fences.stream().filter(fence->fence.getId().equals(fenceId)).findFirst();
 		
 		if(fenceRegister.isEmpty()) {
-			throw new FenceNotRegisteredException();
+			throw new FenceNotFoundException(fenceId);
 		}
 		
 		Fence fence = fenceRegister.get();

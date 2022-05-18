@@ -109,7 +109,7 @@ public class BraceletResource {
 			BraceletDto dto = mapToBraceletDto(bracelet);
 			
 			return ResponseEntity.status(HttpStatus.OK).location(getUri(bracelet)).body(dto);
-		} catch (UserNotFoundException| BraceletNotFoundException | BraceletNotRegisteredException  exception) {
+		} catch (UserNotFoundException| BraceletNotFoundException  exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		} 
 	}
@@ -121,7 +121,7 @@ public class BraceletResource {
 			braceletService.deleteBracelet(principal.getName(), braceletId);
 			
 			return ResponseEntity.noContent().build();
-		} catch (UserNotFoundException | BraceletNotFoundException | BraceletNotRegisteredException exception) {
+		} catch (UserNotFoundException | BraceletNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}

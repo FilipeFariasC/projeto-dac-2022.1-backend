@@ -34,7 +34,6 @@ public class BraceletService {
 		User user = register.get();
 		
 		Bracelet mapped = mapFromDto(dto);
-		mapped.setOwner(user);
 		
 		Bracelet bracelet = braceletRepo.save(mapped);
 		
@@ -85,7 +84,7 @@ public class BraceletService {
 				.toList();
 	}
 	
-	public Bracelet updateBracelet(String username, Long braceletId, BraceletPostDto dto) throws UserNotFoundException, BraceletNotFoundException, BraceletNotRegisteredException {
+	public Bracelet updateBracelet(String username, Long braceletId, BraceletPostDto dto) throws UserNotFoundException, BraceletNotFoundException {
 		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
@@ -98,7 +97,7 @@ public class BraceletService {
 			entrou = braceletRegister.getId().equals(braceletId);
 		}
 		if(!entrou) {
-			throw new BraceletNotRegisteredException();
+			throw new BraceletNotFoundException(braceletId);
 		}
 		
 		Bracelet mapped = mapFromDto(dto);
@@ -106,7 +105,7 @@ public class BraceletService {
 		
 		return braceletRepo.save(mapped);
 	}
-	public void deleteBracelet(String username, Long braceletId) throws UserNotFoundException, BraceletNotFoundException, BraceletNotRegisteredException {
+	public void deleteBracelet(String username, Long braceletId) throws UserNotFoundException, BraceletNotFoundException{
 		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
@@ -117,7 +116,7 @@ public class BraceletService {
 		
 		Optional<Bracelet> registerBracelet = bracelets.stream().filter((bracelet)->bracelet.getId().equals(braceletId)).findFirst();
 		if(register.isEmpty()) {
-			throw new BraceletNotRegisteredException();
+			throw new BraceletNotFoundException(braceletId);
 		}
 		user.removeBracelet(registerBracelet.get());
 		userRepo.save(user);

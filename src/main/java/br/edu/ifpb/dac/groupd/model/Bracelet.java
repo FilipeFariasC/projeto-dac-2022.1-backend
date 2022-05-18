@@ -35,11 +35,11 @@ public class Bracelet implements Serializable{
 	@Column(name="bracelet_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	
+	/*
 	@ManyToOne
 	@JoinColumn(name="owner", referencedColumnName = "user_id")
 	private User owner;
-	
+	*/
 	@NotEmpty
 	@Size(min=1,max=50)
 	@Column(name="name")
@@ -108,15 +108,6 @@ public class Bracelet implements Serializable{
 	public void setMonitor(Fence monitor) {
 		this.monitor = monitor;
 	}
-
-	public User getOwner() {
-		return owner;
-	}
-
-	public void setOwner(User owner) {
-		this.owner = owner;
-	}
-	
 	
 	
 }

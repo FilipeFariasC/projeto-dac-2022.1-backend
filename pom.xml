@@ -11,7 +11,7 @@
 	<groupId>br.edu.ifpb.dac.groupd</groupId>
 	<artifactId>projeto-dac-2022-1</artifactId>
 	<version>0.1</version>
-	<name>projeto-dac-2022.1</name>
+	<name>childfence-dac-2022.1</name>
 	<description>Projeto de Desenvolvimento de Aplicações Corporativas - 2022.1</description>
 	<properties>
 		<java.version>17</java.version>

@@ -99,7 +99,7 @@ public class FenceResource {
 			FenceDto dto = mapToFenceDto(fence);
 			
 			return ResponseEntity.ok(dto);
-		} catch (UserNotFoundException| FenceNotFoundException | FenceNotRegisteredException  exception) {
+		} catch (UserNotFoundException| FenceNotFoundException   exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		} 
 	}
@@ -128,7 +128,7 @@ public class FenceResource {
 			fenceService.deleteFence(principal.getName(), fenceId);
 			
 			return ResponseEntity.noContent().build();
-		} catch (UserNotFoundException | FenceNotFoundException | FenceNotRegisteredException exception) {
+		} catch (UserNotFoundException | FenceNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}

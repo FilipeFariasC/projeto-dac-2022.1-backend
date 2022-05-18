@@ -37,6 +37,11 @@ public class Fence implements Serializable, Timer{
 	@Column(name="fence_id")
 	private Long id;
 	
+	/*
+	@ManyToOne
+	@JoinColumn(name="owner", referencedColumnName = "user_id")
+	private User owner;
+	*/
 	@NotNull
 	@Embedded
 	@Valid

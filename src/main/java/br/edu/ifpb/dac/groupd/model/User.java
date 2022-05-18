@@ -66,7 +66,7 @@ public class User implements Serializable, UserDetails {
 	@OneToMany
 	@JoinTable(name="user_bracelet",
 			joinColumns = @JoinColumn(name="user_id"),
-			inverseJoinColumns = @JoinColumn(name="bracelet_id"))
+			inverseJoinColumns = @JoinColumn(name="bracelet_id"))	
 	private Set<Bracelet> bracelets = new HashSet<>();
 	
 	@OneToMany
