@@ -1,5 +1,6 @@
 package br.edu.ifpb.dac.groupd.tests.integration;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -137,6 +138,7 @@ class BraceletResourceTests {
 		
 		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getEmail(), braceletDto.getIdBracelet()));
 		
+		equals(braceletPostDto, braceletDto, bracelet);
 	}
 	
 	
@@ -153,5 +155,13 @@ class BraceletResourceTests {
 			Arguments.of(new BraceletPostDto("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwx"))
 		);
 	}
-
+	
+	private void equals(BraceletPostDto postDto, BraceletDto dto, Bracelet bracelet) {
+		assertAll(
+			()->postDto.getName().equals(dto.getName()),
+			()->postDto.getName().equals(bracelet.getName()),
+			()->dto.getIdBracelet().equals(bracelet.getId()),
+			()->dto.getName().equals(bracelet.getName())
+				);
+	}
 }
