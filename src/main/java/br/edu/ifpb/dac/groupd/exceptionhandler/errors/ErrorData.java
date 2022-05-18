@@ -1,12 +1,15 @@
 package br.edu.ifpb.dac.groupd.exceptionhandler.errors;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
-@JsonSubTypes({ 
-	  @Type(value = AttributeErrorData.class, name = "attributeErrorData"), 
-	  @Type(value = AttributeValueErrorData.class, name = "truck") 
-	})
+@JsonTypeInfo(use = Id.NAME, include = As.PROPERTY)
+@JsonSubTypes({
+  @JsonSubTypes.Type(value=AttributeErrorData.class, name = "AttributeErrorData"),
+  @JsonSubTypes.Type(value=AttributeValueErrorData.class, name = "AttributeValueErrorData")
+})
 public class ErrorData {
 	
 	private String messageUser;
