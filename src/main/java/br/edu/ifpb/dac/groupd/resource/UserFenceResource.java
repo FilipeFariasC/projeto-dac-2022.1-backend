@@ -27,6 +27,7 @@ import br.edu.ifpb.dac.groupd.dto.post.FencePostDto;
 import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotRegisteredException;
+import br.edu.ifpb.dac.groupd.exception.NoBraceletAvailableException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.service.UserFenceService;
@@ -112,8 +113,10 @@ public class UserFenceResource {
 			FenceDto dto = mapToFenceDto(fence);
 			
 			return ResponseEntity.ok(dto);
-		} catch (FenceEmptyException | FenceNotFoundException | UserNotFoundException exception) {
+		} catch ( FenceNotFoundException | UserNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+		} catch (FenceEmptyException | NoBraceletAvailableException exception) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
 		}
 	}
 	

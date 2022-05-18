@@ -23,6 +23,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
+import br.edu.ifpb.dac.groupd.exception.NoBraceletAvailableException;
 import br.edu.ifpb.dac.groupd.interfaces.Timer;
 
 @Entity
@@ -103,22 +104,27 @@ public class Fence implements Serializable, Timer{
 		return active;
 	}
 
-	public void setActive(boolean active) throws FenceEmptyException {
+	public void setActive(boolean active) throws FenceEmptyException, NoBraceletAvailableException {
 		if(active && bracelets.isEmpty()){
 			throw new FenceEmptyException(id);
 		}
-		if(active) {
-			for(Bracelet bracelet : bracelets) {
-				if(bracelet.getMonitor() == null) {
-					bracelet.setMonitor(this);
-				}
-			}
-		} else {
+		if(!active) {
 			for(Bracelet bracelet : bracelets) {
 				if(bracelet.getMonitor() == this) {
 					bracelet.setMonitor(null);
 				}
 			}
+			return;
+		} 
+		boolean hasBraceletAvailable = false;
+		for(Bracelet bracelet : bracelets) {
+			if(bracelet.getMonitor() == null) {
+				bracelet.setMonitor(this);
+				hasBraceletAvailable = true;
+			}
+		}
+		if(!hasBraceletAvailable) {
+			throw new NoBraceletAvailableException(id);
 		}
 		
 		this.active = active;

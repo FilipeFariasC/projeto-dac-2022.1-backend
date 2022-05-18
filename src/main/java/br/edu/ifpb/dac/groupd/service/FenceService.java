@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import br.edu.ifpb.dac.groupd.dto.post.FencePostDto;
 import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
+import br.edu.ifpb.dac.groupd.exception.NoBraceletAvailableException;
 import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.repository.FenceRepository;
 
@@ -52,7 +53,7 @@ public class FenceService {
 		return fenceRepo.save(updated);
 	}
 	
-	public Fence setActive(Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException {
+	public Fence setActive(Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException, NoBraceletAvailableException {
 		Optional<Fence> register = fenceRepo.findById(fenceId);
 		if(register.isEmpty()) {
 			throw new FenceNotFoundException(fenceId);

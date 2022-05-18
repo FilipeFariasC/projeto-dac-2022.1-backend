@@ -81,10 +81,10 @@ public class UserResourcesTests {
 			.andExpect(status().isBadRequest())
 			.andReturn().getResponse().getContentAsString();
 		});
-		
+
+		assertThat(response, containsString("name"));
 		assertThat(response, containsString("email"));
 		assertThat(response, containsString("password"));
-		assertThat(response, containsString("email"));
 		
 		assertThrows(UserNotFoundException.class, ()->userService.findByEmail(dto.getEmail()));
 		

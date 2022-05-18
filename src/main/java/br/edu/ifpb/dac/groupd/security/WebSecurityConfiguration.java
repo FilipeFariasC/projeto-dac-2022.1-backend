@@ -50,6 +50,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		String login = "/login";
+		String userEndpoint = "/api/users";
 		
 		http
 			.csrf()
@@ -60,14 +61,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 					.antMatchers("/").permitAll()
 					.antMatchers(login).permitAll()
-					.antMatchers("/api/signin", "/api/users", "/api/login").permitAll()
+					.antMatchers(HttpMethod.POST, "/api/signin", userEndpoint, "/api/login").permitAll()
 					.antMatchers("/api/users/**").authenticated()
-					.antMatchers(HttpMethod.PUT ,"/api/users").authenticated()
 					.anyRequest().authenticated()
 			.and()
 				.formLogin(
 					form ->
-						form
+					form
 						.loginPage(login)
 						.defaultSuccessUrl("/")
 						.failureUrl("/login?error=true")

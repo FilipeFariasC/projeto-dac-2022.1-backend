@@ -11,6 +11,7 @@ import br.edu.ifpb.dac.groupd.dto.post.FencePostDto;
 import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotRegisteredException;
+import br.edu.ifpb.dac.groupd.exception.NoBraceletAvailableException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.model.User;
@@ -86,7 +87,7 @@ public class UserFenceService {
 		
 		return fenceService.update(fenceId, dto);
 	}
-	public Fence setActive(String username, Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException, UserNotFoundException {
+	public Fence setActive(String username, Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException, UserNotFoundException, NoBraceletAvailableException {
 		
 		Optional<User> register = userRepo.findByEmail(username);
 		if(register.isEmpty()) {

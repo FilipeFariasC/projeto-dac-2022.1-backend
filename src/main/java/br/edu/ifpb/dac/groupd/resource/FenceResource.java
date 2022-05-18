@@ -26,6 +26,7 @@ import br.edu.ifpb.dac.groupd.dto.FenceDto;
 import br.edu.ifpb.dac.groupd.dto.post.FencePostDto;
 import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
+import br.edu.ifpb.dac.groupd.exception.NoBraceletAvailableException;
 import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.service.FenceService;
 
@@ -100,8 +101,10 @@ public class FenceResource {
 			URI uri = toUri(fence);
 			
 			return ResponseEntity.created(uri).body(toDto(fence));
-		} catch (FenceNotFoundException | FenceEmptyException exception) {
+		} catch (FenceNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+		} catch (FenceEmptyException | NoBraceletAvailableException exception) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
 		}
 	}
 	
