@@ -5,13 +5,13 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
-import br.edu.ifpb.dac.groupd.tests.integration.UserResourcesTests;
+import br.edu.ifpb.dac.groupd.tests.integration.UserResourceTests;
 
 @Suite
 @Testable
 //@SelectPackages({"br.edu.ifpb.dac.groupd.tests.unittest"})
 @SelectClasses({
-	UserResourcesTests.class
+	UserResourceTests.class
 })
 @SuiteDisplayName("Suite de Testes de Integração")
 public class SuiteIntegrationTests {}

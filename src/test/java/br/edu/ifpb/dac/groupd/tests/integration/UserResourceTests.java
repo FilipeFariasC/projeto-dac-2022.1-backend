@@ -3,9 +3,9 @@ package br.edu.ifpb.dac.groupd.tests.integration;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -15,7 +15,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.annotation.Testable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,20 +28,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.edu.ifpb.dac.groupd.dto.UserDto;
 import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.User;
 import br.edu.ifpb.dac.groupd.service.UserService;
 
 @Testable
-@DisplayName("User Resources")
+@DisplayName("User Resources Tests")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserResourcesTests {
+@TestMethodOrder(OrderAnnotation.class)
+public class UserResourceTests {
 	
 	private final String PREFIX = "http://localhost:8080/api/users";
 	
@@ -66,6 +70,7 @@ public class UserResourcesTests {
 	
 	@Test
 	@DisplayName("Register Invalid User")
+	@Order(1)
 	void testInvalidUserRegister() {
 		dto.setEmail("f@f");
 		dto.setName("Fi");
@@ -91,6 +96,7 @@ public class UserResourcesTests {
 	}
 	@Test
 	@DisplayName("Register Valid User")
+	@Order(2)
 	void testValidUserRegister() {
 		
 		dto = validUser();
@@ -105,16 +111,19 @@ public class UserResourcesTests {
 			.andExpect(status().isCreated())
 			.andReturn().getResponse().getContentAsString();
 		});
+		UserDto userDto= assertDoesNotThrow(()->mapper.readValue(response,UserDto.class));
 		
 		User user = assertDoesNotThrow(()->{
 			return userService.findByEmail(dto.getEmail());
 		});
 		
-		assertTrue(equals(dto, user));
+		equalsDto(dto, userDto);
+		equalsUser(dto, user);
 	}
 	
 	@Test
 	@DisplayName("Register user with email already registered")
+	@Order(3)
 	void testPostEmailAlreadyUsed() {
 		dto = validUser();
 		try {
@@ -141,7 +150,8 @@ public class UserResourcesTests {
 	}
 	
 	@Test
-	@DisplayName("Update user email with email already in use")
+	@DisplayName("Update user email with email already registered")
+	@Order(4)
 	void testPutEmailAlreadyUsed() {
 		dto = validUser();
 		
@@ -187,9 +197,67 @@ public class UserResourcesTests {
 		
 		deleteUser(differentEmail);
 	}
+	@Test
+	@DisplayName("Update user email with a valid email")
+	@Order(5)
+	void testPutEmailValid() {
+		dto = validUser();
+		
+		UserPostDto dtoNewUser = validUser();
+		
+		String differentEmail = "ffc@protonmail.com";
+		String differentPassword = "filipefariasc";
+		
+		dtoNewUser.setEmail(differentEmail);
+		dtoNewUser.setPassword(differentPassword);
+		
+		assertDoesNotThrow(
+			()->
+			{
+				mockMvc.perform(
+					post(PREFIX)
+						.contentType("application/json")
+						.content(mapper.writeValueAsString(dto))
+				);
+				mockMvc.perform(
+					post(PREFIX)
+						.contentType("application/json")
+						.content(mapper.writeValueAsString(dtoNewUser))
+				);	
+			
+			}
+		);
+		
+		String newEmail = "ffc@pm.me";
+		dtoNewUser.setEmail(newEmail);
+		
+		String response = assertDoesNotThrow(()->{
+			return
+			mockMvc.perform(
+				put(PREFIX)
+				.with(user(differentEmail).password(differentPassword))
+					.contentType("application/json")
+					.content(mapper.writeValueAsString(dtoNewUser))
+			)
+			.andExpect(status().isOk())
+			.andReturn().getResponse().getContentAsString();
+		});
+		
+		UserDto userDto = assertDoesNotThrow(()->mapper.readValue(response, UserDto.class));
+		
+		User user = assertDoesNotThrow(()->{
+			return userService.findByEmail(dtoNewUser.getEmail());
+		});
+		
+		equalsDto(dto, userDto);
+		equalsUser(dto, user);
+		
+		deleteUser(newEmail);
+	}
 	
 	@Test
 	@DisplayName("Delete User Logged In")
+	@Order(6)
 	void testDeleteCurrentUser() {
 		dto = validUser();
 		
@@ -232,13 +300,18 @@ public class UserResourcesTests {
 		
 		return dto;
 	}
-	
-	private boolean equals(UserPostDto dto, User user) {
-		return 
-			(dto.getName().equals(user.getName()) &&
-			 dto.getEmail().equals(user.getEmail()) &&
-			 passEncoder.matches(dto.getPassword(), user.getPassword())
-			);
-				
+	private void equalsDto(UserPostDto dto, UserDto userDto) {
+		assertAll(
+				()->dto.getName().equals(userDto.getName()),
+				()->dto.getEmail().equals(userDto.getEmail())
+		);
+	}
+	private void equalsUser(UserPostDto dto, User user) {
+		
+		assertAll(
+			()->dto.getName().equals(user.getName()),
+			()->dto.getEmail().equals(user.getName()),
+			()->passEncoder.matches(dto.getPassword(), user.getPassword())
+		);
 	}
 }

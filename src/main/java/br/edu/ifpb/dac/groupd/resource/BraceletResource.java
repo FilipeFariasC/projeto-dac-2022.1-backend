@@ -26,14 +26,14 @@ import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
-import br.edu.ifpb.dac.groupd.service.UserBraceletService;
+import br.edu.ifpb.dac.groupd.service.BraceletService;
 
 @RestController
-@RequestMapping("/users/bracelets")
-public class UserBraceletResource {
+@RequestMapping({"/bracelets", "/users/bracelets"})
+public class BraceletResource {
 	// User Bracelet
 	@Autowired
-	private UserBraceletService userBraceletService;
+	private BraceletService braceletService;
 	
 	@PostMapping
 	public ResponseEntity<?> createBracelet(
@@ -42,7 +42,7 @@ public class UserBraceletResource {
 			@RequestBody
 			BraceletPostDto postDto){
 		try {
-			Bracelet bracelet = userBraceletService.createBracelet(principal.getName(), postDto);
+			Bracelet bracelet = braceletService.createBracelet(principal.getName(), postDto);
 			
 			BraceletDto dto = mapToBraceletDto(bracelet);
 			
@@ -54,7 +54,7 @@ public class UserBraceletResource {
 	@GetMapping
 	public ResponseEntity<?> getAllBracelets(Principal principal){
 		try {
-			List<BraceletDto> dtos = userBraceletService.getAllBracelets(principal.getName())
+			List<BraceletDto> dtos = braceletService.getAllBracelets(principal.getName())
 					.stream()
 					.map(this::mapToBraceletDto)
 					.toList();
@@ -69,7 +69,7 @@ public class UserBraceletResource {
 			Principal principal,
 			@RequestParam(name="name", required=true) String name){
 		try {
-			List<Bracelet> bracelets = userBraceletService.searchBraceletByName(principal.getName(), name);
+			List<Bracelet> bracelets = braceletService.searchBraceletByName(principal.getName(), name);
 			
 			List<BraceletDto> dtos = bracelets
 					.stream()
@@ -86,7 +86,7 @@ public class UserBraceletResource {
 			Principal principal,
 			@PathVariable("braceletId") Long braceletId){
 		try {
-			Bracelet bracelet = userBraceletService.findByBraceletId(principal.getName(), braceletId);
+			Bracelet bracelet = braceletService.findByBraceletId(principal.getName(), braceletId);
 			
 			BraceletDto dto = mapToBraceletDto(bracelet);
 			
@@ -104,7 +104,7 @@ public class UserBraceletResource {
 			@RequestBody
 			BraceletPostDto postDto){
 		try {
-			Bracelet bracelet = userBraceletService.updateBracelet(principal.getName(), braceletId, postDto);
+			Bracelet bracelet = braceletService.updateBracelet(principal.getName(), braceletId, postDto);
 			
 			BraceletDto dto = mapToBraceletDto(bracelet);
 			
@@ -118,7 +118,7 @@ public class UserBraceletResource {
 			Principal principal,
 			@PathVariable("braceletId") Long braceletId){
 		try {
-			userBraceletService.deleteBracelet(principal.getName(), braceletId);
+			braceletService.deleteBracelet(principal.getName(), braceletId);
 			
 			return ResponseEntity.noContent().build();
 		} catch (UserNotFoundException | BraceletNotFoundException | BraceletNotRegisteredException exception) {

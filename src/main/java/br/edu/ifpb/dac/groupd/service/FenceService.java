@@ -2,8 +2,7 @@ package br.edu.ifpb.dac.groupd.service;
 
 import java.util.List;
 import java.util.Optional;
-
-import javax.validation.Valid;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,69 +10,129 @@ import org.springframework.stereotype.Service;
 import br.edu.ifpb.dac.groupd.dto.post.FencePostDto;
 import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotFoundException;
+import br.edu.ifpb.dac.groupd.exception.FenceNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.NoBraceletAvailableException;
+import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Fence;
+import br.edu.ifpb.dac.groupd.model.User;
 import br.edu.ifpb.dac.groupd.repository.FenceRepository;
+import br.edu.ifpb.dac.groupd.repository.UserRepository;
 
 @Service
 public class FenceService {
 	@Autowired
+	private UserRepository userRepo;
+	
+	@Autowired
 	private FenceRepository fenceRepo;
 	
-	public Fence create(@Valid FencePostDto postDto) {
-		Fence fence = fromDto(postDto);
-		
-		
-		return fenceRepo.save(fence);
-	}
-	public List<Fence> getAll(){
-		
-		return fenceRepo.findAll();
-	}
-	public Fence findById(Long id) throws FenceNotFoundException{
-		Optional<Fence> register = fenceRepo.findById(id);
-		
-		if(register.isEmpty())
-			throw new FenceNotFoundException(id);
-		
-		return register.get();
-	}
-	public Fence update(Long id, @Valid FencePostDto postDto) throws FenceNotFoundException {
-		Optional<Fence> register = fenceRepo.findById(id);
-		
-		if(register.isEmpty())
-			throw new FenceNotFoundException(id);
-		
-		Fence fence = register.get();
-		
-		Fence updated = fromDto(postDto);
-		updated.setId(id);
-		updated.setBracelets(fence.getBracelets());
-		
-		return fenceRepo.save(updated);
-	}
 	
-	public Fence setActive(Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException, NoBraceletAvailableException {
-		Optional<Fence> register = fenceRepo.findById(fenceId);
-		if(register.isEmpty()) {
-			throw new FenceNotFoundException(fenceId);
+	public Fence createFence(String username, FencePostDto dto) throws UserNotFoundException {
+		Optional<User> register = userRepo.findByEmail(username);
+		
+		if (register.isEmpty())
+			throw new UserNotFoundException(username);
+		
+		User user = register.get();
+		
+		Fence mapped = mapFromDto(dto);
+		
+		Fence fence = fenceRepo.save(mapped);
+
+		user.addFence(fence);
+		userRepo.save(user);
+		
+		return fence;
+	}
+	public List<Fence> getAllFences(String username) throws UserNotFoundException {
+		Optional<User> register = userRepo.findByEmail(username);
+		
+		if (register.isEmpty())
+			throw new UserNotFoundException(username);
+		
+		User user = register.get();
+		
+		return user.getFences().stream().toList();
+	}
+	public Fence findFenceById(String username, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException {
+		Optional<User> register = userRepo.findByEmail(username);
+		
+		if (register.isEmpty())
+			throw new UserNotFoundException(username);
+		
+		User user = register.get();
+		
+		Optional<Fence> registerFence = user.getFences().stream().filter((fence)->fence.getId().equals(fenceId)).findFirst();
+		
+		if(registerFence.isEmpty()) {
+			throw new FenceNotRegisteredException();
 		}
 		
-		Fence fence = register.get();
+		return registerFence.get();
+	}
+
+	public Fence updateFence(String username, Long fenceId, FencePostDto dto) throws UserNotFoundException, FenceNotFoundException, FenceNotRegisteredException {
+		Optional<User> register = userRepo.findByEmail(username);
+		
+		if (register.isEmpty())
+			throw new UserNotFoundException(username);
+		
+		User user = register.get();
+		
+		boolean existe = user.getFences()
+				.stream()
+				.mapToLong(Fence::getId)
+				.anyMatch(id -> id == fenceId);
+		if(!existe) {
+			throw new FenceNotRegisteredException();
+		}
+		
+		Fence mapped = mapFromDto(dto);
+		
+		return fenceRepo.save(mapped);
+	}
+	public Fence setActive(String username, Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException, UserNotFoundException, NoBraceletAvailableException {
+		
+		Optional<User> register = userRepo.findByEmail(username);
+		if(register.isEmpty()) {
+			throw new UserNotFoundException(username);
+		}
+		User user = register.get();
+		
+		Optional<Fence> fenceRegister = user.getFences().stream().filter(f->f.getId().equals(fenceId))
+		.findFirst();
+		if(fenceRegister.isEmpty())
+			throw new FenceNotFoundException(fenceId);
+		
+		Fence fence = fenceRegister.get();
 		fence.setActive(status);
 		
 		return fenceRepo.save(fence);
 	}
 	
-	
-	public void delete(Long id) throws FenceNotFoundException {
-		if(!fenceRepo.existsById(id))
-			throw new FenceNotFoundException(id);
+	public void deleteFence(String username, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException, FenceNotFoundException {
+		Optional<User> register = userRepo.findByEmail(username);
 		
-		fenceRepo.deleteById(id);
+		if (register.isEmpty())
+			throw new UserNotFoundException(username);
+		
+		User user = register.get();
+		Set<Fence> fences = user.getFences();
+
+		Optional<Fence> fenceRegister = fences.stream().filter(fence->fence.getId().equals(fenceId)).findFirst();
+		
+		if(fenceRegister.isEmpty()) {
+			throw new FenceNotRegisteredException();
+		}
+		
+		Fence fence = fenceRegister.get();
+
+		user.removeFence(fence);
+		userRepo.save(user);
+		fenceRepo.deleteById(fenceId);
 	}
 	
-	private Fence fromDto(FencePostDto dto) {
+	private Fence mapFromDto(FencePostDto dto) {
 		Fence fence = new Fence();
 		
 		fence.setCoordinate(dto.getCoordinate());

@@ -108,5 +108,15 @@ public class Bracelet implements Serializable{
 	public void setMonitor(Fence monitor) {
 		this.monitor = monitor;
 	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+	
+	
 	
 }

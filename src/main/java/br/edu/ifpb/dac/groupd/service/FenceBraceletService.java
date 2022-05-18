@@ -14,7 +14,7 @@ import br.edu.ifpb.dac.groupd.model.User;
 import br.edu.ifpb.dac.groupd.repository.UserRepository;
 
 @Service
-public class UserFenceBraceletService {
+public class FenceBraceletService {
 	
 	@Autowired
 	private UserRepository userRepo;

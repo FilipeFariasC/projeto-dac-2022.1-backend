@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.FenceNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
-import br.edu.ifpb.dac.groupd.service.UserFenceBraceletService;
+import br.edu.ifpb.dac.groupd.service.FenceBraceletService;
 
 @RestController
-@RequestMapping("/users/fences/{fenceId}/{braceletId}")
-public class UserFenceBraceletResource {
+@RequestMapping({"/fences/{fenceId}/{braceletId}","/users/fences/{fenceId}/{braceletId}"})
+public class FenceBraceletResource {
 	
 	@Autowired
-	private UserFenceBraceletService userFenceBraceletService;
+	private FenceBraceletService fenceBraceletService;
 	
 	@PostMapping
 	public ResponseEntity<?> addBraceletFence(
@@ -29,7 +29,7 @@ public class UserFenceBraceletResource {
 			@PathVariable("fenceId") Long fenceId,
 			@PathVariable("braceletId") Long braceletId){
 		try {
-			userFenceBraceletService.addBraceletFence(principal.getName(), fenceId, braceletId);
+			fenceBraceletService.addBraceletFence(principal.getName(), fenceId, braceletId);
 			
 			return ResponseEntity.ok(String.format("Adicionada pulseira de identificador %d na cerca de identificador %d!", braceletId, fenceId));
 		} catch (UserNotFoundException | FenceNotRegisteredException | BraceletNotRegisteredException exception) {
@@ -42,7 +42,7 @@ public class UserFenceBraceletResource {
 			@PathVariable("fenceId") Long fenceId,
 			@PathVariable("braceletId") Long braceletId){
 		try {
-			userFenceBraceletService.removeBraceletFence(principal.getName(), fenceId, braceletId);
+			fenceBraceletService.removeBraceletFence(principal.getName(), fenceId, braceletId);
 			
 			return ResponseEntity.ok(String.format("Removida pulseira de identificador %d da cerca de identificador %d!", braceletId, fenceId));
 		} catch (UserNotFoundException | FenceNotRegisteredException | BraceletNotRegisteredException exception) {
