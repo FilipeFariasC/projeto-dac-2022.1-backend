@@ -89,6 +89,7 @@ public class FenceService {
 		
 		Fence mapped = mapFromDto(dto);
 		
+		
 		return fenceRepo.save(mapped);
 	}
 	public Fence setActive(String username, Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException, UserNotFoundException, NoBraceletAvailableException {

@@ -23,7 +23,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import br.edu.ifpb.dac.groupd.dto.BraceletDto;
 import br.edu.ifpb.dac.groupd.dto.post.BraceletPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
-import br.edu.ifpb.dac.groupd.exception.BraceletNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.service.BraceletService;
@@ -91,7 +90,7 @@ public class BraceletResource {
 			BraceletDto dto = mapToBraceletDto(bracelet);
 			
 			return ResponseEntity.ok(dto);
-		} catch (UserNotFoundException | BraceletNotRegisteredException exception) {
+		} catch (UserNotFoundException | BraceletNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}
@@ -129,7 +128,7 @@ public class BraceletResource {
 	private BraceletDto mapToBraceletDto(Bracelet bracelet) {
 		BraceletDto dto = new BraceletDto();
 		
-		dto.setIdBracelet(bracelet.getId());
+		dto.setId(bracelet.getId());
 		dto.setName(bracelet.getName());
 		
 		return dto;

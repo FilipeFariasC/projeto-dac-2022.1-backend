@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS roles(
 	CONSTRAINT authority_unique UNIQUE (authority)
 );
 
-INSERT INTO roles VALUES (nextval('roles_role_id_seq'), 'USER');
-INSERT INTO roles VALUES (nextval('roles_role_id_seq'), 'ADMIN');
+INSERT INTO roles (role_id, authority) VALUES (nextval('roles_role_id_seq'), 'USER');
+INSERT INTO roles (role_id, authority) VALUES (nextval('roles_role_id_seq'), 'ADMIN');

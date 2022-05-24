@@ -14,14 +14,14 @@ public class BraceletServiceConvert {
 	public Bracelet dtoToBracelet(BraceletDto dto) {
 		Bracelet bracelet = new Bracelet();
 		bracelet.setName(dto.getName());
-		bracelet.setId(dto.getIdBracelet());
+		bracelet.setId(dto.getId());
 		return bracelet;
 	}
 	
 	public BraceletDto braceletToDTO(Bracelet bracelet) {
 		BraceletDto dto = new BraceletDto();
 		dto.setName(bracelet.getName());
-		dto.setIdBracelet(bracelet.getId());
+		dto.setId(bracelet.getId());
 		return dto;
 	}
 	

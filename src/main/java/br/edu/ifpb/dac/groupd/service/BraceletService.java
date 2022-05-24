@@ -53,7 +53,7 @@ public class BraceletService {
 		
 		return user.getBracelets().stream().toList();
 	}
-	public Bracelet findByBraceletId(String username, Long braceletId) throws UserNotFoundException, BraceletNotRegisteredException {
+	public Bracelet findByBraceletId(String username, Long braceletId) throws UserNotFoundException, BraceletNotFoundException {
 		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
@@ -66,7 +66,7 @@ public class BraceletService {
 				return bracelet;
 			}
 		}
-		throw new BraceletNotRegisteredException();
+		throw new BraceletNotFoundException(braceletId);
 	}
 	public List<Bracelet> searchBraceletByName(String username, String name) throws UserNotFoundException {
 		Optional<User> register = userRepo.findByEmail(username);

@@ -121,7 +121,7 @@ public class FenceResource {
 	}
 	
 	@DeleteMapping("/{fenceId}")
-	public ResponseEntity<?> deleteUserFence(
+	public ResponseEntity<?> deleteFence(
 			Principal principal,
 			@PathVariable("fenceId") Long fenceId){
 		try {
