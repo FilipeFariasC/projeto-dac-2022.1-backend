@@ -12,6 +12,14 @@ public class BraceletPostDto {
 	@NotBlank
 	@Size(max=50)
 	private String name;
+	
+	// Default
+	public BraceletPostDto() {}
+
+	public BraceletPostDto(@NotNull @NotEmpty @NotBlank @Size(max = 50) String name) {
+		super();
+		this.name = name;
+	}
 
 	public String getName() {
 		return name;
@@ -20,6 +28,12 @@ public class BraceletPostDto {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public String toString() {
+		return "BraceletPostDto [name=" + name + "]";
+	}
+	
 	
 	
 }

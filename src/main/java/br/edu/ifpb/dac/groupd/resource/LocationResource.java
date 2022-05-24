@@ -1,6 +1,7 @@
 package br.edu.ifpb.dac.groupd.resource;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -24,8 +25,10 @@ import br.edu.ifpb.dac.groupd.dto.LocationDto;
 import br.edu.ifpb.dac.groupd.dto.post.LocationPostDto;
 import br.edu.ifpb.dac.groupd.exception.AlarmNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
+import br.edu.ifpb.dac.groupd.exception.BraceletNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.LocationCreationDateInFutureException;
 import br.edu.ifpb.dac.groupd.exception.LocationNotFoundException;
+import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Location;
 import br.edu.ifpb.dac.groupd.service.AlarmService;
 import br.edu.ifpb.dac.groupd.service.LocationService;
@@ -44,13 +47,14 @@ public class LocationResource {
 	@PostMapping
 	@ResponseStatus(code=HttpStatus.CREATED)
 	public ResponseEntity<?> create(
+			Principal principal,
 			@Valid
 			@RequestBody
 			LocationPostDto postDto,
 			HttpServletResponse response
 			) {
 		try {
-			Location location = locationService.create(postDto);
+			Location location = locationService.create(principal.getName(),postDto);
 			
 			LocationDto dto = mapToDto(location);
 			
@@ -61,8 +65,10 @@ public class LocationResource {
 					.toUri();
 			
 			return ResponseEntity.created(uri).body(dto);
-		} catch (BraceletNotFoundException | LocationCreationDateInFutureException exception) {
+		} catch (BraceletNotFoundException | LocationCreationDateInFutureException | UserNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+		} catch(BraceletNotRegisteredException exception) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
 		}
 	}
 	@GetMapping
@@ -79,9 +85,9 @@ public class LocationResource {
 		
 	}
 	@GetMapping("/{pulseiraId}")
-	public ResponseEntity<?> findByBraceletId(@PathVariable("pulseiraId") Long pulseiraId){
+	public ResponseEntity<?> findByBraceletId(Principal principal,@PathVariable("pulseiraId") Long pulseiraId){
 		try {
-			List<Location> locations = locationService.findByBraceletId(pulseiraId);
+			List<Location> locations = locationService.findByBraceletId(principal.getName(),pulseiraId);
 			
 			List<LocationDto> dtos = locations
 					.stream()
@@ -93,8 +99,10 @@ public class LocationResource {
 					.toList();
 			
 			return ResponseEntity.ok(dtos);
-		} catch (BraceletNotFoundException exception) {
+		} catch (BraceletNotFoundException | UserNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+		} catch (BraceletNotRegisteredException exception) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
 		}
 	}
 	

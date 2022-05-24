@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.post.LocationPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
+import br.edu.ifpb.dac.groupd.exception.BraceletNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.LocationCreationDateInFutureException;
 import br.edu.ifpb.dac.groupd.exception.LocationNotFoundException;
+import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.model.Fence;
 import br.edu.ifpb.dac.groupd.model.Location;
@@ -36,7 +38,7 @@ public class LocationService {
 	@Autowired
 	private CoordinateService coordinateService;
 	
-	public Location create(LocationPostDto dto) throws BraceletNotFoundException, LocationCreationDateInFutureException {
+	public Location create(String email, LocationPostDto dto) throws BraceletNotFoundException, LocationCreationDateInFutureException, UserNotFoundException, BraceletNotRegisteredException {
 		if(dto.getCreationDate() == null){
 			dto.setCreationDate(LocalDateTime.now());
 		} else {
@@ -50,7 +52,7 @@ public class LocationService {
 			}
 		}
 		
-		Bracelet bracelet = braceletService.findById(dto.getBraceletId());
+		Bracelet bracelet = braceletService.findByBraceletId(email, dto.getBraceletId());
 		
 		Location mapped = mapfromDto(dto);
 		mapped.setBracelet(bracelet);
@@ -84,8 +86,8 @@ public class LocationService {
 		return location.get();
 	}
 	
-	public List<Location> findByBraceletId(Long braceletId) throws BraceletNotFoundException {
-		Bracelet bracelet = braceletService.findById(braceletId);
+	public List<Location> findByBraceletId(String email, Long braceletId) throws BraceletNotFoundException, UserNotFoundException, BraceletNotRegisteredException {
+		Bracelet bracelet = braceletService.findByBraceletId(email, braceletId);
 		
 		return bracelet.getLocations().stream().toList();
 	}

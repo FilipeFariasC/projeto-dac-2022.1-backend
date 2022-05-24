@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
@@ -33,7 +34,11 @@ public class Bracelet implements Serializable{
 	@Column(name="bracelet_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	
+	/*
+	@ManyToOne
+	@JoinColumn(name="owner", referencedColumnName = "user_id")
+	private User owner;
+	*/
 	@NotEmpty
 	@Size(min=1,max=50)
 	@Column(name="name")
@@ -43,7 +48,7 @@ public class Bracelet implements Serializable{
 	private Set<Fence> fences = new HashSet<>();
 	
 	
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "bracelet_location",
 		joinColumns = @JoinColumn(name = "bracelet_id"),
 		inverseJoinColumns = @JoinColumn(name = "location_id"))
@@ -102,5 +107,6 @@ public class Bracelet implements Serializable{
 	public void setMonitor(Fence monitor) {
 		this.monitor = monitor;
 	}
+	
 	
 }
