@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,6 +22,7 @@ import org.junit.platform.commons.annotation.Testable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -29,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.edu.ifpb.dac.groupd.dto.BraceletDto;
 import br.edu.ifpb.dac.groupd.dto.post.BraceletPostDto;
 import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
+import br.edu.ifpb.dac.groupd.exception.UserEmailInUseException;
 import br.edu.ifpb.dac.groupd.exceptionhandler.errors.AttributeErrorData;
 import br.edu.ifpb.dac.groupd.exceptionhandler.errors.ErrorResponse;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
@@ -41,6 +44,7 @@ import br.edu.ifpb.dac.groupd.service.UserService;
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @DisplayName("Bracelet Resources Tests")
+@ActiveProfiles("test")
 class BraceletResourceTests {
 	
 	private final String USER_PREFIX = "http://localhost:8080/api/users";
@@ -59,6 +63,7 @@ class BraceletResourceTests {
 	@Autowired
 	private BraceletService braceletService;
 	
+	
 	private User user;
 	
 	private BraceletPostDto dto;
@@ -66,12 +71,17 @@ class BraceletResourceTests {
 	@BeforeEach
 	void setUp() throws Exception {
 		dto = new BraceletPostDto();
+		UserPostDto userPostDto = validUser();
+		user = userService.create(userPostDto);
+	}
+	
+	private UserPostDto validUser() {
 		UserPostDto userPostDto = new UserPostDto();
 		userPostDto.setEmail("f@f.com");
 		userPostDto.setPassword("abcdefgh");
 		userPostDto.setName("Fil");
 		
-		user = userService.create(userPostDto);
+		return userPostDto;
 	}
 
 	@AfterEach
@@ -139,6 +149,20 @@ class BraceletResourceTests {
 		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getEmail(), braceletDto.getIdBracelet()));
 		
 		equals(braceletPostDto, braceletDto, bracelet);
+	}
+	
+	void testRegisterBraceletValid
+	
+	@Test
+	void createUser() throws Exception{
+		try {
+			UserPostDto create = validUser();
+
+			create.setEmail("fil@pm.me");
+			
+			userService.create(create);
+		} catch (UserEmailInUseException e) {
+		}
 	}
 	
 	
