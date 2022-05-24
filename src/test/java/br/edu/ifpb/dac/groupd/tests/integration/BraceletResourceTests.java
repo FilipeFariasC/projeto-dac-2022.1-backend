@@ -151,7 +151,7 @@ class BraceletResourceTests {
 		equals(braceletPostDto, braceletDto, bracelet);
 	}
 	
-	void testRegisterBraceletValid
+	//void testRegisterBraceletValid
 	
 	@Test
 	void createUser() throws Exception{
