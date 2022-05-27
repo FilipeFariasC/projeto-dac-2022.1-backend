@@ -168,6 +168,11 @@ class BraceletResourceTests {
 		equals(braceletPostDto, braceletDto, bracelet);
 	}
 	
+<<<<<<< HEAD
+=======
+	//void testRegisterBraceletValid
+	
+>>>>>>> 8567652a41e4014638b1b4a9d11d808a13cbbfe1
 	@Test
 	@DisplayName("Get Bracelet Id Doesn't Exist")
 	@Order(3)
