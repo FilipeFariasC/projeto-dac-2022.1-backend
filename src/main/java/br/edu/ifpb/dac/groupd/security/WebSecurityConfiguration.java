@@ -53,6 +53,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		String userEndpoint = "/api/users";
 		
 		http
+			.cors()
+			.and()
 			.csrf()
 				.disable()
 			.exceptionHandling()
