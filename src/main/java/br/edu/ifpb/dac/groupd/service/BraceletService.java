@@ -44,14 +44,13 @@ public class BraceletService {
 		return bracelet;
 	}
 	public List<Bracelet> getAllBracelets(String username) throws UserNotFoundException {
-		Optional<User> register = userRepo.findByEmail(username);
+		boolean register = userRepo.existsByEmail(username);
 		
-		if (register.isEmpty())
+		if (!register)
 			throw new UserNotFoundException(username);
 		
-		User user = register.get();
-		
-		return user.getBracelets().stream().toList();
+		List<Bracelet> bracelets = braceletRepo.findByUsername(username);
+		return bracelets;
 	}
 	public Bracelet findByBraceletId(String username, Long braceletId) throws UserNotFoundException, BraceletNotFoundException {
 		Optional<User> register = userRepo.findByEmail(username);
