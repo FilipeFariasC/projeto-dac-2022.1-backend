@@ -4,7 +4,10 @@ import java.time.LocalTime;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -15,7 +18,13 @@ import br.edu.ifpb.dac.groupd.validation.contraints.ValidTimer;
 
 @ValidTimer
 public class FencePostDto implements Timer{
-
+	
+	@NotNull
+	@NotEmpty
+	@NotBlank
+	@Size(min=1,max=50)
+	private String name;
+	
 	@NotNull
 	@Valid
 	private Coordinate coordinate;

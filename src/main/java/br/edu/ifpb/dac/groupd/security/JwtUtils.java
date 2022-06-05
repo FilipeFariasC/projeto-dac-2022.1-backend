@@ -56,6 +56,6 @@ public class JwtUtils {
     }
 	
     private Long getExpirationTime() {
-    	return System.currentTimeMillis() + 1000 * 60 * 30; // 30 minutos 
+    	return System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7; // 1 semana
     }
 }

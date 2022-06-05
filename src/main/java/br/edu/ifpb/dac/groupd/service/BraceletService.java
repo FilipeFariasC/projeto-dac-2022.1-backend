@@ -5,11 +5,12 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.post.BraceletPostDto;
 import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
-import br.edu.ifpb.dac.groupd.exception.BraceletNotRegisteredException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.model.User;
@@ -43,13 +44,13 @@ public class BraceletService {
 		
 		return bracelet;
 	}
-	public List<Bracelet> getAllBracelets(String username) throws UserNotFoundException {
+	public Page<Bracelet> getAllBracelets(String username, Pageable pageable) throws UserNotFoundException {
 		boolean register = userRepo.existsByEmail(username);
 		
 		if (!register)
 			throw new UserNotFoundException(username);
 		
-		List<Bracelet> bracelets = braceletRepo.findByUsername(username);
+		Page<Bracelet> bracelets = braceletRepo.findAllBraceletsByUsername(username, pageable);
 		return bracelets;
 	}
 	public Bracelet findByBraceletId(String username, Long braceletId) throws UserNotFoundException, BraceletNotFoundException {

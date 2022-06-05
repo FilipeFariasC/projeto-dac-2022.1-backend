@@ -7,6 +7,7 @@ import br.edu.ifpb.dac.groupd.model.Coordinate;
 public class FenceDto {
 	
 	private Long id;
+	private String name;
 	private Coordinate coordinate;
 	private LocalTime startTime;
 	private LocalTime finishTime;
@@ -19,6 +20,12 @@ public class FenceDto {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	public Coordinate getCoordinate() {
 		return coordinate;

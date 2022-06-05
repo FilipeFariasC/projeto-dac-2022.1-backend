@@ -20,7 +20,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.exception.NoBraceletAvailableException;
@@ -37,29 +39,24 @@ public class Fence implements Serializable, Timer{
 	@Column(name="fence_id")
 	private Long id;
 	
-	/*
-	@ManyToOne
-	@JoinColumn(name="owner", referencedColumnName = "user_id")
-	private User owner;
-	*/
+	@NotEmpty
+	@Size(min=1,max=50)
+	@Column(name="name")
+	private String name;
+	
 	@NotNull
 	@Embedded
 	@Valid
 	private Coordinate coordinate;
 	
-	@Column(name="start_time"
-//			, columnDefinition = "TIME"
-			)
+	@Column(name="start_time")
 	private LocalTime startTime;
 	
-	@Column(name="finish_time"
-//			, columnDefinition = "TIME"
-			)
+	@Column(name="finish_time")
 	private LocalTime finishTime;
 	
 	@NotNull
-	@Column(name="active"
-	)
+	@Column(name="active")
 	private boolean active = false;
 	
 	@NotNull

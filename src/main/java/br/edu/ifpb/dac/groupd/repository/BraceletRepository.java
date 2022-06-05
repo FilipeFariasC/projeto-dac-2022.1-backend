@@ -1,8 +1,9 @@
 package br.edu.ifpb.dac.groupd.repository;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +15,11 @@ import br.edu.ifpb.dac.groupd.model.Bracelet;
 public interface BraceletRepository extends JpaRepository<Bracelet, Long> {
 	Optional<Bracelet> findByName(String name);
 	
-	@Query("SELECT u.bracelets FROM User u WHERE u.email = :username ORDER BY u.id")
-	List<Bracelet> findByUsername(@Param("username") String username);
+//	@Query(value = "SELECT u.bracelets FROM User u WHERE u.email = :username")
+	@Query(nativeQuery = true,
+		   value="SELECT b.* FROM bracelets b "+
+		   		 "JOIN user_bracelet ub ON ub.bracelet_id = b.bracelet_id "+
+				 "JOIN users u ON u.user_id = ub.user_id "+
+		   		 "WHERE u.email = :username")
+	Page<Bracelet> findAllBraceletsByUsername(@Param("username") String username, Pageable pageable);
 }

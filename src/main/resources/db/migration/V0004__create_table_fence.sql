@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS fences (
 	fence_id BIGSERIAL,
+	name VARCHAR(50) NOT NULL,
 	latitude DECIMAL(10,8) NOT NULL,
 	longitude DECIMAL(11,8) NOT NULL,
 	start_time TIME,

@@ -31,11 +31,6 @@ public class LoginController {
 			@RequestBody
 			UserDetailsDto userDetailsDto,
 			HttpServletRequest request){
-		
-		if(principal != null) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-					String.format("Você já está logado no sistema, através do username %s", principal.getName()));
-		}
 		try {
 			return ResponseEntity.ok(loginService.login(userDetailsDto));
 		} catch(AuthenticationException exception) {
