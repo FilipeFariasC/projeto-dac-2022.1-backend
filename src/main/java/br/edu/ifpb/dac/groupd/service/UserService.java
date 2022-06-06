@@ -74,6 +74,18 @@ public class UserService {
 		
 		return userRepo.save(updated);
 	}
+	
+	public User updateUserName(String username, String name) throws UserNotFoundException {
+		Optional<User> user = userRepo.findByEmail(username);
+		if(user.isEmpty())
+			throw new UserNotFoundException(username);
+		
+		User updated = user.get();
+		updated.setName(name);
+		
+		return userRepo.save(updated);
+	}
+	
 	public void deleteByUsername(String username) throws UserNotFoundException{
 		Optional<User> register = userRepo.findByEmail(username);
 		

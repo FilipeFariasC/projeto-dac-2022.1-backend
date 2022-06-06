@@ -29,15 +29,23 @@ public class FencePostDto implements Timer{
 	@Valid
 	private Coordinate coordinate;
 	
-	@JsonFormat(pattern = "hh:mm")
+	@JsonFormat(pattern = "HH:mm")
 	private LocalTime startTime;
 	
-	@JsonFormat(pattern = "hh:mm")
+	@JsonFormat(pattern = "HH:mm")
 	private LocalTime finishTime;
 	
 	@NotNull
 	@Min(1)
 	private Double radius;
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public Coordinate getCoordinate() {
 		return coordinate;

@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.dto.post.FencePostDto;
@@ -44,15 +46,13 @@ public class FenceService {
 		
 		return fence;
 	}
-	public List<Fence> getAllFences(String username) throws UserNotFoundException {
+	public Page<Fence> getAllFences(String username, Pageable pageable) throws UserNotFoundException {
 		Optional<User> register = userRepo.findByEmail(username);
 		
 		if (register.isEmpty())
 			throw new UserNotFoundException(username);
 		
-		User user = register.get();
-		
-		return user.getFences().stream().toList();
+		return fenceRepo.findByUserEmail(username, pageable);
 	}
 	public Fence findFenceById(String username, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException {
 		Optional<User> register = userRepo.findByEmail(username);
@@ -136,6 +136,7 @@ public class FenceService {
 	private Fence mapFromDto(FencePostDto dto) {
 		Fence fence = new Fence();
 		
+		fence.setName(dto.getName());
 		fence.setCoordinate(dto.getCoordinate());
 		fence.setRadius(dto.getRadius());
 		fence.setStartTime(dto.getStartTime());

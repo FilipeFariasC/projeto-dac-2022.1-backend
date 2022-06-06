@@ -85,9 +85,14 @@ public class BraceletResource {
 		return PageRequest.of(page, size, sorted);
 	}
 	
+	private Sort byId() {
+		return Sort.by("bracelet_id");
+//		return Sort.by("id");
+	}
 	private Sort getSort(String sort) {
 		if(sort == null || sort.isEmpty() || sort.isBlank()) {
-			return Sort.by("bracelet_id").ascending();
+//			return Sort.by("bracelet_id").ascending();
+			return byId().ascending();
 		}
 		
 		
@@ -103,14 +108,7 @@ public class BraceletResource {
 		}).toArray(String[]::new);
 
 		Sort sortedFields = sortFields(fields);
-		System.out.println(sortedFields);
-
-		Sort sortedOrder = sortOrder(sortedFields, order);
-		return sortedOrder;
-	}
-	
-	void printArray(Object[]array) {
-		Arrays.stream(array).forEach(System.out::println);
+		return sortOrder(sortedFields, order);
 	}
 	
 	Sort sortFields(String[] arguments) {
@@ -124,23 +122,23 @@ public class BraceletResource {
 				sorted = switch(argument){
 					case "ID" ->{
 						first = false;
-						yield Sort.by("bracelet_id");
+						yield byId();
 					}
 					case "NAME" ->{
 						first = false;
 						yield Sort.by("name");
 					}
-					default -> Sort.by("bracelet_id");
+					default -> byId();
 				};
 			} else {
 				switch(argument){
-					case "ID" -> sorted.and(Sort.by("bracelet_id"));
+					case "ID" -> sorted.and(byId());
 					case "NAME" -> sorted.and(Sort.by("name"));
 				}
 			}
 				
 		}
-		return sorted.and(Sort.by("name"));
+		return sorted;
 	}
 	Sort sortOrder(Sort sorted, String[] arguments) {
 		for(int i = 0; i < arguments.length; i++) {

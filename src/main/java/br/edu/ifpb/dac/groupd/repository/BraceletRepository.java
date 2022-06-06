@@ -15,7 +15,7 @@ import br.edu.ifpb.dac.groupd.model.Bracelet;
 public interface BraceletRepository extends JpaRepository<Bracelet, Long> {
 	Optional<Bracelet> findByName(String name);
 	
-//	@Query(value = "SELECT u.bracelets FROM User u WHERE u.email = :username")
+//	@Query(value = "SELECT u.bracelets FROM User u WHERE email = :username")
 	@Query(nativeQuery = true,
 		   value="SELECT b.* FROM bracelets b "+
 		   		 "JOIN user_bracelet ub ON ub.bracelet_id = b.bracelet_id "+
