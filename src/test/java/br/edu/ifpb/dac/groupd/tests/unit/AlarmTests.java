@@ -49,7 +49,6 @@ public class AlarmTests {
 		alarm.setFence(null);
 		
 		violations = validator.validateProperty(alarm, "fence");
-		System.out.println("tamanho:"+violations.size());
 		assertNotEquals(0, violations.size(),"Valid not fence");
 	}
 	

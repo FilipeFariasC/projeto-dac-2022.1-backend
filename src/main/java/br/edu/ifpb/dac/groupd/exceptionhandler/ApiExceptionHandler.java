@@ -1,8 +1,8 @@
 package br.edu.ifpb.dac.groupd.exceptionhandler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -59,7 +58,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		
 		return handleExceptionInternal(ex, response, headers, HttpStatus.BAD_REQUEST, request);
 	}
-	
+
 	@Override
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	@ResponseBody
@@ -74,26 +73,22 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	private List<ErrorData> createErrorList(BindingResult bindingResult){
-		List<ErrorData> errors = new ArrayList<>();
 		
-		String messageUser = "";
-		String messageDeveloper = "";
-		
-		for(FieldError fieldError : bindingResult.getFieldErrors()) {
-			messageUser = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
-			messageDeveloper = fieldError.toString();
-			
-			String field = fieldError.getField();
-			String rejectedValue = null;
-			
-			if(fieldError.getRejectedValue() != null) {
-				rejectedValue = fieldError.getRejectedValue().toString();
-			}
-			
-			errors.add(new AttributeValueErrorData(messageUser, messageDeveloper, field, rejectedValue));
-		}
-
-		return errors;
+		return bindingResult.getFieldErrors()
+			.stream()
+			.map(fieldError->{
+				String messageUser = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+				String messageDeveloper = fieldError.toString();
+				
+				String field = fieldError.getField();
+				String rejectedValue = null;
+				
+				if(fieldError.getRejectedValue() != null) {
+					rejectedValue = fieldError.getRejectedValue().toString();
+				}
+				
+				return new AttributeValueErrorData(messageUser, messageDeveloper, field, rejectedValue);
+			}).collect(Collectors.toList());
 	}
 	
 	private String getRequestUri(WebRequest request) {

@@ -88,7 +88,7 @@ public class FenceService {
 		}
 		
 		Fence mapped = mapFromDto(dto);
-		
+		mapped.setId(fenceId);
 		
 		return fenceRepo.save(mapped);
 	}

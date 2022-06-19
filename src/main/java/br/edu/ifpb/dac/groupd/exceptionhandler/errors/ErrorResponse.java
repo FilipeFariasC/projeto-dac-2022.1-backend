@@ -27,7 +27,7 @@ public class ErrorResponse {
 	public void setPath(String path) {
 		this.path = path;
 	}
-	public List<ErrorData> getErrors() {
+	public List<? extends ErrorData> getErrors() {
 		return errors;
 	}
 	public void setErrors(List<ErrorData> errors) {

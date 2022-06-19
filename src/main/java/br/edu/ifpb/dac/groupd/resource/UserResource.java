@@ -6,16 +6,11 @@ import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -42,7 +37,6 @@ public class UserResource {
 	
 	@Autowired
 	private ModelMapper mapper;
-
 	
 	// User Only
 	@PostMapping
@@ -122,14 +116,9 @@ public class UserResource {
 	
 	@PatchMapping("/user")
 	public ResponseEntity<?> updateUserName(Principal principal, 
-			@RequestBody
-			@NotNull
-			@NotEmpty
-			@NotBlank
-			@Size(min=3, max=50)
-			String name){
+			@RequestBody @Valid UserPostDto userPostDto){
 		try {
-			userService.updateUserName(principal.getName(), name.replace('"', ' '));
+			userService.updateUserName(principal.getName(), userPostDto.getName());
 			
 			return ResponseEntity.ok(String.format("Nome atualizado!", principal.getName()));
 		} catch (UserNotFoundException exception) {
