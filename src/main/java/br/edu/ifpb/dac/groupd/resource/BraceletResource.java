@@ -4,7 +4,6 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -33,7 +32,6 @@ import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
 import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.model.Bracelet;
 import br.edu.ifpb.dac.groupd.service.BraceletService;
-import net.bytebuddy.asm.Advice.AllArguments;
 
 @RestController
 @RequestMapping({"/bracelets", "/users/bracelets"})

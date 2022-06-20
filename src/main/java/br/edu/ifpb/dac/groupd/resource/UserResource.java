@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import br.edu.ifpb.dac.groupd.dto.UserDto;
 import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
 import br.edu.ifpb.dac.groupd.exception.UserEmailInUseException;
@@ -31,6 +33,7 @@ import br.edu.ifpb.dac.groupd.service.UserService;
 
 @RestController
 @RequestMapping("/users")
+@JsonIgnoreProperties(ignoreUnknown = false)
 public class UserResource {
 	@Autowired
 	private UserService userService;
@@ -44,8 +47,7 @@ public class UserResource {
 	public ResponseEntity<?> create(
 			@Valid
 			@RequestBody
-			UserPostDto userPostDto
-			,
+			UserPostDto userPostDto,
 			HttpServletRequest request){
 		
 		User created;
@@ -61,17 +63,6 @@ public class UserResource {
 		
 		return ResponseEntity.created(uri).body(dto);
 	}
-	/*
-	@GetMapping
-	public ResponseEntity<?> getAll() {
-		List<UserDto> dtos = userService.getAll()
-				.stream()
-				.map(this::mapToUserDto)
-				.toList();
-		
-		return ResponseEntity.ok(dtos);
-	}
-	*/
 	@GetMapping("/user")
 	public ResponseEntity<?> findById(Principal principal){
 		try {

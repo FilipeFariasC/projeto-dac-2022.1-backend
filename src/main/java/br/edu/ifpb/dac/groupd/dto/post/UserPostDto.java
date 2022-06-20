@@ -2,29 +2,28 @@ package br.edu.ifpb.dac.groupd.dto.post;
 
 import java.util.Objects;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import br.edu.ifpb.dac.groupd.validation.contraints.ValidEmail;
+
+@JsonIgnoreProperties(ignoreUnknown = false)
 public class UserPostDto {
 
 	@NotNull
-	@NotEmpty
-	@NotBlank
 	@Size(min=3, max=50)
 	private String name;
 	
 	@NotNull
 	@NotEmpty
-	@NotBlank
 	@ValidEmail
 	private String email;
 	
 	@NotNull
-	@NotEmpty
 	@Size(min=8, max=30)
 	@Pattern(regexp="^[^\\s]+$", message= "{password.Pattern}")
 	private String password;
@@ -43,7 +42,7 @@ public class UserPostDto {
 	}
 
 	public void setEmail(String email) {
-		this.email = email;
+		this.email = email == null ? null : email.trim();
 	}
 
 	public String getPassword() {
@@ -51,7 +50,7 @@ public class UserPostDto {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = password == null ? null : password.trim();
 	}
 
 	@Override

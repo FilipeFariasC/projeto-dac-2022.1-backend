@@ -2,6 +2,8 @@ package br.edu.ifpb.dac.groupd.dto;
 
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import br.edu.ifpb.dac.groupd.model.Coordinate;
 
 public class FenceDto {
@@ -9,7 +11,9 @@ public class FenceDto {
 	private Long id;
 	private String name;
 	private Coordinate coordinate;
+	@JsonFormat(pattern = "HH:mm")
 	private LocalTime startTime;
+	@JsonFormat(pattern = "HH:mm")
 	private LocalTime finishTime;
 	private boolean active;
 	private Double radius;

@@ -1,8 +1,10 @@
 package br.edu.ifpb.dac.groupd.exceptionhandler;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -11,7 +13,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -65,16 +68,33 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		
-		List<ErrorData> errors = createErrorList(ex.getBindingResult());
+		List<ErrorData> globalErrors = createGlobalErrorList(ex.getBindingResult().getGlobalErrors());
+		List<ErrorData> fieldErrors = createFieldErrorList(ex.getBindingResult().getFieldErrors());
+		
+		List<ErrorData> errors = Stream.of(globalErrors, fieldErrors)
+			.flatMap(Collection::stream)
+			.collect(Collectors.toList());
 		
 		ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), getRequestUri(request), errors);
 		
 		return handleExceptionInternal(ex, response, headers, HttpStatus.BAD_REQUEST, request);
 	}
 	
-	private List<ErrorData> createErrorList(BindingResult bindingResult){
+	private List<ErrorData> createGlobalErrorList(List<ObjectError> globalErrors){
 		
-		return bindingResult.getFieldErrors()
+		return globalErrors
+			.stream()
+			.map((objectError)->{
+				String messageUser = objectError.getDefaultMessage();
+				String messageDeveloper = objectError.toString();
+				
+				return new ErrorData(messageUser, messageDeveloper);
+			}).collect(Collectors.toList());
+	}
+	
+	private List<ErrorData> createFieldErrorList(List<FieldError> fieldErrors){
+		
+		return fieldErrors
 			.stream()
 			.map(fieldError->{
 				String messageUser = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
