@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import br.edu.ifpb.dac.groupd.dto.UserDto;
 import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
 import br.edu.ifpb.dac.groupd.exception.UserEmailInUseException;
@@ -33,7 +31,6 @@ import br.edu.ifpb.dac.groupd.service.UserService;
 
 @RestController
 @RequestMapping("/users")
-@JsonIgnoreProperties(ignoreUnknown = false)
 public class UserResource {
 	@Autowired
 	private UserService userService;

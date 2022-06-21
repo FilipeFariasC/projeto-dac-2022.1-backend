@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.edu.ifpb.dac.groupd.validation.contraints.ValidEmail;
 
-@JsonIgnoreProperties(ignoreUnknown = false)
 public class UserPostDto {
 
 	@NotNull
