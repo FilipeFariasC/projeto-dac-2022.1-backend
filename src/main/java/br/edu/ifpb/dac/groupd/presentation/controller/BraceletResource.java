@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import br.edu.ifpb.dac.groupd.business.exception.BraceletNotFoundException;
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.business.service.BraceletService;
+import br.edu.ifpb.dac.groupd.business.service.converter.BraceletConverterService;
 import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
 import br.edu.ifpb.dac.groupd.presentation.dto.BraceletRequest;
 import br.edu.ifpb.dac.groupd.presentation.dto.BraceletResponse;
@@ -40,6 +40,9 @@ public class BraceletResource {
 	@Autowired
 	private BraceletService braceletService;
 	
+	@Autowired
+	private BraceletConverterService converter;
+	
 	@PostMapping
 	public ResponseEntity<?> createBracelet(
 			Principal principal,
@@ -49,7 +52,7 @@ public class BraceletResource {
 		try {
 			Bracelet bracelet = braceletService.createBracelet(principal.getName(), postDto);
 			
-			BraceletResponse dto = mapToBraceletDto(bracelet);
+			BraceletResponse dto = converter.braceletToResponse(bracelet);
 			
 			return ResponseEntity.created(getUri(bracelet)).body(dto);
 		} catch (UserNotFoundException exception) {
@@ -58,15 +61,15 @@ public class BraceletResource {
 	}
 	@GetMapping
 	public ResponseEntity<?> getAllBracelets(Principal principal,
-			@RequestHeader(name = "page", required=false) int page,
-			@RequestHeader(name = "size", required=false) int size,
-			@RequestHeader(name = "sort", required=false) String sort
+			@RequestParam(name = "page", required=false) int page,
+			@RequestParam(name = "size", required=false) int size,
+			@RequestParam(name = "sort", required=false) String sort
 			){
 		try {
 			Pageable pageable = getPageable(page, size, sort);
 			Page<Bracelet> pageBracelets = braceletService.getAllBracelets(principal.getName(), pageable);
 			Page<BraceletResponse> pageDtos = pageBracelets
-					.map(this::mapToBraceletDto);
+					.map(converter::braceletToResponse);
 			
 			
 			return ResponseEntity.ok(pageDtos);
@@ -159,7 +162,7 @@ public class BraceletResource {
 			
 			List<BraceletResponse> dtos = bracelets
 					.stream()
-					.map(this::mapToBraceletDto)
+					.map(converter::braceletToResponse)
 					.toList();
 			return ResponseEntity.ok(dtos);
 		} catch (UserNotFoundException exception) {
@@ -174,7 +177,7 @@ public class BraceletResource {
 		try {
 			Bracelet bracelet = braceletService.findByBraceletId(principal.getName(), braceletId);
 			
-			BraceletResponse dto = mapToBraceletDto(bracelet);
+			BraceletResponse dto = converter.braceletToResponse(bracelet);
 			
 			return ResponseEntity.ok(dto);
 		} catch (UserNotFoundException | BraceletNotFoundException exception) {
@@ -192,7 +195,7 @@ public class BraceletResource {
 		try {
 			Bracelet bracelet = braceletService.updateBracelet(principal.getName(), braceletId, postDto);
 			
-			BraceletResponse dto = mapToBraceletDto(bracelet);
+			BraceletResponse dto = converter.braceletToResponse(bracelet);
 			
 			return ResponseEntity.status(HttpStatus.OK).location(getUri(bracelet)).body(dto);
 		} catch (UserNotFoundException| BraceletNotFoundException  exception) {
@@ -212,14 +215,6 @@ public class BraceletResource {
 		}
 	}
 	
-	private BraceletResponse mapToBraceletDto(Bracelet bracelet) {
-		BraceletResponse dto = new BraceletResponse();
-		
-		dto.setId(bracelet.getId());
-		dto.setName(bracelet.getName());
-		
-		return dto;
-	}
 	private URI getUri(Bracelet bracelet) {
 		return ServletUriComponentsBuilder
 				.fromCurrentRequestUri()

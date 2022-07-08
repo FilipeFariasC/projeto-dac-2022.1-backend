@@ -4,7 +4,6 @@ package br.edu.ifpb.dac.groupd.presentation.controller;
 import java.net.URI;
 import java.security.Principal;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.validation.Valid;
 
@@ -34,6 +33,7 @@ import br.edu.ifpb.dac.groupd.business.exception.FenceNotRegisteredException;
 import br.edu.ifpb.dac.groupd.business.exception.NoBraceletAvailableException;
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.business.service.FenceService;
+import br.edu.ifpb.dac.groupd.business.service.converter.FenceConverterService;
 import br.edu.ifpb.dac.groupd.model.entities.Fence;
 import br.edu.ifpb.dac.groupd.presentation.dto.FenceRequest;
 import br.edu.ifpb.dac.groupd.presentation.dto.FenceResponse;
@@ -45,6 +45,9 @@ public class FenceResource {
 	@Autowired
 	private FenceService fenceService;
 	
+	@Autowired
+	private FenceConverterService converter;
+	
 	
 	@PostMapping
 	public ResponseEntity<?> createFence(
@@ -55,7 +58,7 @@ public class FenceResource {
 		try {
 			Fence fence = fenceService.createFence(principal.getName(), postDto);
 			
-			FenceResponse dto = mapToFenceDto(fence);
+			FenceResponse dto = converter.fenceToResponse(fence);
 			
 			return ResponseEntity.status(HttpStatus.CREATED).location(toUri(fence)).body(dto);
 		} catch (UserNotFoundException exception) {
@@ -65,16 +68,16 @@ public class FenceResource {
 	@GetMapping
 	public ResponseEntity<?> getAllFences(
 			Principal principal,
-			@RequestHeader(name = "page", required=false) int page,
-			@RequestHeader(name = "size", required=false) int size,
-			@RequestHeader(name = "sort", required=false) String sort
+			@RequestParam(name = "page", required=false) Integer page,
+			@RequestParam(name = "size", required=false) Integer size,
+			@RequestParam(name = "sort", required=false) String sort
 			){
 		try {
 			Pageable pageable = getPageable(page, size, sort);
 			
 			Page<Fence> pageFences = fenceService.getAllFences(principal.getName(), pageable);
 			Page<FenceResponse> dtos = pageFences
-					.map(this::mapToFenceDto);
+					.map(converter::fenceToResponse);
 			
 			return ResponseEntity.ok(dtos);
 		} catch (UserNotFoundException exception) {
@@ -167,7 +170,7 @@ public class FenceResource {
 		try {
 			Fence bracelet = fenceService.findFenceById(principal.getName(), fenceId);
 			
-			FenceResponse dto = mapToFenceDto(bracelet);
+			FenceResponse dto = converter.fenceToResponse(bracelet);
 			
 			return ResponseEntity.ok(dto);
 		} catch (UserNotFoundException | FenceNotRegisteredException exception) {
@@ -185,7 +188,7 @@ public class FenceResource {
 		try {
 			Fence fence = fenceService.updateFence(principal.getName(), fenceId, postDto);
 			
-			FenceResponse dto = mapToFenceDto(fence);
+			FenceResponse dto = converter.fenceToResponse(fence);
 			
 			return ResponseEntity.ok(dto);
 		} catch (UserNotFoundException| FenceNotFoundException   exception) {
@@ -199,7 +202,7 @@ public class FenceResource {
 		try {
 			Fence fence = fenceService.setActive(principal.getName(), fenceId, active);
 			
-			FenceResponse dto = mapToFenceDto(fence);
+			FenceResponse dto = converter.fenceToResponse(fence);
 			
 			return ResponseEntity.ok(dto);
 		} catch ( FenceNotFoundException | UserNotFoundException exception) {
@@ -222,7 +225,7 @@ public class FenceResource {
 		}
 	}
 	
-	private FenceResponse mapToFenceDto(Fence fence) {
+	private FenceResponse mapToFenceDto1(Fence fence) {
 		FenceResponse dto = new FenceResponse();
 		
 		dto.setId(fence.getId());

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.edu.ifpb.dac.groupd.model.entities.Coordinate;
 
-public class FenceResponse {
+public class FenceResponseMin {
 	
 	private Long id;
 	private String name;
@@ -18,7 +18,6 @@ public class FenceResponse {
 	private LocalTime finishTime;
 	private boolean active;
 	private Double radius;
-	private List<BraceletResponseMin> bracelets;
 	
 	
 	public Long getId() {
@@ -63,11 +62,6 @@ public class FenceResponse {
 	public void setRadius(Double radius) {
 		this.radius = radius;
 	}
-	public List<BraceletResponseMin> getBracelets() {
-		return bracelets;
-	}
-	public void setBracelets(List<BraceletResponseMin> bracelets) {
-		this.bracelets = bracelets;
-	}
+	
 	
 }

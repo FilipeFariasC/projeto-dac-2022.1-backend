@@ -1,13 +1,11 @@
 package br.edu.ifpb.dac.groupd.presentation.dto;
 
-import java.util.List;
 import java.util.Objects;
 
-public class BraceletResponse {
+public class BraceletResponseMin {
 	
 	private Long id;
 	private String name;
-	private List<FenceResponseMin> fences;
 	
 	
 	public Long getId() {
@@ -22,14 +20,6 @@ public class BraceletResponse {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public List<FenceResponseMin> getFences() {
-		return fences;
-	}
-	public void setFences(List<FenceResponseMin> fences) {
-		this.fences = fences;
-	}
-	
 	@Override
 	public int hashCode() {
 		return Objects.hash(id, name);
@@ -42,7 +32,7 @@ public class BraceletResponse {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		BraceletResponse other = (BraceletResponse) obj;
+		BraceletResponseMin other = (BraceletResponseMin) obj;
 		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
 	}
 	

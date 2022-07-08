@@ -1,6 +1,5 @@
 package br.edu.ifpb.dac.groupd.business.configuration;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -18,11 +17,7 @@ public class BeanConfiguration {
 	
 	@Value("${spring.jackson.deserialization.fail-on-unknown-properties}")
 	private Boolean failOnUnknownProperties;
-	
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
+
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
