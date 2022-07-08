@@ -24,15 +24,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import br.edu.ifpb.dac.groupd.dto.BraceletDto;
-import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
-import br.edu.ifpb.dac.groupd.model.Alarm;
-import br.edu.ifpb.dac.groupd.model.Bracelet;
-import br.edu.ifpb.dac.groupd.model.Coordinate;
-import br.edu.ifpb.dac.groupd.model.Fence;
-import br.edu.ifpb.dac.groupd.model.Location;
-import br.edu.ifpb.dac.groupd.repository.AlarmRepository;
-import br.edu.ifpb.dac.groupd.repository.BraceletRepository;
+import br.edu.ifpb.dac.groupd.business.exception.FenceEmptyException;
+import br.edu.ifpb.dac.groupd.model.entities.Alarm;
+import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
+import br.edu.ifpb.dac.groupd.model.entities.Coordinate;
+import br.edu.ifpb.dac.groupd.model.entities.Fence;
+import br.edu.ifpb.dac.groupd.model.entities.Location;
+import br.edu.ifpb.dac.groupd.model.repository.AlarmRepository;
+import br.edu.ifpb.dac.groupd.model.repository.BraceletRepository;
+import br.edu.ifpb.dac.groupd.presentation.dto.BraceletResponse;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -92,8 +92,8 @@ public class BraceletReposistoryTest {
 	void criarBraceletTest() {
         HttpEntity<Bracelet> httpEntity = new HttpEntity<>(this.bracelet);
 
-        ResponseEntity<BraceletDto> response = this.testRestTemplate
-            .exchange("/bracelets", HttpMethod.POST, httpEntity, BraceletDto.class);
+        ResponseEntity<BraceletResponse> response = this.testRestTemplate
+            .exchange("/bracelets", HttpMethod.POST, httpEntity, BraceletResponse.class);
     
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertEquals(response.getBody().getName(), "Julia");

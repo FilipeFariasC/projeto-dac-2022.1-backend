@@ -31,11 +31,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.edu.ifpb.dac.groupd.dto.UserDto;
-import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
-import br.edu.ifpb.dac.groupd.exception.UserNotFoundException;
-import br.edu.ifpb.dac.groupd.model.User;
-import br.edu.ifpb.dac.groupd.service.UserService;
+import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
+import br.edu.ifpb.dac.groupd.business.service.UserService;
+import br.edu.ifpb.dac.groupd.model.entities.User;
+import br.edu.ifpb.dac.groupd.presentation.dto.UserRequest;
+import br.edu.ifpb.dac.groupd.presentation.dto.UserResponse;
 
 @Testable
 @DisplayName("User Resources Tests")
@@ -60,10 +60,10 @@ public class UserResourceTests {
 	@Autowired
 	private UserService userService;
 	
-	private UserPostDto dto = new UserPostDto();
+	private UserRequest dto = new UserRequest();
 	@BeforeEach
 	void setUp() {
-		dto = new UserPostDto();
+		dto = new UserRequest();
 	}
 	@AfterEach
 	void tearDown() {
@@ -113,7 +113,7 @@ public class UserResourceTests {
 			.andExpect(status().isCreated())
 			.andReturn().getResponse().getContentAsString();
 		});
-		UserDto userDto= assertDoesNotThrow(()->mapper.readValue(response,UserDto.class));
+		UserResponse userDto= assertDoesNotThrow(()->mapper.readValue(response,UserResponse.class));
 		
 		User user = assertDoesNotThrow(()->{
 			return userService.findByEmail(dto.getEmail());
@@ -157,7 +157,7 @@ public class UserResourceTests {
 	void testPutEmailAlreadyUsed() {
 		dto = validUser();
 		
-		UserPostDto dtoNewUser = validUser();
+		UserRequest dtoNewUser = validUser();
 		
 		String differentEmail = "ffc@protonmail.com";
 		String differentPassword = "filipefariasc";
@@ -205,7 +205,7 @@ public class UserResourceTests {
 	void testPutEmailValid() {
 		dto = validUser();
 		
-		UserPostDto dtoNewUser = validUser();
+		UserRequest dtoNewUser = validUser();
 		
 		String differentEmail = "ffc@protonmail.com";
 		String differentPassword = "filipefariasc";
@@ -245,7 +245,7 @@ public class UserResourceTests {
 			.andReturn().getResponse().getContentAsString();
 		});
 		
-		UserDto userDto = assertDoesNotThrow(()->mapper.readValue(response, UserDto.class));
+		UserResponse userDto = assertDoesNotThrow(()->mapper.readValue(response, UserResponse.class));
 		
 		User user = assertDoesNotThrow(()->{
 			return userService.findByEmail(dtoNewUser.getEmail());
@@ -294,21 +294,21 @@ public class UserResourceTests {
 		}
 	}
 	
-	UserPostDto validUser() {
-		UserPostDto dto = new UserPostDto();
+	UserRequest validUser() {
+		UserRequest dto = new UserRequest();
 		dto.setEmail("filipefariasc@protonmail.com");
 		dto.setName("Filipe Farias");
 		dto.setPassword("ffc20221*");
 		
 		return dto;
 	}
-	private void equalsDto(UserPostDto dto, UserDto userDto) {
+	private void equalsDto(UserRequest dto, UserResponse userDto) {
 		assertAll(
 				()->dto.getName().equals(userDto.getName()),
 				()->dto.getEmail().equals(userDto.getEmail())
 		);
 	}
-	private void equalsUser(UserPostDto dto, User user) {
+	private void equalsUser(UserRequest dto, User user) {
 		
 		assertAll(
 			()->dto.getName().equals(user.getName()),

@@ -20,7 +20,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.platform.commons.annotation.Testable;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.edu.ifpb.dac.groupd.model.Fence;
+import br.edu.ifpb.dac.groupd.model.entities.Fence;
 
 @Testable
 @DisplayName("Fence")

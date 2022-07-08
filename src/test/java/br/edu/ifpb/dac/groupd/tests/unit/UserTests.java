@@ -38,12 +38,12 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
-import br.edu.ifpb.dac.groupd.model.Bracelet;
-import br.edu.ifpb.dac.groupd.model.Coordinate;
-import br.edu.ifpb.dac.groupd.model.Fence;
-import br.edu.ifpb.dac.groupd.model.Role;
-import br.edu.ifpb.dac.groupd.model.User;
+import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
+import br.edu.ifpb.dac.groupd.model.entities.Coordinate;
+import br.edu.ifpb.dac.groupd.model.entities.Fence;
+import br.edu.ifpb.dac.groupd.model.entities.Role;
+import br.edu.ifpb.dac.groupd.model.entities.User;
+import br.edu.ifpb.dac.groupd.presentation.dto.UserRequest;
 
 @Testable
 @DisplayName("User")
@@ -344,13 +344,13 @@ public class UserTests {
 	@TestMethodOrder(OrderAnnotation.class)
 	public class PasswordTests{
 		
-		private UserPostDto user = new UserPostDto();
+		private UserRequest user = new UserRequest();
 		
-		private Set<ConstraintViolation<UserPostDto>> violations;
+		private Set<ConstraintViolation<UserRequest>> violations;
 		
 		
 		void setUp() {
-			user = new UserPostDto();
+			user = new UserRequest();
 		}
 		
 		@Order(1)
@@ -360,7 +360,7 @@ public class UserTests {
 			user.setPassword(null);
 			
 			violations = validator.validateProperty(user, "password");
-			ConstraintViolation<UserPostDto> constraint = violations.iterator().next();
+			ConstraintViolation<UserRequest> constraint = violations.iterator().next();
 			
 			assertNotEquals(0, violations.size(), () -> "Valid password" );
 			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
@@ -374,7 +374,7 @@ public class UserTests {
 			user.setPassword(password);
 			
 			violations = validator.validateProperty(user, "password");
-			ConstraintViolation<UserPostDto> constraint = violations.iterator().next();
+			ConstraintViolation<UserRequest> constraint = violations.iterator().next();
 			
 			assertNotEquals(0, violations.size(), () -> "Valid password" );
 			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
@@ -388,7 +388,7 @@ public class UserTests {
 			user.setPassword(password);
 			
 			violations = validator.validateProperty(user, "password");
-			ConstraintViolation<UserPostDto> constraint = violations.iterator().next();
+			ConstraintViolation<UserRequest> constraint = violations.iterator().next();
 			
 			assertNotEquals(0, violations.size(), () -> "Valid password" );
 			assertThat(constraint.getPropertyPath().toString(), containsString("password"));
@@ -403,7 +403,7 @@ public class UserTests {
 			user.setPassword(password);
 			
 			violations = validator.validateProperty(user, "password");
-			ConstraintViolation<UserPostDto> constraint = violations.iterator().next();
+			ConstraintViolation<UserRequest> constraint = violations.iterator().next();
 			
 			assertNotEquals(0, violations.size(), () -> "Valid password" );
 			assertThat(constraint.getPropertyPath().toString(), containsString("password"));

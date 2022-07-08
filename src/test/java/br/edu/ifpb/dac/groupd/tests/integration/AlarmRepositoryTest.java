@@ -20,12 +20,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import br.edu.ifpb.dac.groupd.dto.AlarmDto;
-import br.edu.ifpb.dac.groupd.exception.FenceEmptyException;
-import br.edu.ifpb.dac.groupd.exception.NoBraceletAvailableException;
-import br.edu.ifpb.dac.groupd.model.Alarm;
-import br.edu.ifpb.dac.groupd.model.Fence;
-import br.edu.ifpb.dac.groupd.repository.AlarmRepository;
+import br.edu.ifpb.dac.groupd.business.exception.FenceEmptyException;
+import br.edu.ifpb.dac.groupd.business.exception.NoBraceletAvailableException;
+import br.edu.ifpb.dac.groupd.model.entities.Alarm;
+import br.edu.ifpb.dac.groupd.model.entities.Fence;
+import br.edu.ifpb.dac.groupd.model.repository.AlarmRepository;
+import br.edu.ifpb.dac.groupd.presentation.dto.AlarmResponse;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -109,8 +109,8 @@ public class AlarmRepositoryTest {
 	public void buscarAlarmPorIdTest() {
 		Alarm alarmSalva = this.alarmRepository.save(new Alarm());
 
-		ResponseEntity<AlarmDto> response = this.testRestTemplate.exchange("/alarms/{id}" + alarmSalva.getId(),
-				HttpMethod.GET, null, AlarmDto.class);
+		ResponseEntity<AlarmResponse> response = this.testRestTemplate.exchange("/alarms/{id}" + alarmSalva.getId(),
+				HttpMethod.GET, null, AlarmResponse.class);
 
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
 		assertEquals(response.getBody().getSeen(), 8);

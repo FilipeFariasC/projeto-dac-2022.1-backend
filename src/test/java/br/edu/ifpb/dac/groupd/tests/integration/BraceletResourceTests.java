@@ -39,17 +39,17 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.edu.ifpb.dac.groupd.dto.BraceletDto;
-import br.edu.ifpb.dac.groupd.dto.post.BraceletPostDto;
-import br.edu.ifpb.dac.groupd.dto.post.UserPostDto;
-import br.edu.ifpb.dac.groupd.exception.BraceletNotFoundException;
-import br.edu.ifpb.dac.groupd.exceptionhandler.errors.AttributeErrorData;
-import br.edu.ifpb.dac.groupd.exceptionhandler.errors.ErrorResponse;
-import br.edu.ifpb.dac.groupd.model.Bracelet;
-import br.edu.ifpb.dac.groupd.model.User;
-import br.edu.ifpb.dac.groupd.repository.BraceletRepository;
-import br.edu.ifpb.dac.groupd.service.BraceletService;
-import br.edu.ifpb.dac.groupd.service.UserService;
+import br.edu.ifpb.dac.groupd.business.exception.BraceletNotFoundException;
+import br.edu.ifpb.dac.groupd.business.service.BraceletService;
+import br.edu.ifpb.dac.groupd.business.service.UserService;
+import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
+import br.edu.ifpb.dac.groupd.model.entities.User;
+import br.edu.ifpb.dac.groupd.model.repository.BraceletRepository;
+import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.AttributeErrorData;
+import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.ErrorResponse;
+import br.edu.ifpb.dac.groupd.presentation.dto.BraceletRequest;
+import br.edu.ifpb.dac.groupd.presentation.dto.BraceletResponse;
+import br.edu.ifpb.dac.groupd.presentation.dto.UserRequest;
 
 @Testable
 @SpringBootTest
@@ -82,17 +82,17 @@ class BraceletResourceTests {
 	
 	private User user;
 	
-	private BraceletPostDto dto;
+	private BraceletRequest dto;
 	
 	@BeforeEach
 	void setUp() throws Exception {
-		dto = new BraceletPostDto();
-		UserPostDto userPostDto = validUser();
+		dto = new BraceletRequest();
+		UserRequest userPostDto = validUser();
 		user = userService.create(userPostDto);
 	}
 	
-	private UserPostDto validUser() {
-		UserPostDto userPostDto = new UserPostDto();
+	private UserRequest validUser() {
+		UserRequest userPostDto = new UserRequest();
 		userPostDto.setEmail("f@f.com");
 		userPostDto.setPassword("abcdefgh");
 		userPostDto.setName("Fil");
@@ -111,7 +111,7 @@ class BraceletResourceTests {
 	@DisplayName("Register Invalid Bracelet")
 	@MethodSource("provideInvalidBraceletName")
 	@Order(1)
-	void testRegisterBraceletInvalid(BraceletPostDto braceletPostDto) {
+	void testRegisterBraceletInvalid(BraceletRequest braceletPostDto) {
 		
 		String response = assertDoesNotThrow(
 			()->mockMvc.perform(
@@ -151,7 +151,7 @@ class BraceletResourceTests {
 	@DisplayName("Register Valid Bracelet")
 	@MethodSource("provideValidBraceletName")
 	@Order(2)
-	void testRegisterBraceletValid(BraceletPostDto braceletPostDto) {
+	void testRegisterBraceletValid(BraceletRequest braceletPostDto) {
 		
 		String response = assertDoesNotThrow(
 			()->mockMvc.perform(
@@ -163,7 +163,7 @@ class BraceletResourceTests {
 				.andReturn().getResponse().getContentAsString()
 		);
 		
-		BraceletDto braceletDto = assertDoesNotThrow(()->mapper.readValue(response, BraceletDto.class));
+		BraceletResponse braceletDto = assertDoesNotThrow(()->mapper.readValue(response, BraceletResponse.class));
 		
 		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getEmail(), braceletDto.getId()));
 		
@@ -174,7 +174,7 @@ class BraceletResourceTests {
 	@DisplayName("Get Bracelet Id Doesn't Exist")
 	@Order(3)
 	void testGetBraceletWithInvalidId() {
-		BraceletPostDto braceletPostDto = validBracelet();
+		BraceletRequest braceletPostDto = validBracelet();
 		
 		String response = assertDoesNotThrow(
 			()->mockMvc.perform(
@@ -192,7 +192,7 @@ class BraceletResourceTests {
 	@DisplayName("Get Bracelet Id Exist")
 	@Order(4)
 	void testGetBraceletWithValidId() {
-		BraceletPostDto braceletPostDto = validBracelet();
+		BraceletRequest braceletPostDto = validBracelet();
 		
 		String responsePost = assertDoesNotThrow(
 			()->mockMvc.perform(
@@ -204,7 +204,7 @@ class BraceletResourceTests {
 				.andReturn().getResponse().getContentAsString()
 		);
 		
-		BraceletDto braceletDtoPost = assertDoesNotThrow(()->mapper.readValue(responsePost, BraceletDto.class));
+		BraceletResponse braceletDtoPost = assertDoesNotThrow(()->mapper.readValue(responsePost, BraceletResponse.class));
 		
 		String responseGet = assertDoesNotThrow(
 			()->mockMvc.perform(
@@ -214,7 +214,7 @@ class BraceletResourceTests {
 				.andReturn().getResponse().getContentAsString()
 		);
 		
-		BraceletDto braceletDtoGet = assertDoesNotThrow(()->mapper.readValue(responseGet, BraceletDto.class));
+		BraceletResponse braceletDtoGet = assertDoesNotThrow(()->mapper.readValue(responseGet, BraceletResponse.class));
 		
 		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getUsername(), braceletDtoPost.getId()));
 		
@@ -230,9 +230,9 @@ class BraceletResourceTests {
 	@DisplayName("Update Invalid Bracelet")
 	@MethodSource("provideInvalidBraceletName")
 	@Order(3)
-	void testUpdateInvalidBracelet(BraceletPostDto braceletPostDto) {
+	void testUpdateInvalidBracelet(BraceletRequest braceletPostDto) {
 		
-		BraceletPostDto validBracelet = validBracelet();
+		BraceletRequest validBracelet = validBracelet();
 		
 		String responsePost = assertDoesNotThrow(
 			()->mockMvc.perform(
@@ -244,7 +244,7 @@ class BraceletResourceTests {
 				.andReturn().getResponse().getContentAsString()
 		);
 		
-		BraceletDto dto = assertDoesNotThrow(()->mapper.readValue(responsePost, BraceletDto.class));
+		BraceletResponse dto = assertDoesNotThrow(()->mapper.readValue(responsePost, BraceletResponse.class));
 		
 		String responsePut = assertDoesNotThrow(
 			()->mockMvc.perform(
@@ -277,9 +277,9 @@ class BraceletResourceTests {
 	@DisplayName("Update Valid Bracelet")
 	@MethodSource("provideValidBraceletName")
 	@Order(4)
-	void updateValidBracelet(BraceletPostDto braceletPostDto) {
+	void updateValidBracelet(BraceletRequest braceletPostDto) {
 
-		BraceletPostDto validBracelet = validBracelet();
+		BraceletRequest validBracelet = validBracelet();
 		
 		String responsePost = assertDoesNotThrow(
 			()->mockMvc.perform(
@@ -291,7 +291,7 @@ class BraceletResourceTests {
 				.andReturn().getResponse().getContentAsString()
 		);
 		
-		BraceletDto dto = assertDoesNotThrow(()->mapper.readValue(responsePost, BraceletDto.class));
+		BraceletResponse dto = assertDoesNotThrow(()->mapper.readValue(responsePost, BraceletResponse.class));
 		
 		String responsePut = assertDoesNotThrow(
 			()->mockMvc.perform(
@@ -303,7 +303,7 @@ class BraceletResourceTests {
 				.andReturn().getResponse().getContentAsString()
 		);
 		
-		BraceletDto braceletDto = assertDoesNotThrow(()->mapper.readValue(responsePut, BraceletDto.class));
+		BraceletResponse braceletDto = assertDoesNotThrow(()->mapper.readValue(responsePut, BraceletResponse.class));
 		
 		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getEmail(), braceletDto.getId()));
 		
@@ -312,23 +312,23 @@ class BraceletResourceTests {
 	
 	private static Stream<Arguments> provideInvalidBraceletName(){
 		return Stream.of(
-			Arguments.of(new BraceletPostDto(null)),
-			Arguments.of(new BraceletPostDto("")),
-			Arguments.of(new BraceletPostDto("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxy"))
+			Arguments.of(new BraceletRequest(null)),
+			Arguments.of(new BraceletRequest("")),
+			Arguments.of(new BraceletRequest("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxy"))
 		);
 	}
 	private static Stream<Arguments> provideValidBraceletName(){
 		return Stream.of(
-			Arguments.of(new BraceletPostDto("a")),
-			Arguments.of(new BraceletPostDto("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwx"))
+			Arguments.of(new BraceletRequest("a")),
+			Arguments.of(new BraceletRequest("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwx"))
 		);
 	}
 	
-	private BraceletPostDto validBracelet() {
-		return new BraceletPostDto("a");
+	private BraceletRequest validBracelet() {
+		return new BraceletRequest("a");
 	}
 	
-	private void equals(BraceletPostDto postDto, BraceletDto dto, Bracelet bracelet) {
+	private void equals(BraceletRequest postDto, BraceletResponse dto, Bracelet bracelet) {
 		assertAll(
 			()->postDto.getName().equals(dto.getName()),
 			()->postDto.getName().equals(bracelet.getName()),

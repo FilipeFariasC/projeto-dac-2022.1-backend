@@ -31,10 +31,10 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import br.edu.ifpb.dac.groupd.model.Bracelet;
-import br.edu.ifpb.dac.groupd.model.Coordinate;
-import br.edu.ifpb.dac.groupd.model.Fence;
-import br.edu.ifpb.dac.groupd.model.Location;
+import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
+import br.edu.ifpb.dac.groupd.model.entities.Coordinate;
+import br.edu.ifpb.dac.groupd.model.entities.Fence;
+import br.edu.ifpb.dac.groupd.model.entities.Location;
 
 @Testable
 @DisplayName("Bracelet")
