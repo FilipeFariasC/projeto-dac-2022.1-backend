@@ -80,7 +80,6 @@ public class BraceletResourceTests {
 	
 	@BeforeEach
 	void setUp() throws Exception {
-		dto = new BraceletRequest();
 		UserRequest userPostDto = validUser();
 		user = userService.create(userPostDto);
 		

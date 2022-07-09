@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testable
 @DisplayName("Fence Resources Tests")
@@ -22,6 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureMockMvc
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
+@Testcontainers(disabledWithoutDocker = true)
 public class FenceResourcesTestes {
 
 	@BeforeEach

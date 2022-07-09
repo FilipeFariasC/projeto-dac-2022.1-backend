@@ -6,6 +6,7 @@ import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import br.edu.ifpb.dac.groupd.tests.integration.AlarmRepositoryTest;
@@ -28,5 +29,6 @@ import br.edu.ifpb.dac.groupd.tests.integration.UserResourceTests;
 @SuiteDisplayName("Suite de Testes de Integração")
 @ActiveProfiles("test")
 @Profile("test")
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
+@ContextConfiguration()
 public class SuiteIntegrationTests {}

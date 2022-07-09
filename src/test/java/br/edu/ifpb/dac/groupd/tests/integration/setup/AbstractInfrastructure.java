@@ -1,4 +1,4 @@
-package br.edu.ifpb.dac.groupd.tests.integration;
+package br.edu.ifpb.dac.groupd.tests.integration.setup;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;

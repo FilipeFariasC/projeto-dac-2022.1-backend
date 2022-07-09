@@ -16,6 +16,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
 import br.edu.ifpb.dac.groupd.model.repository.BraceletRepository;
@@ -25,6 +26,7 @@ import br.edu.ifpb.dac.groupd.presentation.dto.BraceletResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testable
 @DisplayName("BraceleteReposistoryTest")
+@Testcontainers(disabledWithoutDocker = true)
 public class BraceletReposistoryTest {
 	
 	@Autowired

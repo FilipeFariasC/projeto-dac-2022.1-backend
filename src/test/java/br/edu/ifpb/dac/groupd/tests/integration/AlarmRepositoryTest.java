@@ -17,6 +17,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import br.edu.ifpb.dac.groupd.model.entities.Alarm;
 import br.edu.ifpb.dac.groupd.model.repository.AlarmRepository;
@@ -27,6 +28,7 @@ import br.edu.ifpb.dac.groupd.presentation.dto.AlarmResponse;
 //@AutoConfigureTestDatabase
 @Testable
 @DisplayName("AlarmService")
+@Testcontainers(disabledWithoutDocker = true)
 public class AlarmRepositoryTest {
 
 	@Autowired

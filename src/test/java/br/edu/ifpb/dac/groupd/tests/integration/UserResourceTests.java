@@ -3,6 +3,7 @@ package br.edu.ifpb.dac.groupd.tests.integration;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,7 +46,7 @@ import br.edu.ifpb.dac.groupd.presentation.dto.UserResponse;
 @AutoConfigureMockMvc
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
-@Testcontainers
+@Testcontainers(disabledWithoutDocker = true)
 public class UserResourceTests {
 	
 	private final String PREFIX = "http://localhost:8080/api/users";

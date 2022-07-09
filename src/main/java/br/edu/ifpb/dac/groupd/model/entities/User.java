@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -62,13 +63,13 @@ public class User implements Serializable, UserDetails {
 	private String password;
 	
 	
-	@OneToMany(fetch = FetchType.EAGER)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinTable(name="user_bracelet",
 			joinColumns = @JoinColumn(name="user_id"),
 			inverseJoinColumns = @JoinColumn(name="bracelet_id"))	
 	private Set<Bracelet> bracelets = new HashSet<>();
 	
-	@OneToMany(fetch = FetchType.EAGER)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinTable(name="user_fence",
 		joinColumns = @JoinColumn(name="user_id"),
 		inverseJoinColumns = @JoinColumn(name="fence_id"))
