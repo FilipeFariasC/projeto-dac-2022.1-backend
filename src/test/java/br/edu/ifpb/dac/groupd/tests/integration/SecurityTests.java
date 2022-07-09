@@ -1,7 +1,5 @@
 package br.edu.ifpb.dac.groupd.tests.integration;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,11 +13,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @DisplayName("Endpoint Security Tests")
-class SecurityTests {
+public class SecurityTests {
 
 	@Test
 	void test() {
-		fail("Not yet implemented");
 	}
 
 }

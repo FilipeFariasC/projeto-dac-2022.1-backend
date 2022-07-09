@@ -21,7 +21,7 @@ public class Alarm implements Serializable{
 	private static final long serialVersionUID = 9023853450528858907L;
 	
 	@Id
-	@Column(name="alarm_id")
+	@Column(name="id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 

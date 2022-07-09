@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -31,7 +32,7 @@ public class Bracelet implements Serializable{
 	private static final long serialVersionUID = 8321201080965139583L;
 
 	@Id
-	@Column(name="bracelet_id")
+	@Column(name="id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 
@@ -53,6 +54,12 @@ public class Bracelet implements Serializable{
 	@OneToOne
 	@JoinColumn(name="bracelet_monitor")
 	private Fence monitor;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinTable(name="user_bracelet",
+		joinColumns = @JoinColumn(name="bracelet_id"),
+		inverseJoinColumns = @JoinColumn(name="user_id"))	
+	private User user;
 	
 	
 	public Long getId() {

@@ -2,12 +2,6 @@ package br.edu.ifpb.dac.groupd.tests.integration;
 
 import static org.junit.Assert.assertEquals;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
-import java.util.List;
-
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,19 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import br.edu.ifpb.dac.groupd.business.exception.FenceEmptyException;
-import br.edu.ifpb.dac.groupd.model.entities.Alarm;
 import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
-import br.edu.ifpb.dac.groupd.model.entities.Coordinate;
-import br.edu.ifpb.dac.groupd.model.entities.Fence;
-import br.edu.ifpb.dac.groupd.model.entities.Location;
-import br.edu.ifpb.dac.groupd.model.repository.AlarmRepository;
 import br.edu.ifpb.dac.groupd.model.repository.BraceletRepository;
 import br.edu.ifpb.dac.groupd.presentation.dto.BraceletResponse;
 

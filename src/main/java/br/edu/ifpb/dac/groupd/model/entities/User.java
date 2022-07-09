@@ -42,7 +42,7 @@ public class User implements Serializable, UserDetails {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="user_id")
+	@Column(name="id")
 	private Long id;
 	
 	@NotEmpty
@@ -50,7 +50,6 @@ public class User implements Serializable, UserDetails {
 	@Column(name="name", nullable=false)
 	private String name;
 	
-	@NotEmpty
 	@ValidEmail
 	@Column(name="email", unique=true, nullable=false)
 	@Size(max=255)

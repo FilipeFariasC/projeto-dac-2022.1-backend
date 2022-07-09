@@ -28,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -44,6 +45,7 @@ import br.edu.ifpb.dac.groupd.presentation.dto.UserResponse;
 @AutoConfigureMockMvc
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
+@Testcontainers
 public class UserResourceTests {
 	
 	private final String PREFIX = "http://localhost:8080/api/users";

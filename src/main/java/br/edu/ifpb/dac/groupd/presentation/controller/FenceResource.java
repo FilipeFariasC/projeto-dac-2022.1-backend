@@ -3,15 +3,12 @@ package br.edu.ifpb.dac.groupd.presentation.controller;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.Arrays;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,13 +63,9 @@ public class FenceResource {
 	}
 	@GetMapping
 	public ResponseEntity<?> getAllFences(
-			Principal principal,
-			@RequestParam(name = "page", required=false) Integer page,
-			@RequestParam(name = "size", required=false) Integer size,
-			@RequestParam(name = "sort", required=false) String sort
+			Principal principal, Pageable pageable
 			){
 		try {
-			Pageable pageable = getPageable(page, size, sort);
 			
 			Page<Fence> pageFences = fenceService.getAllFences(principal.getName(), pageable);
 			Page<FenceResponse> dtos = pageFences
@@ -83,84 +75,6 @@ public class FenceResource {
 		} catch (UserNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
-	}
-	private Pageable getPageable(int page, int size, String sort){
-		if(size == 0) {
-			size = 5;
-		}
-		Sort sorted = getSort(sort);
-		return PageRequest.of(page, size, sorted);
-	}
-	
-	private Sort byId() {
-		return Sort.by("fence_id");
-//		return Sort.by("id");
-	}
-	
-	private Sort getSort(String sort) {
-		if(sort == null || sort.isEmpty() || sort.isBlank()) {
-			return byId().ascending();
-		}
-		
-		
-		String[] arguments = sort.split(",");
-		arguments = Arrays.stream(arguments).map(String::trim).toArray(String[]::new);
-		
-		String[] fields = Arrays.stream(arguments).filter(n ->{
-			return !(n.equalsIgnoreCase("ASC") || n.equalsIgnoreCase("DESC"));
-		}).toArray(String[]::new);
-
-		String[] order = Arrays.stream(arguments).filter(n ->{
-			return (n.equalsIgnoreCase("ASC") || n.equalsIgnoreCase("DESC"));
-		}).toArray(String[]::new);
-
-		Sort sortedFields = sortFields(fields);
-		
-		return sortOrder(sortedFields, order);
-	}
-	Sort sortFields(String[] arguments) {
-		boolean first = true;
-		Sort sorted = null;
-		
-		
-		for(int i = 0; i < arguments.length; i++) {
-			String argument = arguments[i].toUpperCase();
-			if(first) {
-				sorted = switch(argument){
-					case "ID" ->{
-						first = false;
-						yield byId();
-					}
-					case "NAME" ->{
-						first = false;
-						yield Sort.by("name");
-					}
-					case "RADIUS" ->{
-						first = false;
-						yield Sort.by("radius");
-					}
-					default -> byId();
-				};
-			} else {
-				switch(argument){
-					case "ID" -> sorted.and(byId());
-					case "NAME" -> sorted.and(Sort.by("name"));
-				}
-			}
-				
-		}
-		return sorted;
-	}
-	Sort sortOrder(Sort sorted, String[] arguments) {
-		for(int i = 0; i < arguments.length; i++) {
-			String argument = arguments[i];
-			if(argument.toUpperCase().equals("ASC")){
-				return sorted.ascending();
-			} else if(argument.toUpperCase().equals("DESC")) {
-				return sorted.descending();
-			};
-		}
-		return sorted;
 	}
 	
 	@GetMapping("/{fenceId}")
@@ -223,20 +137,6 @@ public class FenceResource {
 		} catch (UserNotFoundException | FenceNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
-	}
-	
-	private FenceResponse mapToFenceDto1(Fence fence) {
-		FenceResponse dto = new FenceResponse();
-		
-		dto.setId(fence.getId());
-		dto.setName(fence.getName());
-		dto.setCoordinate(fence.getCoordinate());
-		dto.setStartTime(fence.getStartTime());
-		dto.setFinishTime(fence.getFinishTime());
-		dto.setRadius(fence.getRadius());
-		dto.setActive(fence.isActive());
-		
-		return dto;
 	}
 	private URI toUri (Fence fence) {
 		return ServletUriComponentsBuilder

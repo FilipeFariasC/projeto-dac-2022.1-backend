@@ -26,7 +26,7 @@ public class Location implements Serializable{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="location_id")
+	@Column(name="id")
 	private Long id;
 	
 	@NotNull

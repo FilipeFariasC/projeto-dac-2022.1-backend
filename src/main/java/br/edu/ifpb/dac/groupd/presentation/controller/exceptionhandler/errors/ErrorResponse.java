@@ -7,6 +7,7 @@ public class ErrorResponse {
 	private String path;
 	private List<ErrorData> errors;
 	
+	public ErrorResponse() {}// construtor default
 	
 	public ErrorResponse(Integer status, String path, List<ErrorData> errors) {
 		super();

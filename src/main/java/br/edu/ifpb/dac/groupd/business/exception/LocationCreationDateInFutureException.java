@@ -1,7 +1,13 @@
 package br.edu.ifpb.dac.groupd.business.exception;
 
-public class LocationCreationDateInFutureException extends Exception {
-	private static final long serialVersionUID = 4486573287675907621L;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+public class LocationCreationDateInFutureException extends AbstractException {
+	
+	private static final long serialVersionUID = 4515323381330680041L;
+	private static final HttpStatus status = HttpStatus.BAD_REQUEST;
 
 	public LocationCreationDateInFutureException(String criacao, String agora) {
 		super(String.format(
@@ -11,5 +17,10 @@ public class LocationCreationDateInFutureException extends Exception {
 		passada: %s		
 		""", agora, criacao));
 		
+	}
+
+	@Override
+	public HttpStatus getStatus() {
+		return status;
 	}
 }

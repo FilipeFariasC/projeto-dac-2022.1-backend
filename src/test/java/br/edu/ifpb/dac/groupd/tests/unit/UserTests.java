@@ -1,5 +1,6 @@
 package br.edu.ifpb.dac.groupd.tests.unit;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.either;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -155,7 +156,7 @@ public class UserTests {
 			ConstraintViolation<User> constraint = violations.iterator().next();
 			
 			assertTrue(constraint.getPropertyPath().toString().contains("email"));
-			assertThat(constraint.getMessageTemplate(), containsString("NotEmpty"));
+			assertThat(constraint.getMessageTemplate(), containsString("ValidEmail"));
 		}
 		@Order(2)
 		@DisplayName("Empty Email")
@@ -169,30 +170,35 @@ public class UserTests {
 			
 			ConstraintViolation<User> constraint = violations.iterator().next();
 			assertTrue(constraint.getPropertyPath().toString().contains("email"));
-			assertThat(constraint.getMessageTemplate(), containsString("NotEmpty"));
+			assertThat(constraint.getMessageTemplate(), containsString("ValidEmail"));
 		}
 		
 		@Order(3)
 		@DisplayName("Email out of pattern")
 		@ParameterizedTest(name="Teste inválido {index} -> {0} ")
-		@ValueSource(strings= {"filipe farias@email.com", "@gmail.com", "1filipe@"})
+		@ValueSource(strings= {"filipe farias@email.com", "@gmail.com", "1filipe@", "filipe@g."})
 		void testInvalidEmailWithCharacters(String email) {
 			user.setEmail(email);
 			
 			violations = validator.validateProperty(user, "email");
 			assertNotEquals(0, violations.size(), () -> "Valid email" );
+			
+			assertThat(violations).isNotEmpty();
 			ConstraintViolation<User> constraint = violations.iterator().next();
 			assertThat(constraint.getMessageTemplate(), containsString("Email"));
 		}
 		@Order(4)
 		@DisplayName("Valid Email")
 		@ParameterizedTest(name="Teste válido {index} -> {0} ")
-		@ValueSource(strings= {"filipe.farias@email.com", "f@f.f", "filipe@gmail"})
+		@ValueSource(strings= {"filipe@email.com", "f@f.fc", "filipe@g.com"})
 		void testValidEmail(String email) {
 			user.setEmail(email);
 			
 			violations = validator.validateProperty(user, "email");
-			assertEquals(0, violations.size(), () -> "Invalid Email");
+			assertEquals(0, violations.size(), () -> {
+				violations.stream().forEach(System.out::println);
+				return "Invalid Email";
+			});
 		}
 	}
 	
@@ -277,23 +283,24 @@ public class UserTests {
 		
 		private static Stream<Arguments> invalidFences(){
 			return Stream.of(
-				Arguments.of(createFence(-91.0, -180.0, 1.0)),
-				Arguments.of(createFence(-90.0, -181.0, 1.0)),
-				Arguments.of(createFence(-90.0, -180.0, 0.0)),
-				Arguments.of(createFence(91.0, 180.0, 1.0)),
-				Arguments.of(createFence(90.0, 181.0, 1.0)),
-				Arguments.of(createFence(90.0, 180.0, 0.0))
+				Arguments.of(createFence("", -91.0, -180.0, 1.0)),
+				Arguments.of(createFence("", -90.0, -181.0, 1.0)),
+				Arguments.of(createFence("", -90.0, -180.0, 0.0)),
+				Arguments.of(createFence("", 91.0, 180.0, 1.0)),
+				Arguments.of(createFence("", 90.0, 181.0, 1.0)),
+				Arguments.of(createFence("", 90.0, 180.0, 0.0))
 					);
 		}
 		private static Stream<Arguments> validFences(){
 			return Stream.of(
-				Arguments.of(createFence(-90.0, -180.0, 1.0)),
-				Arguments.of(createFence(90.0, 180.0, 1.0))
+				Arguments.of(createFence("Bottom Limit", -90.0, -180.0, 1.0)),
+				Arguments.of(createFence("Top Limit", 90.0, 180.0, 1.0))
 					);
 		}
 		
-		private static Fence createFence(Double latitude, Double longitude, Double radius) {
+		private static Fence createFence(String name, Double latitude, Double longitude, Double radius) {
 			Fence fence = new Fence();
+			fence.setName(name);
 			fence.setCoordinate(new Coordinate(latitude, longitude));
 			fence.setRadius(radius);
 			

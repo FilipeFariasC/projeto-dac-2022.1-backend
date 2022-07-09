@@ -37,6 +37,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.edu.ifpb.dac.groupd.business.exception.BraceletNotFoundException;
@@ -58,9 +59,7 @@ import br.edu.ifpb.dac.groupd.presentation.dto.UserRequest;
 @DisplayName("Bracelet Resources Tests")
 @ActiveProfiles("test")
 @TestMethodOrder(OrderAnnotation.class)
-class BraceletResourceTests {
-	
-	private final String USER_PREFIX = "http://localhost:8080/api/users/bracelets/";
+public class BraceletResourceTests {
 	
 	private final String BRACELETS_PREFIX = "http://localhost:8080/api/bracelets/";
 	
@@ -74,21 +73,18 @@ class BraceletResourceTests {
 	private UserService userService;
 	
 	@Autowired
-	private BraceletRepository braceletRepo;
-	
-	@Autowired
 	private BraceletService braceletService;
 	
 	
 	private User user;
-	
-	private BraceletRequest dto;
 	
 	@BeforeEach
 	void setUp() throws Exception {
 		dto = new BraceletRequest();
 		UserRequest userPostDto = validUser();
 		user = userService.create(userPostDto);
+		
+		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	}
 	
 	private UserRequest validUser() {
@@ -141,7 +137,7 @@ class BraceletResourceTests {
 		Page<Bracelet> bracelets = assertDoesNotThrow(
 			()->
 				{
-					return braceletService.getAllBracelets(user.getEmail(), PageRequest.of(0, 5, Sort.by("id")));
+					return braceletService.getAllBracelets(user.getEmail(), PageRequest.of(0, 5, Sort.by("bracelet_id")));
 				}
 			);
 		assertTrue(bracelets.isEmpty());

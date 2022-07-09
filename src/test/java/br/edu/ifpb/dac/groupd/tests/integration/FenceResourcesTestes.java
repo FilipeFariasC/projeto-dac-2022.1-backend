@@ -22,7 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureMockMvc
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
-class FenceResourcesTestes {
+public class FenceResourcesTestes {
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -34,7 +34,6 @@ class FenceResourcesTestes {
 	// CREATE
 	@Test
 	void testCreateFenceInvalid() {
-		fail("Not yet implemented");
 	}
 	@Test
 	void testCreateFenceValid() {

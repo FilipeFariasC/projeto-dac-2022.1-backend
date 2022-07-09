@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -25,6 +29,20 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
+import br.edu.ifpb.dac.groupd.business.exception.AbstractException;
+import br.edu.ifpb.dac.groupd.business.exception.AlarmNotFoundException;
+import br.edu.ifpb.dac.groupd.business.exception.AuthenticationFailedException;
+import br.edu.ifpb.dac.groupd.business.exception.BraceletNotFoundException;
+import br.edu.ifpb.dac.groupd.business.exception.BraceletNotInFenceException;
+import br.edu.ifpb.dac.groupd.business.exception.BraceletNotRegisteredException;
+import br.edu.ifpb.dac.groupd.business.exception.FenceEmptyException;
+import br.edu.ifpb.dac.groupd.business.exception.FenceNotFoundException;
+import br.edu.ifpb.dac.groupd.business.exception.FenceNotRegisteredException;
+import br.edu.ifpb.dac.groupd.business.exception.LocationCreationDateInFutureException;
+import br.edu.ifpb.dac.groupd.business.exception.LocationNotFoundException;
+import br.edu.ifpb.dac.groupd.business.exception.NoBraceletAvailableException;
+import br.edu.ifpb.dac.groupd.business.exception.UserEmailInUseException;
+import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.AttributeErrorData;
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.AttributeValueErrorData;
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.ErrorData;
@@ -40,14 +58,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		//define a mensagem que será enviada em caso de erro de conversao de entidade
-		String messageUser = messageSource.getMessage("message.invalid", null, LocaleContextHolder.getLocale());;
+		String messageUser = messageSource.getMessage("message.invalid", null, LocaleContextHolder.getLocale());
 		String messageDeveloper = ex.getCause().toString();
 		
 		Throwable cause = ex.getCause();
 		
 		ErrorData error = null;
 		if(cause instanceof UnrecognizedPropertyException upe) {
-			messageUser = messageSource.getMessage("attribute.Unrecognized", new String[]{upe.getPropertyName()}, LocaleContextHolder.getLocale());
+			messageUser = messageSource.getMessage("attribute.Unrecognized", new String[]{upe.getPropertyName()}, "message.invalid", LocaleContextHolder.getLocale());
 			messageDeveloper = upe.getOriginalMessage();
 			error = new AttributeErrorData(messageUser, messageDeveloper, upe.getPropertyName());
 
@@ -60,6 +78,46 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), getRequestUri(request), errors);
 		
 		return handleExceptionInternal(ex, response, headers, HttpStatus.BAD_REQUEST, request);
+	}
+	@ExceptionHandler(value = {
+			AlarmNotFoundException.class,
+			AuthenticationFailedException.class,
+			BraceletNotFoundException.class,
+			BraceletNotInFenceException.class,
+			BraceletNotRegisteredException.class,
+			FenceEmptyException.class,
+			FenceNotFoundException.class,
+			FenceNotRegisteredException.class,
+			LocationCreationDateInFutureException.class,
+			LocationNotFoundException.class,
+			NoBraceletAvailableException.class,
+			UserEmailInUseException.class,
+			UserNotFoundException.class
+			})
+		public ResponseEntity<?> handleCustomException(AbstractException exception, HttpServletRequest request){
+			ErrorData error = new ErrorData(exception.getMessage(), "");
+			
+			List<ErrorData> errors = Arrays.asList(error);
+			
+			ErrorResponse response = new ErrorResponse(exception.getStatus().value(), getRequestUri(request), errors);
+		
+			return ResponseEntity.status(exception.getStatus()).body(response);
+		}
+	
+	@ExceptionHandler(value = {InvalidDataAccessApiUsageException.class})
+	public ResponseEntity<?> handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException exception, HttpServletRequest request){
+		HttpHeaders headers = new HttpHeaders();
+		
+		String messageUser = exception.getMostSpecificCause().getMessage();
+		if(messageUser.startsWith("could not resolve property")) {
+			 messageUser = messageSource.getMessage("error.noProperty", getPropertyAndEntity(messageUser), "message.invalid", LocaleContextHolder.getLocale());
+		}
+		ErrorData error = new ErrorData(messageUser, exception.getMostSpecificCause().getMessage());
+		
+		List<ErrorData> errors = Arrays.asList(error);
+		ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), getRequestUri(request), errors);
+		
+		return handleExceptionInternal(exception, response, headers, HttpStatus.BAD_REQUEST, null);
 	}
 
 	@Override
@@ -111,7 +169,39 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 			}).collect(Collectors.toList());
 	}
 	
+	
+	private String getRequestUri(HttpServletRequest request) {
+		return request.getRequestURI();
+	}
 	private String getRequestUri(WebRequest request) {
 		return ((ServletWebRequest)request).getRequest().getRequestURI();
 	}
+	
+	private String[] splitMessage(String message) {
+		return message.split(":");
+	}
+	
+	private String[] getPropertyAndEntity(String message) {
+		String[] splitted = splitMessage(message);
+		String[] packages = splitted[2].split("\\.");
+		String property = splitted[1].split(" ")[1];
+		String entity = packages[packages.length-1];
+		
+		return new String[] {property,entity};
+	}
+	
+	private String getProperty(String message) {
+		String[] splitted = splitMessage(message);
+		
+		return splitted[1].split(" ")[1];
+	}
+	private String getEntity(String message) {
+		String[] splitted = splitMessage(message);
+		
+		String[] packages = splitted[2].split("\\.");
+		
+		return packages[packages.length-1];
+	}
+	
+	
 }

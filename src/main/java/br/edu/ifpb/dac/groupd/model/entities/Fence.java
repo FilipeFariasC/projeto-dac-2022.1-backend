@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -36,7 +37,7 @@ public class Fence implements Serializable, Timer{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="fence_id")
+	@Column(name="id")
 	private Long id;
 	
 	@NotEmpty
@@ -69,7 +70,13 @@ public class Fence implements Serializable, Timer{
 	@JoinTable(name = "fence_bracelet",
 	joinColumns = @JoinColumn(name = "fence_id"),
 	inverseJoinColumns = @JoinColumn(name = "bracelet_id"))
-	private Set<br.edu.ifpb.dac.groupd.model.entities.Bracelet> bracelets = new HashSet<>();
+	private Set<Bracelet> bracelets = new HashSet<>();
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinTable(name="user_fence",
+	joinColumns = @JoinColumn(name="fence_id"),
+	inverseJoinColumns = @JoinColumn(name="user_id"))
+	private User user;
 	
 
 	public Long getId() {
@@ -168,11 +175,21 @@ public class Fence implements Serializable, Timer{
 		this.bracelets.remove(bracelet);
 		bracelet.getFences().remove(this);
 	}
+	
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 	@Override
 	public String toString() {
 		return "Fence [coordinate=" + coordinate.toString() + ", startTime=" + startTime + ", finishTime=" + finishTime
 				+ ", active=" + active + ", radius=" + radius + "]";
 	}
+
 	
 }

@@ -7,14 +7,13 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.edu.ifpb.dac.groupd.business.exception.AuthenticationFailedException;
 import br.edu.ifpb.dac.groupd.business.service.LoginService;
 import br.edu.ifpb.dac.groupd.presentation.dto.security.UserDetailsRequest;
 
@@ -33,7 +32,7 @@ public class LoginController {
 			HttpServletRequest request){
 		try {
 			return ResponseEntity.ok(loginService.login(userDetailsDto));
-		} catch(AuthenticationException exception) {
+		} catch(AuthenticationFailedException exception) {
 			return ResponseEntity.badRequest().body(exception.getMessage());
 		}
 	}

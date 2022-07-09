@@ -1,6 +1,5 @@
 package br.edu.ifpb.dac.groupd.business.service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -40,8 +39,8 @@ public class FenceService {
 		Fence mapped = mapFromDto(dto);
 		
 		Fence fence = fenceRepo.save(mapped);
-
 		user.addFence(fence);
+		
 		userRepo.save(user);
 		
 		return fence;

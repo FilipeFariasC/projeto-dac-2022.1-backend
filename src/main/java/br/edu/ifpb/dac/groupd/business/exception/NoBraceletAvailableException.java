@@ -1,12 +1,21 @@
 package br.edu.ifpb.dac.groupd.business.exception;
 
-public class NoBraceletAvailableException extends Exception {
-	private static final long serialVersionUID = -941436713186971505L;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+public class NoBraceletAvailableException extends AbstractException {
+	
+	private static final long serialVersionUID = -4352892525683864793L;
+	private static final HttpStatus status = HttpStatus.BAD_REQUEST;
 	
 	public NoBraceletAvailableException() {
-		// TODO Auto-generated constructor stub
 	}
 	public NoBraceletAvailableException(Long id) {
 		super(String.format("A pulseira de id %d não possui pulseiras disponíveis para monitoramento.", id));
+	}
+	@Override
+	public HttpStatus getStatus() {
+		return status;
 	}
 }

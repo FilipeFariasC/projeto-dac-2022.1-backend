@@ -15,12 +15,16 @@ public class ModelValidator {
 	
 	public static boolean validBracelet(Bracelet bracelet) {
 		Set<ConstraintViolation<Bracelet>> violations = validator.validate(bracelet);
+
+		violations.forEach(System.out::println);
 		
-		return violations.size() == 0;
+		return violations.isEmpty();
 	}
 	public static boolean validFence(Fence fence) {
 		Set<ConstraintViolation<Fence>> violations = validator.validate(fence);
 		
-		return violations.size() == 0;
+		violations.forEach(System.out::println);
+		
+		return violations.isEmpty();
 	}
 }
