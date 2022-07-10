@@ -2,6 +2,7 @@ package br.edu.ifpb.dac.groupd.presentation.controller;
 
 import java.net.URI;
 import java.security.Principal;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -79,6 +81,21 @@ public class BraceletResource {
 			
 			return ResponseEntity.ok(dto);
 		} catch (UserNotFoundException | BraceletNotFoundException exception) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+		}
+	}
+	@GetMapping("/search")
+	public ResponseEntity<?> searchBraceletByName(
+			Principal principal,
+			@RequestParam("name") String name,
+			Pageable pageable){
+		try {
+			Page<Bracelet> bracelets = braceletService.searchBraceletByName(principal.getName(), name, pageable);
+			
+			Page<BraceletResponse> dto = bracelets.map(converter::braceletToResponse);
+			
+			return ResponseEntity.ok(dto);
+		} catch (UserNotFoundException exception) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}

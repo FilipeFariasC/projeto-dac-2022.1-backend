@@ -13,6 +13,7 @@ import br.edu.ifpb.dac.groupd.business.exception.FenceNotFoundException;
 import br.edu.ifpb.dac.groupd.business.exception.FenceNotRegisteredException;
 import br.edu.ifpb.dac.groupd.business.exception.NoBraceletAvailableException;
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
+import br.edu.ifpb.dac.groupd.business.service.converter.FenceConverterService;
 import br.edu.ifpb.dac.groupd.model.entities.Fence;
 import br.edu.ifpb.dac.groupd.model.entities.User;
 import br.edu.ifpb.dac.groupd.model.repository.FenceRepository;
@@ -27,6 +28,9 @@ public class FenceService {
 	@Autowired
 	private FenceRepository fenceRepo;
 	
+	@Autowired
+	private FenceConverterService converter;
+	
 	
 	public Fence createFence(String username, FenceRequest dto) throws UserNotFoundException {
 		Optional<User> register = userRepo.findByEmail(username);
@@ -36,12 +40,13 @@ public class FenceService {
 		
 		User user = register.get();
 		
-		Fence mapped = mapFromDto(dto);
+		Fence mapped = converter.requestToFence(dto);
 		
 		Fence fence = fenceRepo.save(mapped);
 		user.addFence(fence);
 		
 		userRepo.save(user);
+		fence.setUser(user);
 		
 		return fence;
 	}
@@ -86,8 +91,9 @@ public class FenceService {
 			throw new FenceNotFoundException(fenceId);
 		}
 		
-		Fence mapped = mapFromDto(dto);
+		Fence mapped = converter.requestToFence(dto);
 		mapped.setId(fenceId);
+		mapped.setUser(user);
 		
 		return fenceRepo.save(mapped);
 	}
@@ -132,15 +138,4 @@ public class FenceService {
 		fenceRepo.deleteById(fenceId);
 	}
 	
-	private Fence mapFromDto(FenceRequest dto) {
-		Fence fence = new Fence();
-		
-		fence.setName(dto.getName());
-		fence.setCoordinate(dto.getCoordinate());
-		fence.setRadius(dto.getRadius());
-		fence.setStartTime(dto.getStartTime());
-		fence.setFinishTime(dto.getFinishTime());
-		
-		return fence;
-	}
 }
