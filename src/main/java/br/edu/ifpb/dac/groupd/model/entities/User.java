@@ -63,13 +63,13 @@ public class User implements Serializable, UserDetails {
 	private String password;
 	
 	
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinTable(name="user_bracelet",
 			joinColumns = @JoinColumn(name="user_id"),
 			inverseJoinColumns = @JoinColumn(name="bracelet_id"))	
 	private Set<Bracelet> bracelets = new HashSet<>();
 	
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinTable(name="user_fence",
 		joinColumns = @JoinColumn(name="user_id"),
 		inverseJoinColumns = @JoinColumn(name="fence_id"))

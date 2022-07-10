@@ -18,6 +18,6 @@ public interface BraceletRepository extends JpaRepository<Bracelet, Long> {
 	@Query(value = "SELECT b FROM Bracelet b WHERE b.user.email = :username")
 	Page<Bracelet> findAllBraceletsByUser(@Param("username") String username, Pageable pageable);
 	
-	@Query(value = "SELECT b FROM Bracelet b WHERE b.user.email = :username AND b.name LIKE %:name%")
+	@Query(value = "SELECT b FROM Bracelet b WHERE b.user.email = :username AND lower(b.name) LIKE lower(concat('%', :name,'%'))")
 	Page<Bracelet> findBraceletsByName(@Param("username") String username, @Param("name") String name,Pageable pageable);
 }

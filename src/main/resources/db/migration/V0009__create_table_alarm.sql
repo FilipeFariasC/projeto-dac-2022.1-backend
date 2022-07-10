@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS alarms (
 	seen BOOLEAN NOT NULL DEFAULT false,
 	
 	CONSTRAINT alarm_pk PRIMARY KEY (id),
-	CONSTRAINT fence_id_fk_alarm FOREIGN KEY (fence_id) REFERENCES fences(id),
-	CONSTRAINT location_id_fk_alarm FOREIGN KEY (location_id) REFERENCES locations(id)
+	CONSTRAINT fence_id_fk_alarm FOREIGN KEY (fence_id) REFERENCES fences(id) ON DELETE CASCADE,
+	CONSTRAINT location_id_fk_alarm FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
 );

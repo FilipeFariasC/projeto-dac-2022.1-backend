@@ -91,6 +91,21 @@ public class FenceResource {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 		}
 	}
+	@GetMapping("/search")
+	public ResponseEntity<?> searchFenceByName(
+			Principal principal,
+			@RequestParam("name") String name,
+			Pageable pageable){
+		try {
+			Page<Fence> bracelets = fenceService.searchFencesByName(principal.getName(), name, pageable);
+			
+			Page<FenceResponse> dto = bracelets.map(converter::fenceToResponse);
+			
+			return ResponseEntity.ok(dto);
+		} catch (UserNotFoundException exception) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+		}
+	}
 	
 	@PutMapping("/{fenceId}")
 	public ResponseEntity<?> updateFence(

@@ -66,11 +66,14 @@ public class UserService {
 			if(register)
 				throw new UserEmailInUseException(userPostDto.getEmail());
 		}
-		
+		User original = user.get();
 		User updated = mapper.map(userPostDto, User.class);
 		updated.setId(user.get().getId());
-		
 		updated.setPassword(passEncoder.encode(userPostDto.getPassword()));
+		
+		updated.setFences(original.getFences());
+		updated.setBracelets(original.getBracelets());
+		updated.setRoles(original.getAuthorities());
 		
 		return userRepo.save(updated);
 	}

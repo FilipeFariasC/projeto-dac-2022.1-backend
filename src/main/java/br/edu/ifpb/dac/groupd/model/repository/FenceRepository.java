@@ -13,12 +13,8 @@ import br.edu.ifpb.dac.groupd.model.entities.Fence;
 public interface FenceRepository extends JpaRepository<Fence, Long> {
 	
 	@Query(value="SELECT f FROM Fence f WHERE f.user.email = :email")
-	/*
-	@Query(nativeQuery = true,
-		   value="SELECT f.* FROM fences f "+
-		   		 "JOIN user_fence uf ON uf.fence_id = f.id "+
-				 "JOIN users u ON u.id = uf.user_id "+
-		   		 "WHERE u.email = :email")
-	*/
-	Page<Fence> findByUserEmail(@Param("email") String email, Pageable pageable); 
+	Page<Fence> findAllFencesByUser(@Param("email") String email, Pageable pageable);
+	
+	@Query(value="SELECT f FROM Fence f WHERE f.user.email = :email AND lower(f.name) LIKE lower(concat('%', :name,'%'))")
+	Page<Fence> searchUserFenceByName(@Param("email") String email, @Param("name") String name, Pageable pageable); 
 }

@@ -56,8 +56,17 @@ public class FenceService {
 		if (register.isEmpty())
 			throw new UserNotFoundException(username);
 		
-		return fenceRepo.findByUserEmail(username, pageable);
+		return fenceRepo.findAllFencesByUser(username, pageable);
 	}
+	public Page<Fence> searchFencesByName(String username, String name, Pageable pageable) throws UserNotFoundException {
+		boolean register = userRepo.existsByEmail(username);
+		
+		if (!register)
+			throw new UserNotFoundException(username);
+		
+		return fenceRepo.searchUserFenceByName(username, name, pageable);
+	}
+	
 	public Fence findFenceById(String username, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException {
 		Optional<User> register = userRepo.findByEmail(username);
 		

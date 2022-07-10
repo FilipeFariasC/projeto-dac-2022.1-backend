@@ -47,6 +47,7 @@ import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.At
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.AttributeValueErrorData;
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.ErrorData;
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.ErrorResponse;
+import io.jsonwebtoken.MalformedJwtException;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -93,16 +94,27 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 			NoBraceletAvailableException.class,
 			UserEmailInUseException.class,
 			UserNotFoundException.class
-			})
-		public ResponseEntity<?> handleCustomException(AbstractException exception, HttpServletRequest request){
-			ErrorData error = new ErrorData(exception.getMessage(), "");
-			
-			List<ErrorData> errors = Arrays.asList(error);
-			
-			ErrorResponse response = new ErrorResponse(exception.getStatus().value(), getRequestUri(request), errors);
+		})
+	public ResponseEntity<?> handleCustomException(AbstractException exception, HttpServletRequest request){
+		ErrorData error = new ErrorData(exception.getMessage(), "");
 		
-			return ResponseEntity.status(exception.getStatus()).body(response);
-		}
+		List<ErrorData> errors = Arrays.asList(error);
+		
+		ErrorResponse response = new ErrorResponse(exception.getStatus().value(), getRequestUri(request), errors);
+	
+		return ResponseEntity.status(exception.getStatus()).body(response);
+	}
+	@ExceptionHandler(value = MalformedJwtException.class)
+	public ResponseEntity<?> handleMalformedJwtException(MalformedJwtException exception, HttpServletRequest request){
+		ErrorData error = new ErrorData(exception.getMessage(), exception.getMessage());
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		
+		List<ErrorData> errors = Arrays.asList(error);
+		
+		ErrorResponse response = new ErrorResponse(status.value(), getRequestUri(request), errors);
+	
+		return ResponseEntity.status(status).body(response);
+	}
 	
 	@ExceptionHandler(value = {InvalidDataAccessApiUsageException.class})
 	public ResponseEntity<?> handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException exception, HttpServletRequest request){

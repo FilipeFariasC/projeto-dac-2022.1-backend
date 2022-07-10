@@ -55,7 +55,7 @@ public class Bracelet implements Serializable{
 	@JoinColumn(name="bracelet_monitor")
 	private Fence monitor;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinTable(name="user_bracelet",
 		joinColumns = @JoinColumn(name="bracelet_id"),
 		inverseJoinColumns = @JoinColumn(name="user_id"))	
