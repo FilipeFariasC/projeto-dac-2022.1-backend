@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.business.exception.AuthenticationFailedException;
 import br.edu.ifpb.dac.groupd.business.security.JwtUtils;
-import br.edu.ifpb.dac.groupd.business.security.UserDetailsService;
+import br.edu.ifpb.dac.groupd.business.security.UserDetailsLoginService;
 import br.edu.ifpb.dac.groupd.presentation.dto.security.AuthenticationResponse;
 import br.edu.ifpb.dac.groupd.presentation.dto.security.UserDetailsRequest;
 
@@ -21,7 +21,7 @@ public class LoginService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsLoginService userDetailsService;
 
     @Autowired
     private JwtUtils jwtUtils;

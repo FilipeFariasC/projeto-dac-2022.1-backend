@@ -16,8 +16,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JwtUtils {
 	
 	@Value("${jwt.token.secret}")
-	private String SECRET_KEY;
-
+	private String JWT_SECRET_KEY;
+	
+	private static final long EXPIRATION_TIME = 1000L * 60L * 60L * 24L * 7L;  // 1 semana
+	
 	public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -31,7 +33,7 @@ public class JwtUtils {
         return claimsResolver.apply(claims);
     }
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(JWT_SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
     private Boolean isTokenExpired(String token) {
@@ -47,7 +49,7 @@ public class JwtUtils {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(getExpirationTime()))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+                .signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY).compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
@@ -56,6 +58,6 @@ public class JwtUtils {
     }
 	
     private Long getExpirationTime() {
-    	return System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7; // 1 semana
+    	return System.currentTimeMillis() + EXPIRATION_TIME;
     }
 }
