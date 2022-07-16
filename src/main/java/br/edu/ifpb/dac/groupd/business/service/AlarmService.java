@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.business.exception.AlarmNotFoundException;
@@ -21,12 +23,13 @@ public class AlarmService {
 	@Autowired
 	private AlarmRepository alarmRepository;
 	
-	public Alarm saveAlarm(Location location, Fence fence) {
+	public Alarm saveAlarm(Location location, Fence fence, Double distance) {
 		Alarm alarm = new Alarm();
 		
 		alarm.setFence(fence);
 		alarm.setLocation(location);
 		alarm.setSeen(false);
+		alarm.setDistance(distance);
 		
 		return alarmRepository.save(alarm);
 
@@ -36,11 +39,11 @@ public class AlarmService {
 		return alarmRepository.findAll();
 	}
 	
-	public List<Alarm> findByFenceId(Long fenceId){
-		return alarmRepository.findByFence(fenceId);
+	public Page<Alarm> findByFenceId(Long fenceId, Pageable pageable){
+		return alarmRepository.findByFence(fenceId, pageable);
 	}
-	public List<Alarm> findByBraceletId(Long braceletId){
-		return alarmRepository.findByBracelet(braceletId);
+	public Page<Alarm> findByBraceletId(Long braceletId, Pageable pageable){
+		return alarmRepository.findByBracelet(braceletId, pageable);
 	}
 	public Alarm findByLocationId(Long locationId) throws AlarmNotFoundException {
 		Optional<Alarm> register = alarmRepository.findByLocation(locationId);

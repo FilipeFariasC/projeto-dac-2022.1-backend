@@ -30,19 +30,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import br.edu.ifpb.dac.groupd.business.exception.AbstractException;
-import br.edu.ifpb.dac.groupd.business.exception.AlarmNotFoundException;
-import br.edu.ifpb.dac.groupd.business.exception.AuthenticationFailedException;
-import br.edu.ifpb.dac.groupd.business.exception.BraceletNotFoundException;
-import br.edu.ifpb.dac.groupd.business.exception.BraceletNotInFenceException;
-import br.edu.ifpb.dac.groupd.business.exception.BraceletNotRegisteredException;
-import br.edu.ifpb.dac.groupd.business.exception.FenceEmptyException;
-import br.edu.ifpb.dac.groupd.business.exception.FenceNotFoundException;
-import br.edu.ifpb.dac.groupd.business.exception.FenceNotRegisteredException;
-import br.edu.ifpb.dac.groupd.business.exception.LocationCreationDateInFutureException;
-import br.edu.ifpb.dac.groupd.business.exception.LocationNotFoundException;
-import br.edu.ifpb.dac.groupd.business.exception.NoBraceletAvailableException;
-import br.edu.ifpb.dac.groupd.business.exception.UserEmailInUseException;
-import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.AttributeErrorData;
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.AttributeValueErrorData;
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.ErrorData;
@@ -81,19 +68,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, response, headers, HttpStatus.BAD_REQUEST, request);
 	}
 	@ExceptionHandler(value = {
-			AlarmNotFoundException.class,
-			AuthenticationFailedException.class,
-			BraceletNotFoundException.class,
-			BraceletNotInFenceException.class,
-			BraceletNotRegisteredException.class,
-			FenceEmptyException.class,
-			FenceNotFoundException.class,
-			FenceNotRegisteredException.class,
-			LocationCreationDateInFutureException.class,
-			LocationNotFoundException.class,
-			NoBraceletAvailableException.class,
-			UserEmailInUseException.class,
-			UserNotFoundException.class
+			AbstractException.class
 		})
 	public ResponseEntity<?> handleCustomException(AbstractException exception, HttpServletRequest request){
 		ErrorData error = new ErrorData(exception.getMessage(), "");

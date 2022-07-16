@@ -45,59 +45,46 @@ public class BraceletResource {
 			Principal principal,
 			@Valid
 			@RequestBody
-			BraceletRequest postDto){
-		try {
-			Bracelet bracelet = braceletService.createBracelet(principal.getName(), postDto);
-			
-			BraceletResponse dto = converter.braceletToResponse(bracelet);
-			
-			return ResponseEntity.created(getUri(bracelet)).body(dto);
-		} catch (UserNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+			BraceletRequest postDto) throws UserNotFoundException{
+		Bracelet bracelet = braceletService.createBracelet(getPrincipalId(principal), postDto);
+		
+		BraceletResponse dto = converter.braceletToResponse(bracelet);
+		
+		return ResponseEntity.created(getUri(bracelet)).body(dto);
+
 	}
 	@GetMapping
-	public ResponseEntity<?> getAllBracelets(Principal principal, Pageable pageable){
-		try {
-			Page<Bracelet> pageBracelets = braceletService.getAllBracelets(principal.getName(), pageable);
-			Page<BraceletResponse> pageDtos = pageBracelets
-					.map(converter::braceletToResponse);
-			
-			
-			return ResponseEntity.ok(pageDtos);
-		} catch (UserNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+	public ResponseEntity<?> getAllBracelets(Principal principal, Pageable pageable) throws UserNotFoundException{
+		Page<Bracelet> pageBracelets = braceletService.getAllBracelets(getPrincipalId(principal), pageable);
+		Page<BraceletResponse> pageDtos = pageBracelets
+				.map(converter::braceletToResponse);
+		
+		
+		return ResponseEntity.ok(pageDtos);
+
 	}
 	
 	@GetMapping("/{braceletId}")
 	public ResponseEntity<?> getAllBracelets(
 			Principal principal,
-			@PathVariable("braceletId") Long braceletId){
-		try {
-			Bracelet bracelet = braceletService.findByBraceletId(principal.getName(), braceletId);
-			
-			BraceletResponse dto = converter.braceletToResponse(bracelet);
-			
-			return ResponseEntity.ok(dto);
-		} catch (UserNotFoundException | BraceletNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+			@PathVariable("braceletId") Long braceletId) throws UserNotFoundException, BraceletNotFoundException{
+		Bracelet bracelet = braceletService.findByBraceletId(getPrincipalId(principal), braceletId);
+		
+		BraceletResponse dto = converter.braceletToResponse(bracelet);
+		
+		return ResponseEntity.ok(dto);
+
 	}
 	@GetMapping("/search")
 	public ResponseEntity<?> searchBraceletByName(
 			Principal principal,
 			@RequestParam("name") String name,
-			Pageable pageable){
-		try {
-			Page<Bracelet> bracelets = braceletService.searchBraceletByName(principal.getName(), name, pageable);
-			
-			Page<BraceletResponse> dto = bracelets.map(converter::braceletToResponse);
-			
-			return ResponseEntity.ok(dto);
-		} catch (UserNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+			Pageable pageable) throws UserNotFoundException{
+		Page<Bracelet> bracelets = braceletService.searchBraceletByName(getPrincipalId(principal), name, pageable);
+		
+		Page<BraceletResponse> dto = bracelets.map(converter::braceletToResponse);
+		
+		return ResponseEntity.ok(dto);
 	}
 	
 	@PutMapping("/{braceletId}")
@@ -106,28 +93,20 @@ public class BraceletResource {
 			@PathVariable("braceletId") Long braceletId,
 			@Valid
 			@RequestBody
-			BraceletRequest postDto){
-		try {
-			Bracelet bracelet = braceletService.updateBracelet(principal.getName(), braceletId, postDto);
-			
-			BraceletResponse dto = converter.braceletToResponse(bracelet);
-			
-			return ResponseEntity.status(HttpStatus.OK).location(getUri(bracelet)).body(dto);
-		} catch (UserNotFoundException| BraceletNotFoundException  exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		} 
+			BraceletRequest postDto) throws UserNotFoundException, BraceletNotFoundException{
+		Bracelet bracelet = braceletService.updateBracelet(getPrincipalId(principal), braceletId, postDto);
+		
+		BraceletResponse dto = converter.braceletToResponse(bracelet);
+		
+		return ResponseEntity.status(HttpStatus.OK).location(getUri(bracelet)).body(dto);
 	}
 	@DeleteMapping("/{braceletId}")
 	public ResponseEntity<?> deleteUserBracelet(
 			Principal principal,
-			@PathVariable("braceletId") Long braceletId){
-		try {
-			braceletService.deleteBracelet(principal.getName(), braceletId);
-			
-			return ResponseEntity.noContent().build();
-		} catch (UserNotFoundException | BraceletNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+			@PathVariable("braceletId") Long braceletId) throws UserNotFoundException, BraceletNotFoundException{
+		braceletService.deleteBracelet(getPrincipalId(principal), braceletId);
+		
+		return ResponseEntity.noContent().build();
 	}
 	
 	private URI getUri(Bracelet bracelet) {
@@ -136,5 +115,9 @@ public class BraceletResource {
 				.path("/")
 				.buildAndExpand(bracelet.getId())
 				.toUri();
+	}
+	
+	private Long getPrincipalId(Principal principal) {
+		return Long.parseLong(principal.getName());
 	}
 }

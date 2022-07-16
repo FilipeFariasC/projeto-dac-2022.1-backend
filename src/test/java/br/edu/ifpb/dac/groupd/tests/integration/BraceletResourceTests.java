@@ -42,7 +42,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.edu.ifpb.dac.groupd.business.exception.BraceletNotFoundException;
 import br.edu.ifpb.dac.groupd.business.service.BraceletService;
-import br.edu.ifpb.dac.groupd.business.service.UserService;
+import br.edu.ifpb.dac.groupd.business.service.UserServiceImpl;
 import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
 import br.edu.ifpb.dac.groupd.model.entities.User;
 import br.edu.ifpb.dac.groupd.model.repository.BraceletRepository;
@@ -70,7 +70,7 @@ public class BraceletResourceTests {
 	private ObjectMapper mapper;
 	
 	@Autowired
-	private UserService userService;
+	private UserServiceImpl userService;
 	
 	@Autowired
 	private BraceletService braceletService;
@@ -111,7 +111,7 @@ public class BraceletResourceTests {
 		String response = assertDoesNotThrow(
 			()->mockMvc.perform(
 				post(BRACELETS_PREFIX)
-					.with(user(user.getUsername()).password(user.getPassword()))
+					.with(user(user.getId().toString()).password(user.getPassword()))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(braceletPostDto))
 				).andExpect(status().isBadRequest())
@@ -136,7 +136,7 @@ public class BraceletResourceTests {
 		Page<Bracelet> bracelets = assertDoesNotThrow(
 			()->
 				{
-					return braceletService.getAllBracelets(user.getEmail(), PageRequest.of(0, 5, Sort.by("bracelet_id")));
+					return braceletService.getAllBracelets(user.getId(), PageRequest.of(0, 5, Sort.by("id")));
 				}
 			);
 		assertTrue(bracelets.isEmpty());
@@ -151,7 +151,7 @@ public class BraceletResourceTests {
 		String response = assertDoesNotThrow(
 			()->mockMvc.perform(
 				post(BRACELETS_PREFIX)
-					.with(user(user.getUsername()).password(user.getPassword()))
+					.with(user(user.getId().toString()).password(user.getPassword()))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(braceletPostDto))
 				).andExpect(status().isCreated())
@@ -160,7 +160,7 @@ public class BraceletResourceTests {
 		
 		BraceletResponse braceletDto = assertDoesNotThrow(()->mapper.readValue(response, BraceletResponse.class));
 		
-		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getEmail(), braceletDto.getId()));
+		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getId(), braceletDto.getId()));
 		
 		equals(braceletPostDto, braceletDto, bracelet);
 	}
@@ -174,7 +174,7 @@ public class BraceletResourceTests {
 		String response = assertDoesNotThrow(
 			()->mockMvc.perform(
 				get(BRACELETS_PREFIX+0)
-					.with(user(user.getUsername()).password(user.getPassword()))
+					.with(user(user.getId().toString()).password(user.getPassword()))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(braceletPostDto))
 				).andExpect(status().isNotFound())
@@ -192,7 +192,7 @@ public class BraceletResourceTests {
 		String responsePost = assertDoesNotThrow(
 			()->mockMvc.perform(
 				post(BRACELETS_PREFIX)
-					.with(user(user.getUsername()).password(user.getPassword()))
+					.with(user(user.getId().toString()).password(user.getPassword()))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(braceletPostDto))
 				).andExpect(status().isCreated())
@@ -204,14 +204,14 @@ public class BraceletResourceTests {
 		String responseGet = assertDoesNotThrow(
 			()->mockMvc.perform(
 				get(BRACELETS_PREFIX+braceletDtoPost.getId())
-					.with(user(user.getUsername()).password(user.getPassword()))
+					.with(user(user.getId().toString()).password(user.getPassword()))
 				).andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString()
 		);
 		
 		BraceletResponse braceletDtoGet = assertDoesNotThrow(()->mapper.readValue(responseGet, BraceletResponse.class));
 		
-		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getUsername(), braceletDtoPost.getId()));
+		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getId(), braceletDtoPost.getId()));
 		
 		assertThat(braceletDtoPost, is(equalTo(braceletDtoGet)));
 		
@@ -232,7 +232,7 @@ public class BraceletResourceTests {
 		String responsePost = assertDoesNotThrow(
 			()->mockMvc.perform(
 				post(BRACELETS_PREFIX)
-					.with(user(user.getUsername()).password(user.getPassword()))
+					.with(user(user.getId().toString()).password(user.getPassword()))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(validBracelet))
 				).andExpect(status().isCreated())
@@ -244,7 +244,7 @@ public class BraceletResourceTests {
 		String responsePut = assertDoesNotThrow(
 			()->mockMvc.perform(
 				put(BRACELETS_PREFIX+dto.getId())
-					.with(user(user.getUsername()).password(user.getPassword()))
+					.with(user(user.getId().toString()).password(user.getPassword()))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(braceletPostDto))
 				).andExpect(status().isBadRequest())
@@ -279,7 +279,7 @@ public class BraceletResourceTests {
 		String responsePost = assertDoesNotThrow(
 			()->mockMvc.perform(
 				post(BRACELETS_PREFIX)
-					.with(user(user.getUsername()).password(user.getPassword()))
+					.with(user(user.getId().toString()).password(user.getPassword()))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(validBracelet))
 				).andExpect(status().isCreated())
@@ -291,7 +291,7 @@ public class BraceletResourceTests {
 		String responsePut = assertDoesNotThrow(
 			()->mockMvc.perform(
 				put(BRACELETS_PREFIX+dto.getId())
-					.with(user(user.getUsername()).password(user.getPassword()))
+					.with(user(user.getId().toString()).password(user.getPassword()))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(braceletPostDto))
 				).andExpect(status().isOk())
@@ -300,7 +300,7 @@ public class BraceletResourceTests {
 		
 		BraceletResponse braceletDto = assertDoesNotThrow(()->mapper.readValue(responsePut, BraceletResponse.class));
 		
-		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getEmail(), braceletDto.getId()));
+		Bracelet bracelet = assertDoesNotThrow(()->braceletService.findByBraceletId(user.getId(), braceletDto.getId()));
 		
 		equals(braceletPostDto, braceletDto, bracelet);
 	}

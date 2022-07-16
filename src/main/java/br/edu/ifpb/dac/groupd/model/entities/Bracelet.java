@@ -97,8 +97,10 @@ public class Bracelet implements Serializable{
 	}
 	
 	public void addLocation(@Valid Location location) {
-		if(location != null)
+		if(location != null) {
+			location.setBracelet(this);
 			locations.add(location);
+		}
 	}
 
 	public Fence getMonitor() {

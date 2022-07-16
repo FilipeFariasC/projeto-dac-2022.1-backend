@@ -5,18 +5,20 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.business.exception.UserEmailInUseException;
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
+import br.edu.ifpb.dac.groupd.business.service.interfaces.PasswordEncoderService;
+import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
 import br.edu.ifpb.dac.groupd.model.entities.User;
-import br.edu.ifpb.dac.groupd.model.repository.RoleRepository;
 import br.edu.ifpb.dac.groupd.model.repository.UserRepository;
 import br.edu.ifpb.dac.groupd.presentation.dto.UserRequest;
 
 @Service
-public class UserService {
+public class UserServiceImpl implements UserService{
 	@Autowired
 	private UserRepository userRepo;
 	
@@ -24,10 +26,10 @@ public class UserService {
 	private ModelMapper mapper;
 	
 	@Autowired
-	private BCryptPasswordEncoder passEncoder;
+	private PasswordEncoderService passEncoder;
 	
 	@Autowired
-	private RoleRepository roleRepo;
+	private RoleService roleService;
 	
 	// User
 	public User create(UserRequest userPostDto) throws UserEmailInUseException {
@@ -39,7 +41,7 @@ public class UserService {
 			throw new UserEmailInUseException(userPostDto.getEmail());
 		
 		user.setPassword(passEncoder.encode(userPostDto.getPassword()));
-		user.addAuthority(roleRepo.findByAuthority("USER").get());
+		user.addAuthority(roleService.findDefault());
 		
 		return userRepo.save(user);
 	}
@@ -97,6 +99,7 @@ public class UserService {
 		
 		userRepo.deleteById(register.get().getId());
 	}
+	
 	public User findByEmail(String username) throws UserNotFoundException {
 		
 		Optional<User> user = userRepo.findByEmail(username);
@@ -105,6 +108,86 @@ public class UserService {
 			throw new UserNotFoundException(username);
 		
 		return user.get();
+	}
+
+	public User save(User user) throws UserEmailInUseException {
+		
+		if(user.getId() != null) {
+			throw new IllegalStateException("Usuário já está no banco, tente atualizá-lo.");
+		}
+		
+		boolean register = userRepo.existsByEmail(user.getEmail());
+		
+		if(register)
+			throw new UserEmailInUseException(user.getEmail());
+		
+		passEncoder.encryptPassword(user);
+		user.addAuthority(roleService.findDefault());
+		
+		return userRepo.save(user);
+	}
+
+	public User update(User user) throws UserNotFoundException, UserEmailInUseException {
+		Optional<User> userRegister = userRepo.findById(user.getId());
+		if(userRegister.isEmpty())
+			throw new UserNotFoundException(user.getUsername());
+		
+		User registered = userRegister.get();
+		
+		Optional<User> email = userRepo.findByEmail(user.getEmail());
+		
+		if(email.isPresent() && !registered.getId().equals(email.get().getId())) {
+			throw new UserEmailInUseException(user.getEmail());
+		}
+		
+		passEncoder.encryptPassword(user);
+		
+		user.setFences(registered.getFences());
+		user.setBracelets(registered.getBracelets());
+		user.setRoles(registered.getAuthorities());
+		
+		return userRepo.save(user);
+	}
+
+	public void delete(Long id) throws UserNotFoundException {
+		boolean exists = userRepo.existsById(id);
+		
+		if(!exists)
+			throw new UserNotFoundException(id);
+		
+		userRepo.deleteById(id);
+	}
+
+	public void delete(User user) throws UserNotFoundException {
+		Optional<User> register = userRepo.findByEmail(user.getUsername());
+		
+		if(register.isEmpty())
+			throw new UserNotFoundException(user.getUsername());
+		
+		userRepo.deleteById(register.get().getId());
+		
+	}
+
+	public User findByUsername(String username) throws UserNotFoundException {
+		return findByEmail(username);
+	}
+
+	public List<User> findAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public List<User> find(User filter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		try {
+			return findByUsername(username);
+		} catch (UserNotFoundException e) {
+			return null;
+		}
 	}
 	
 }

@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.edu.ifpb.dac.groupd.business.exception.UserEmailInUseException;
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
-import br.edu.ifpb.dac.groupd.business.service.UserService;
+import br.edu.ifpb.dac.groupd.business.service.UserServiceImpl;
+import br.edu.ifpb.dac.groupd.business.service.converter.UserConverterService;
 import br.edu.ifpb.dac.groupd.model.entities.User;
 import br.edu.ifpb.dac.groupd.presentation.dto.UserRequest;
 import br.edu.ifpb.dac.groupd.presentation.dto.UserResponse;
@@ -33,10 +33,10 @@ import br.edu.ifpb.dac.groupd.presentation.dto.UserResponse;
 @RequestMapping("/users")
 public class UserResource {
 	@Autowired
-	private UserService userService;
+	private UserServiceImpl userService;
 	
 	@Autowired
-	private ModelMapper mapper;
+	private UserConverterService converter;
 	
 	// User Only
 	@PostMapping
@@ -45,16 +45,12 @@ public class UserResource {
 			@Valid
 			@RequestBody
 			UserRequest userPostDto,
-			HttpServletRequest request){
+			HttpServletRequest request) throws UserEmailInUseException{
 		
 		User created;
-		try {
-			created = userService.create(userPostDto);
-		} catch (UserEmailInUseException exception) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
-		}
+		created = userService.create(userPostDto);
 		
-		UserResponse dto = mapToUserDto(created);
+		UserResponse dto = converter.userToResponse(created);
 		
 		URI uri = getUri(created);
 		
@@ -63,9 +59,9 @@ public class UserResource {
 	@GetMapping("/user")
 	public ResponseEntity<?> findById(Principal principal){
 		try {
-			User user = userService.findByEmail(principal.getName());
+			User user = userService.findById(Long.parseLong(principal.getName()));
 			
-			UserResponse dto = mapToUserDto(user);
+			UserResponse dto = converter.userToResponse(user);
 			
 			return ResponseEntity.ok(dto);
 		} catch (UserNotFoundException exception) {
@@ -76,57 +72,37 @@ public class UserResource {
 	public ResponseEntity<?> updateById(Principal principal, 
 			@Valid
 			@RequestBody
-			UserRequest userPostDto, HttpSession session){
+			UserRequest userPostDto, HttpSession session) throws UserNotFoundException, UserEmailInUseException{
 		
-		try {
+			Long id = getPrincipalId(principal);
+			User user = converter.requestToUser(userPostDto);
+			user.setId(id);
 			
-			User user = userService.findByEmail(principal.getName());
 			
-			User updated = userService.update(principal.getName(), userPostDto);
+			User updated = userService.update(user);
 			
-			UserResponse dto = mapToUserDto(updated);
+			UserResponse dto = converter.userToResponse(updated);
 			
 			URI uri = getUri(updated);
-			
-			
-			
-			if(!principal.getName().equals(userPostDto.getEmail()) || userPostDto.getPassword().equals(user.getPassword())) {
-				session.invalidate();
-			}
 
 			return ResponseEntity.status(HttpStatus.OK).location(uri).body(dto);
-		} catch (UserNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		} catch(UserEmailInUseException exception) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
-		}
 	}
 	
 	@PatchMapping("/user")
 	public ResponseEntity<?> updateUserName(Principal principal, 
-			@RequestBody @Valid UserRequest userPostDto){
-		try {
-			userService.updateUserName(principal.getName(), userPostDto.getName());
-			
-			return ResponseEntity.ok(String.format("Nome atualizado!", principal.getName()));
-		} catch (UserNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+			@RequestBody @Valid UserRequest userPostDto) throws UserNotFoundException{
+
+		userService.updateUserName(principal.getName(), userPostDto.getName());
+		
+		return ResponseEntity.ok(String.format("Nome atualizado!", principal.getName()));
+
 	}
 	
-	@DeleteMapping
-	public ResponseEntity<?> deleteById(Principal principal, HttpSession session){
-		try {
-			userService.deleteByUsername(principal.getName());
-			session.invalidate();
-			return ResponseEntity.ok(String.format("Usuário de email: %s deletado!", principal.getName()));
-		} catch (UserNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
-	}
-	
-	private UserResponse mapToUserDto(User user) {
-		return mapper.map(user, UserResponse.class);
+	@DeleteMapping("/user")
+	public ResponseEntity<?> deleteById(Principal principal, HttpSession session) throws UserNotFoundException{
+		userService.delete(getPrincipalId(principal));
+		session.invalidate();
+		return ResponseEntity.ok("Usuário deletado!");
 	}
 	
 	private URI getUri(User user) {
@@ -135,6 +111,10 @@ public class UserResource {
 				.path("/")
 				.build()
 				.toUri();
+	}
+	
+	private Long getPrincipalId(Principal principal) {
+		return Long.parseLong(principal.getName());
 	}
 	
 }

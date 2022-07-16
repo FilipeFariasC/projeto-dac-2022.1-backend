@@ -26,7 +26,7 @@ public class FenceBraceletResource {
 			@RequestParam(name="fence", required=true) Long fenceId,
 			@RequestParam(name="bracelet", required=true) Long braceletId)
 		throws AbstractException{
-		fenceBraceletService.addBraceletFence(principal.getName(), fenceId, braceletId);
+		fenceBraceletService.addBraceletFence(getPrincipalId(principal), fenceId, braceletId);
 		
 		return ResponseEntity.ok(String.format("Adicionada pulseira de identificador %d na cerca de identificador %d!", braceletId, fenceId));
 	}
@@ -37,10 +37,12 @@ public class FenceBraceletResource {
 			@RequestParam(name="fence", required=true) Long fenceId,
 			@RequestParam(name="bracelet", required=true) Long braceletId)
 	throws AbstractException{
-		fenceBraceletService.removeBraceletFence(principal.getName(), fenceId, braceletId);
+		fenceBraceletService.removeBraceletFence(getPrincipalId(principal), fenceId, braceletId);
 		
 		return ResponseEntity.ok(String.format("Removida pulseira de identificador %d da cerca de identificador %d!", braceletId, fenceId));
 		
 	}
-	
+	private Long getPrincipalId(Principal principal) {
+		return Long.parseLong(principal.getName());
+	}
 }

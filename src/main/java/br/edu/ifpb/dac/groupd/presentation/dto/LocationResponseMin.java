@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import br.edu.ifpb.dac.groupd.model.entities.Coordinate;
 
-public class LocationResponse {
+public class LocationResponseMin {
 	
 	private Long id;
 	@JsonIgnoreProperties(value="fences")
@@ -15,8 +15,6 @@ public class LocationResponse {
 	private Coordinate coordinate;
 	@JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
 	private LocalDateTime creationDate;
-	
-	private AlarmResponseMin alarm;
 	
 	
 	public Long getId() {
@@ -44,12 +42,5 @@ public class LocationResponse {
 	public void setBracelet(BraceletResponse bracelet) {
 		this.bracelet = bracelet;
 	}
-	public AlarmResponseMin getAlarm() {
-		return alarm;
-	}
-	public void setAlarm(AlarmResponseMin alarm) {
-		this.alarm = alarm;
-	}
-	
 	
 }

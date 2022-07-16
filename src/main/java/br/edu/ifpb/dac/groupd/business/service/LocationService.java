@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.business.exception.BraceletNotFoundException;
-import br.edu.ifpb.dac.groupd.business.exception.BraceletNotRegisteredException;
 import br.edu.ifpb.dac.groupd.business.exception.LocationCreationDateInFutureException;
 import br.edu.ifpb.dac.groupd.business.exception.LocationNotFoundException;
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
+import br.edu.ifpb.dac.groupd.business.service.converter.LocationConverterService;
+import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
 import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
 import br.edu.ifpb.dac.groupd.model.entities.Fence;
 import br.edu.ifpb.dac.groupd.model.entities.Location;
@@ -22,6 +25,8 @@ import br.edu.ifpb.dac.groupd.presentation.dto.LocationRequest;
 
 @Service
 public class LocationService {
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private LocationRepository locationRepo;
 	
@@ -34,11 +39,17 @@ public class LocationService {
 	@Autowired
 	private AlarmService alarmService;
 	
-	
 	@Autowired
 	private CoordinateService coordinateService;
 	
-	public Location create(String email, LocationRequest dto) throws BraceletNotFoundException, LocationCreationDateInFutureException, UserNotFoundException, BraceletNotRegisteredException {
+	@Autowired
+	private LocationConverterService locationConverter;
+	
+	public Location create(Long id, LocationRequest dto) throws BraceletNotFoundException, LocationCreationDateInFutureException, UserNotFoundException {
+		userService.findById(id);
+
+		Bracelet bracelet = braceletService.findByBraceletId(id, dto.getBraceletId());
+		
 		if(dto.getCreationDate() == null){
 			dto.setCreationDate(LocalDateTime.now());
 		} else {
@@ -52,23 +63,21 @@ public class LocationService {
 			}
 		}
 		
-		Bracelet bracelet = braceletService.findByBraceletId(email, dto.getBraceletId());
-		
-		Location mapped = mapfromDto(dto);
-		mapped.setBracelet(bracelet);
+		Location mapped = locationConverter.requestToLocation(dto);
+		mapped.setId(null);
 		
 		Location location = locationRepo.save(mapped);
 		
 		bracelet.addLocation(location);
-		if(bracelet.getMonitor() != null) {
-			Fence fence = bracelet.getMonitor();
-			
-			if(fence.getRadius() < coordinateService.calculateDistance(fence.getCoordinate(), location.getCoordinate()) ) {
-				alarmService.saveAlarm(location, fence);
+		braceletRepo.save(bracelet);
+
+		Fence fence = bracelet.getMonitor();
+		if(fence != null) {
+			Double distance = coordinateService.calculateDistance(fence.getCoordinate(), dto.getCoordinate());
+			if(fence.getRadius() < distance ) {
+				alarmService.saveAlarm(location, fence, distance);
 			}
 		}
-		
-		braceletRepo.save(bracelet);
 		
 		return location;
 	}
@@ -86,20 +95,10 @@ public class LocationService {
 		return location.get();
 	}
 	
-	public List<Location> findByBraceletId(String email, Long braceletId) throws BraceletNotFoundException, UserNotFoundException, BraceletNotRegisteredException {
-		Bracelet bracelet = braceletService.findByBraceletId(email, braceletId);
+	public Page<Location> findByBraceletId(Long id, Long braceletId, Pageable pageable) throws BraceletNotFoundException, UserNotFoundException {
+		userService.findById(id);
 		
-		return bracelet.getLocations().stream().toList();
-	}
-	
-	
-	public Location mapfromDto(LocationRequest dto) {
-		Location location = new Location();
-		
-		location.setCoordinate(dto.getCoordinate());
-		location.setCreationDate(dto.getCreationDate());
-		
-		return location;
+		return locationRepo.findByBraceletId(braceletId, pageable);
 	}
 	
 	private String formatDate(LocalDateTime time){

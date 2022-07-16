@@ -15,9 +15,9 @@ import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
 public interface BraceletRepository extends JpaRepository<Bracelet, Long> {
 	Optional<Bracelet> findByName(String name);
 	
-	@Query(value = "SELECT b FROM Bracelet b WHERE b.user.email = :username")
-	Page<Bracelet> findAllBraceletsByUser(@Param("username") String username, Pageable pageable);
+	@Query(value = "SELECT b FROM Bracelet b WHERE b.user.id = :id")
+	Page<Bracelet> findAllBraceletsByUser(@Param("id") Long id, Pageable pageable);
 	
-	@Query(value = "SELECT b FROM Bracelet b WHERE b.user.email = :username AND lower(b.name) LIKE lower(concat('%', :name,'%'))")
-	Page<Bracelet> findBraceletsByName(@Param("username") String username, @Param("name") String name,Pageable pageable);
+	@Query(value = "SELECT b FROM Bracelet b WHERE b.user.id = :id AND lower(b.name) LIKE lower(concat('%', :name,'%'))")
+	Page<Bracelet> findBraceletsByName(@Param("id") Long id, @Param("name") String name,Pageable pageable);
 }

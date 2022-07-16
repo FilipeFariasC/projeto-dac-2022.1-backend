@@ -25,7 +25,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.edu.ifpb.dac.groupd.business.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.business.exception.FenceNotFoundException;
-import br.edu.ifpb.dac.groupd.business.exception.FenceNotRegisteredException;
 import br.edu.ifpb.dac.groupd.business.exception.NoBraceletAvailableException;
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.business.service.FenceService;
@@ -50,61 +49,47 @@ public class FenceResource {
 			Principal principal,
 			@Valid
 			@RequestBody
-			FenceRequest postDto){
-		try {
-			Fence fence = fenceService.createFence(principal.getName(), postDto);
-			
-			FenceResponse dto = converter.fenceToResponse(fence);
-			
-			return ResponseEntity.status(HttpStatus.CREATED).location(toUri(fence)).body(dto);
-		} catch (UserNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+			FenceRequest postDto) throws UserNotFoundException{
+		Fence fence = fenceService.createFence(getPrincipalId(principal), postDto);
+		
+		FenceResponse dto = converter.fenceToResponse(fence);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).location(toUri(fence)).body(dto);
+
 	}
 	@GetMapping
 	public ResponseEntity<?> getAllFences(
 			Principal principal, Pageable pageable
-			){
-		try {
-			
-			Page<Fence> pageFences = fenceService.getAllFences(principal.getName(), pageable);
-			Page<FenceResponse> dtos = pageFences
-					.map(converter::fenceToResponse);
-			
-			return ResponseEntity.ok(dtos);
-		} catch (UserNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+			) throws UserNotFoundException{
+		Page<Fence> pageFences = fenceService.getAllFences(getPrincipalId(principal), pageable);
+		Page<FenceResponse> dtos = pageFences
+				.map(converter::fenceToResponse);
+		
+		return ResponseEntity.ok(dtos);
+
 	}
 	
 	@GetMapping("/{fenceId}")
 	public ResponseEntity<?> getAllFences(
 			Principal principal,
-			@PathVariable("fenceId") Long fenceId){
-		try {
-			Fence bracelet = fenceService.findFenceById(principal.getName(), fenceId);
-			
-			FenceResponse dto = converter.fenceToResponse(bracelet);
-			
-			return ResponseEntity.ok(dto);
-		} catch (UserNotFoundException | FenceNotRegisteredException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+			@PathVariable("fenceId") Long fenceId) throws UserNotFoundException, FenceNotFoundException{
+		Fence bracelet = fenceService.findFenceById(getPrincipalId(principal), fenceId);
+		
+		FenceResponse dto = converter.fenceToResponse(bracelet);
+		
+		return ResponseEntity.ok(dto);
+
 	}
 	@GetMapping("/search")
 	public ResponseEntity<?> searchFenceByName(
 			Principal principal,
 			@RequestParam("name") String name,
-			Pageable pageable){
-		try {
-			Page<Fence> bracelets = fenceService.searchFencesByName(principal.getName(), name, pageable);
-			
-			Page<FenceResponse> dto = bracelets.map(converter::fenceToResponse);
-			
-			return ResponseEntity.ok(dto);
-		} catch (UserNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+			Pageable pageable) throws UserNotFoundException{
+		Page<Fence> bracelets = fenceService.searchFencesByName(getPrincipalId(principal), name, pageable);
+		
+		Page<FenceResponse> dto = bracelets.map(converter::fenceToResponse);
+		
+		return ResponseEntity.ok(dto);
 	}
 	
 	@PutMapping("/{fenceId}")
@@ -113,45 +98,38 @@ public class FenceResource {
 			@PathVariable("fenceId") Long fenceId,
 			@Valid
 			@RequestBody
-			FenceRequest postDto){
-		try {
-			Fence fence = fenceService.updateFence(principal.getName(), fenceId, postDto);
-			
-			FenceResponse dto = converter.fenceToResponse(fence);
-			
-			return ResponseEntity.ok(dto);
-		} catch (UserNotFoundException| FenceNotFoundException   exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		} 
+			FenceRequest postDto) throws UserNotFoundException, FenceNotFoundException{
+		Fence fence = fenceService.updateFence(getPrincipalId(principal), fenceId, postDto);
+		
+		FenceResponse dto = converter.fenceToResponse(fence);
+		
+		return ResponseEntity.ok(dto);
+
 	}
 	@PatchMapping("/{fenceId}/setStatus")
 	public ResponseEntity<?> setStatus(Principal principal,
 			@PathVariable("fenceId") Long fenceId,
-			@RequestParam(name="active", required=true) boolean active){
-		try {
-			Fence fence = fenceService.setActive(principal.getName(), fenceId, active);
-			
-			FenceResponse dto = converter.fenceToResponse(fence);
-			
-			return ResponseEntity.ok(dto);
-		} catch ( FenceNotFoundException | UserNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		} catch (FenceEmptyException | NoBraceletAvailableException exception) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
-		}
+			@RequestParam(name="active", required=true) boolean active) throws FenceEmptyException, 
+		FenceNotFoundException, 
+		UserNotFoundException, 
+		NoBraceletAvailableException{
+		
+		Fence fence = fenceService.setActive(getPrincipalId(principal), fenceId, active);
+		
+		FenceResponse dto = converter.fenceToResponse(fence);
+		
+		return ResponseEntity.ok(dto);
+
 	}
 	
 	@DeleteMapping("/{fenceId}")
 	public ResponseEntity<?> deleteFence(
 			Principal principal,
-			@PathVariable("fenceId") Long fenceId){
-		try {
-			fenceService.deleteFence(principal.getName(), fenceId);
-			
-			return ResponseEntity.noContent().build();
-		} catch (UserNotFoundException | FenceNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+			@PathVariable("fenceId") Long fenceId) throws UserNotFoundException, FenceNotFoundException{
+		fenceService.deleteFence(getPrincipalId(principal), fenceId);
+		
+		return ResponseEntity.noContent().build();
+
 	}
 	private URI toUri (Fence fence) {
 		return ServletUriComponentsBuilder
@@ -160,4 +138,10 @@ public class FenceResource {
 				.buildAndExpand(fence.getId())
 				.toUri();
 	}
+	
+	private Long getPrincipalId(Principal principal) {
+		return Long.parseLong(principal.getName());
+	}
+	
+	
 }

@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -39,7 +40,10 @@ public class Alarm implements Serializable{
 	@OneToOne
 	@JoinColumn(name="location_id")
 	private Location location;
-
+	
+	@Min(0)
+	@Column(name="distance", columnDefinition = "NUMERIC")
+	private Double distance;
 	
 	public Fence getFence() {
 		return fence;
@@ -63,6 +67,14 @@ public class Alarm implements Serializable{
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+	
+	public Double getDistance() {
+		return distance;
+	}
+
+	public void setDistance(Double distance) {
+		this.distance = distance;
 	}
 
 	public Long getId() {

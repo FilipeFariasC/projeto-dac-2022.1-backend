@@ -3,9 +3,9 @@ package br.edu.ifpb.dac.groupd.tests.integration;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -25,7 +25,6 @@ import org.junit.platform.commons.annotation.Testable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,7 +33,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
-import br.edu.ifpb.dac.groupd.business.service.UserService;
+import br.edu.ifpb.dac.groupd.business.service.UserServiceImpl;
+import br.edu.ifpb.dac.groupd.business.service.interfaces.PasswordEncoderService;
 import br.edu.ifpb.dac.groupd.model.entities.User;
 import br.edu.ifpb.dac.groupd.presentation.dto.UserRequest;
 import br.edu.ifpb.dac.groupd.presentation.dto.UserResponse;
@@ -58,10 +58,10 @@ public class UserResourceTests {
 	private ObjectMapper mapper;
 	
 	@Autowired
-	private PasswordEncoder passEncoder;
+	private PasswordEncoderService passEncoder;
 	
 	@Autowired
-	private UserService userService;
+	private UserServiceImpl userService;
 	
 	private UserRequest dto = new UserRequest();
 	@BeforeEach
@@ -168,20 +168,24 @@ public class UserResourceTests {
 		dtoNewUser.setEmail(differentEmail);
 		dtoNewUser.setPassword(differentPassword);
 		
-		try {
-			mockMvc.perform(
-				post(PREFIX)
-					.contentType("application/json")
-					.content(mapper.writeValueAsString(dto))
-			);
-			mockMvc.perform(
-				post(PREFIX)
-					.contentType("application/json")
-					.content(mapper.writeValueAsString(dtoNewUser))
-			);
-			
-		} catch (Exception e) {
-		}
+		UserResponse user = assertDoesNotThrow(()->
+			{
+				return mapper.readValue(mockMvc.perform(
+					post(PREFIX)
+						.contentType("application/json")
+						.content(mapper.writeValueAsString(dto))
+				).andReturn().getResponse().getContentAsString(), UserResponse.class);
+			}
+		);
+		UserResponse newUser = assertDoesNotThrow(()->
+			{
+				return mapper.readValue(mockMvc.perform(
+					post(PREFIX)
+						.contentType("application/json")
+						.content(mapper.writeValueAsString(dtoNewUser))
+				).andReturn().getResponse().getContentAsString(), UserResponse.class);
+			}
+		);
 		
 		dto = validUser();
 		
@@ -189,7 +193,7 @@ public class UserResourceTests {
 			return
 			mockMvc.perform(
 				put(PREFIX)
-				.with(user(differentEmail).password(differentPassword))
+				.with(user(newUser.getId().toString()).password(differentPassword))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(dto))
 			)
@@ -216,22 +220,21 @@ public class UserResourceTests {
 		dtoNewUser.setEmail(differentEmail);
 		dtoNewUser.setPassword(differentPassword);
 		
-		assertDoesNotThrow(
-			()->
-			{
-				mockMvc.perform(
-					post(PREFIX)
-						.contentType("application/json")
-						.content(mapper.writeValueAsString(dto))
-				);
-				mockMvc.perform(
-					post(PREFIX)
-						.contentType("application/json")
-						.content(mapper.writeValueAsString(dtoNewUser))
-				);	
-			
-			}
-		);
+		UserResponse user = assertDoesNotThrow(()->{
+			return  mapper.readValue(mockMvc.perform(
+				post(PREFIX)
+					.contentType("application/json")
+					.content(mapper.writeValueAsString(dto))
+			).andReturn().getResponse().getContentAsString(), UserResponse.class);
+		});
+		
+		UserResponse newUser = assertDoesNotThrow(()->{
+			return  mapper.readValue(mockMvc.perform(
+				post(PREFIX)
+					.contentType("application/json")
+					.content(mapper.writeValueAsString(dtoNewUser))
+			).andReturn().getResponse().getContentAsString(), UserResponse.class);
+		});
 		
 		String newEmail = "ffc@pm.me";
 		dtoNewUser.setEmail(newEmail);
@@ -240,7 +243,7 @@ public class UserResourceTests {
 			return
 			mockMvc.perform(
 				put(PREFIX)
-				.with(user(differentEmail).password(differentPassword))
+				.with(user(newUser.getId().toString()).password(differentPassword))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(dtoNewUser))
 			)
@@ -250,12 +253,12 @@ public class UserResourceTests {
 		
 		UserResponse userDto = assertDoesNotThrow(()->mapper.readValue(response, UserResponse.class));
 		
-		User user = assertDoesNotThrow(()->{
+		User updated = assertDoesNotThrow(()->{
 			return userService.findByEmail(dtoNewUser.getEmail());
 		});
 		
 		equalsDto(dto, userDto);
-		equalsUser(dto, user);
+		equalsUser(dto, updated);
 		
 		deleteUser(newEmail);
 	}
@@ -266,17 +269,20 @@ public class UserResourceTests {
 	void testDeleteCurrentUser() {
 		dto = validUser();
 		
-		assertDoesNotThrow(()->
+		String responseJson =assertDoesNotThrow(()->
 			mockMvc.perform(
 				post(PREFIX)
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(dto))
-			));
+			).andReturn().getResponse().getContentAsString()
+		);
+		
+		UserResponse responseDto = assertDoesNotThrow(()-> mapper.readValue(responseJson, UserResponse.class));
 		
 		String response =assertDoesNotThrow(
 			()->{return mockMvc.perform(
-				delete(PREFIX)
-					.with(user(dto.getEmail()).password(dto.getPassword()))
+				delete(PREFIX+"/user")
+					.with(user(responseDto.getId().toString()).password(dto.getPassword()))
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(dto))
 				).andExpect(status().isOk())
@@ -284,7 +290,7 @@ public class UserResourceTests {
 			}
 		);
 		
-		assertThat(response, containsString(dto.getEmail()));
+		assertEquals("Usuário deletado!", response);
 		
 		assertThrows(UserNotFoundException.class, ()->{userService.findByEmail(dto.getEmail());});
 		

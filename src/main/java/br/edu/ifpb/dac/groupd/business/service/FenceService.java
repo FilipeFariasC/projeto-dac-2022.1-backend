@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.business.exception.FenceEmptyException;
 import br.edu.ifpb.dac.groupd.business.exception.FenceNotFoundException;
-import br.edu.ifpb.dac.groupd.business.exception.FenceNotRegisteredException;
 import br.edu.ifpb.dac.groupd.business.exception.NoBraceletAvailableException;
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.business.service.converter.FenceConverterService;
@@ -32,11 +31,11 @@ public class FenceService {
 	private FenceConverterService converter;
 	
 	
-	public Fence createFence(String username, FenceRequest dto) throws UserNotFoundException {
-		Optional<User> register = userRepo.findByEmail(username);
+	public Fence createFence(Long id, FenceRequest dto) throws UserNotFoundException {
+		Optional<User> register = userRepo.findById(id);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(username);
+			throw new UserNotFoundException(id);
 		
 		User user = register.get();
 		
@@ -50,52 +49,52 @@ public class FenceService {
 		
 		return fence;
 	}
-	public Page<Fence> getAllFences(String username, Pageable pageable) throws UserNotFoundException {
-		Optional<User> register = userRepo.findByEmail(username);
+	public Page<Fence> getAllFences(Long id, Pageable pageable) throws UserNotFoundException {
+		Optional<User> register = userRepo.findById(id);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(username);
+			throw new UserNotFoundException(id);
 		
-		return fenceRepo.findAllFencesByUser(username, pageable);
+		return fenceRepo.findAllFencesByUser(id, pageable);
 	}
-	public Page<Fence> searchFencesByName(String username, String name, Pageable pageable) throws UserNotFoundException {
-		boolean register = userRepo.existsByEmail(username);
+	public Page<Fence> searchFencesByName(Long id, String name, Pageable pageable) throws UserNotFoundException {
+		boolean register = userRepo.existsById(id);
 		
 		if (!register)
-			throw new UserNotFoundException(username);
+			throw new UserNotFoundException(id);
 		
-		return fenceRepo.searchUserFenceByName(username, name, pageable);
+		return fenceRepo.searchUserFenceByName(id, name, pageable);
 	}
 	
-	public Fence findFenceById(String username, Long fenceId) throws UserNotFoundException, FenceNotRegisteredException {
-		Optional<User> register = userRepo.findByEmail(username);
+	public Fence findFenceById(Long id, Long fenceId) throws UserNotFoundException, FenceNotFoundException {
+		Optional<User> register = userRepo.findById(id);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(username);
+			throw new UserNotFoundException(id);
 		
 		User user = register.get();
 		
 		Optional<Fence> registerFence = user.getFences().stream().filter(fence->fence.getId().equals(fenceId)).findFirst();
 		
 		if(registerFence.isEmpty()) {
-			throw new FenceNotRegisteredException();
+			throw new FenceNotFoundException(fenceId);
 		}
 		
 		return registerFence.get();
 	}
 
-	public Fence updateFence(String username, Long fenceId, FenceRequest dto) throws UserNotFoundException, FenceNotFoundException {
-		Optional<User> register = userRepo.findByEmail(username);
+	public Fence updateFence(Long id, Long fenceId, FenceRequest dto) throws UserNotFoundException, FenceNotFoundException {
+		Optional<User> register = userRepo.findById(id);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(username);
+			throw new UserNotFoundException(id);
 		
 		User user = register.get();
 		
 		boolean existe = user.getFences()
 				.stream()
 				.mapToLong(Fence::getId)
-				.anyMatch(id -> id == fenceId);
+				.anyMatch(fenceIdRegistered -> fenceIdRegistered == fenceId);
 		if(!existe) {
 			throw new FenceNotFoundException(fenceId);
 		}
@@ -106,11 +105,11 @@ public class FenceService {
 		
 		return fenceRepo.save(mapped);
 	}
-	public Fence setActive(String username, Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException, UserNotFoundException, NoBraceletAvailableException {
+	public Fence setActive(Long id, Long fenceId, Boolean status) throws FenceEmptyException, FenceNotFoundException, UserNotFoundException, NoBraceletAvailableException {
 		
-		Optional<User> register = userRepo.findByEmail(username);
+		Optional<User> register = userRepo.findById(id);
 		if(register.isEmpty()) {
-			throw new UserNotFoundException(username);
+			throw new UserNotFoundException(id);
 		}
 		User user = register.get();
 		
@@ -125,11 +124,11 @@ public class FenceService {
 		return fenceRepo.save(fence);
 	}
 	
-	public void deleteFence(String username, Long fenceId) throws UserNotFoundException, FenceNotFoundException {
-		Optional<User> register = userRepo.findByEmail(username);
+	public void deleteFence(Long id, Long fenceId) throws UserNotFoundException, FenceNotFoundException {
+		Optional<User> register = userRepo.findById(id);
 		
 		if (register.isEmpty())
-			throw new UserNotFoundException(username);
+			throw new UserNotFoundException(id);
 		
 		User user = register.get();
 		Set<Fence> fences = user.getFences();

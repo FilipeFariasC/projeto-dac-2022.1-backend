@@ -3,6 +3,8 @@ package br.edu.ifpb.dac.groupd.presentation.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.ifpb.dac.groupd.business.exception.AlarmNotFoundException;
 import br.edu.ifpb.dac.groupd.business.service.AlarmService;
-import br.edu.ifpb.dac.groupd.business.service.AlarmServiceConvert;
+import br.edu.ifpb.dac.groupd.business.service.converter.AlarmConverterService;
 import br.edu.ifpb.dac.groupd.model.entities.Alarm;
 import br.edu.ifpb.dac.groupd.presentation.dto.AlarmResponse;
 
@@ -27,44 +29,33 @@ public class AlarmResource {
 	private AlarmService alarmService;
 	
 	@Autowired
-	private AlarmServiceConvert alarmServiceConvert;
+	private AlarmConverterService alarmConverter;
 	
 
 	@PatchMapping("/{id}")
-	public ResponseEntity<?> alarmSeen(@PathVariable("id") Long idAlarm){
-		try {
-			Alarm alarm = alarmService.alarmSeen(idAlarm);
-			AlarmResponse dto = alarmServiceConvert.mapToDto(alarm);
-			
-			return ResponseEntity.ok(dto);
-		} catch (AlarmNotFoundException exception) {
-			
-			return ResponseEntity.badRequest().body(exception.getMessage());
-		}
+	public ResponseEntity<?> alarmSeen(@PathVariable("id") Long idAlarm) throws AlarmNotFoundException{
+		Alarm alarm = alarmService.alarmSeen(idAlarm);
+		AlarmResponse dto = alarmConverter.alarmToResponse(alarm);
+		
+		return ResponseEntity.ok(dto);
+
 	}
 	
 	
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteAlarm(@PathVariable("id") Long idAlarm) {
-		try {
-			alarmService.deleteAlarm(idAlarm);
-			return ResponseEntity.noContent().build();
-		}catch(AlarmNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-		}
+	public ResponseEntity<?> deleteAlarm(@PathVariable("id") Long idAlarm) throws AlarmNotFoundException {
+		alarmService.deleteAlarm(idAlarm);
+		return ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> findAlarmById(@PathVariable("id") Long alarmId){
-		try {
-			Alarm alarm = alarmService.findAlarmById(alarmId);
-			
-			AlarmResponse dto = alarmServiceConvert.mapToDto(alarm);
-			
-			return ResponseEntity.ok(dto);
-		} catch (AlarmNotFoundException exception) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
-		}
+	public ResponseEntity<?> findAlarmById(@PathVariable("id") Long alarmId) throws AlarmNotFoundException{
+		Alarm alarm = alarmService.findAlarmById(alarmId);
+		
+
+		AlarmResponse dto = alarmConverter.alarmToResponse(alarm);
+		
+		return ResponseEntity.ok(dto);
 	}
 	
 	@GetMapping("/search")
@@ -72,36 +63,29 @@ public class AlarmResource {
 			@RequestParam(value = "idAlarm",required = true) Long idAlarm,
 			@RequestParam(value = "seen", required = false) boolean seen) {
 		
-		try {
-			Alarm filter = new Alarm();
-			
-			filter.setId(idAlarm);
-			filter.setSeen(seen);
-			
-			List<Alarm> alarms = alarmService.findFilter(filter);
-			List<AlarmResponse> dtos = alarmServiceConvert.alarmsToDto(alarms);
-			
-			return ResponseEntity.ok(dtos);
-		}catch(Exception e) {
-			
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+		Alarm filter = new Alarm();
+		
+		filter.setId(idAlarm);
+		filter.setSeen(seen);
+		
+		List<Alarm> alarms = alarmService.findFilter(filter);
+		List<AlarmResponse> dtos = alarms.stream().map(alarmConverter::alarmToResponse)
+			.toList();
+		
+		return ResponseEntity.ok(dtos);
 	}
+	
 	@GetMapping("/fence/{id}")
-	public ResponseEntity<?> findByFence(@PathVariable("id") Long fenceId){
-		List<AlarmResponse> alarms = alarmService.findByFenceId(fenceId)
-				.stream()
-				.map(alarmServiceConvert::mapToDto)
-				.toList();
+	public ResponseEntity<?> findByFence(@PathVariable("id") Long fenceId, Pageable pageable){
+		Page<AlarmResponse> alarms = alarmService.findByFenceId(fenceId, pageable)
+				.map(alarmConverter::alarmToResponse);
 		
 		return ResponseEntity.ok(alarms);
 	}
 	@GetMapping("/bracelet/{id}")
-	public ResponseEntity<?> findByBracelet(@PathVariable("id") Long braceletId){
-		List<AlarmResponse> alarms = alarmService.findByBraceletId(braceletId)
-				.stream()
-				.map(alarmServiceConvert::mapToDto)
-				.toList();
+	public ResponseEntity<?> findByBracelet(@PathVariable("id") Long braceletId, Pageable pageable){
+		Page<AlarmResponse> alarms = alarmService.findByBraceletId(braceletId, pageable)
+				.map(alarmConverter::alarmToResponse);
 		
 		return ResponseEntity.ok(alarms);
 	}

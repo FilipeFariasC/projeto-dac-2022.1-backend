@@ -10,46 +10,47 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
+import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
+import br.edu.ifpb.dac.groupd.business.service.security.TokenServiceImpl;
+import br.edu.ifpb.dac.groupd.model.entities.User;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 	@Autowired
-	private JwtUtils jwtUtils;
+	private TokenServiceImpl tokenService;
 	
 	@Autowired
-	private UserDetailsLoginService userDetailsService;
+	private UserService userService;
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		String authorizationHeader = request.getHeader("Authorization");
+		String token = tokenService.get(request);
+		boolean valid = tokenService.isValid(token);
 		
-		String username = null;
-		String jwtToken = null;
-		
-		if(authorizationHeader != null && 
-				authorizationHeader.startsWith("Bearer ")) {
-			jwtToken = authorizationHeader.substring(7);
-			username = jwtUtils.extractUsername(jwtToken);
-		}
-		if( username != null && 
-			SecurityContextHolder.getContext().getAuthentication() == null) {
-			
-			UserDetails currentUser = userDetailsService.loadUserByUsername(username);
-			Boolean tokenValidation = jwtUtils.validateToken(jwtToken, currentUser);
-			
-			if(Boolean.TRUE.equals(tokenValidation)) {
-				UsernamePasswordAuthenticationToken uPAT = new UsernamePasswordAuthenticationToken(currentUser, tokenValidation, currentUser.getAuthorities());
-				uPAT.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				SecurityContextHolder.getContext().setAuthentication(uPAT);
+		if(valid) {
+			try {
+				authenticate(token);
+			} catch (UserNotFoundException e) {
+				
 			}
-			
 		}
+		
 		filterChain.doFilter(request, response);
 	}
-
+	
+	private void authenticate(String token) throws UserNotFoundException {
+		Long userId = tokenService.getUserId(token);
+		
+		User user = userService.findById(userId);
+		UsernamePasswordAuthenticationToken authentication = 
+			new UsernamePasswordAuthenticationToken(userId, null, user.getAuthorities());
+		
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
+	}
 }

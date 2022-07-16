@@ -28,33 +28,45 @@ public class Role implements GrantedAuthority, Serializable {
 	@NotNull
 	@NotBlank
 	@NotEmpty
-	@Column(name="authority", unique=true)
-	private String authority;
+	@Column(name="name", unique=true)
+	private String name;
+	
 	
 	public Role() {
 		super();
 	}
 
-
-	public Role(@NotNull @NotBlank @NotEmpty String authority) {
+	public Role(@NotNull @NotBlank @NotEmpty String name) {
 		super();
-		this.authority = authority;
+		this.name = name;
 	}
-
-
-	@Override
-	public String getAuthority() {
-		return authority;
-	}
-
+	
+	
+	
 	public Long getId() {
 		return id;
 	}
-
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
 
+	public String getName() {
+		return name;
+	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	@Override
+	public String getAuthority() {
+		return getName();
+	}
 
+	@Override
+	public String toString() {
+		return "Role [id=" + id + ", name=" + name + "]";
+	}
+	
 }

@@ -2,15 +2,13 @@ package br.edu.ifpb.dac.groupd.presentation.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-public class AlarmResponse {
+public class AlarmResponseMin {
 	
 	private Long id;
 	private Boolean seen;
+	private Double distance;
 	@JsonIgnoreProperties(value="bracelets")
 	private FenceResponse fence;
-	private Double distance;
-	@JsonIgnoreProperties(value="alarm")
-	private LocationResponseMin location;
 	
 	public Long getId() {
 		return id;
@@ -31,17 +29,12 @@ public class AlarmResponse {
 	public void setFence(FenceResponse fence) {
 		this.fence = fence;
 	}
-	public LocationResponseMin getLocation() {
-		return location;
-	}
-	public void setLocation(LocationResponseMin location) {
-		this.location = location;
-	}
 	public Double getDistance() {
 		return distance;
 	}
 	public void setDistance(Double distance) {
 		this.distance = distance;
 	}
+	
 
 }
