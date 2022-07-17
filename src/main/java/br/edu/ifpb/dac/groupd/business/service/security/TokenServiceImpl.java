@@ -37,7 +37,6 @@ public class TokenServiceImpl implements TokenService{
 	
 	private static final long EXPIRATION_TIME = 1000L * 60L * 60L * 24L * 7L;  // 1 semana
 	
-	private static final String CLAIM_USERID = "userid";
 	private static final String CLAIM_USERNAME = "username";
 	private static final String CLAIM_EXPIRATION = "expirationTime";
 	

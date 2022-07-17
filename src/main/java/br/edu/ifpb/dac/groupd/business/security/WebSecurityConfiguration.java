@@ -28,7 +28,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import br.edu.ifpb.dac.groupd.business.service.interfaces.PasswordEncoderService;
-import br.edu.ifpb.dac.groupd.business.service.interfaces.TokenService;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
 
 @Configuration
@@ -40,9 +39,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private JwtRequestFilter requestFilter;
-	
-	@Autowired
-	private TokenService tokenService;
 	
 	@Autowired
 	private PasswordEncoderService passwordEncoder;

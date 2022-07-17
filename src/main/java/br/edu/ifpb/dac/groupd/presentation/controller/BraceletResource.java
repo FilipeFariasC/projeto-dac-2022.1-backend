@@ -2,7 +2,6 @@ package br.edu.ifpb.dac.groupd.presentation.controller;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.List;
 
 import javax.validation.Valid;
 

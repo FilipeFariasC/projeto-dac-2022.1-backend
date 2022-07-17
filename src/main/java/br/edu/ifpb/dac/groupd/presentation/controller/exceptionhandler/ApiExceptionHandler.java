@@ -42,18 +42,20 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 	@Autowired
 	private MessageSource messageSource;
 	
+	private static final String INVALID_MESSAGE = "message.invalid";
+	
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		//define a mensagem que será enviada em caso de erro de conversao de entidade
-		String messageUser = messageSource.getMessage("message.invalid", null, LocaleContextHolder.getLocale());
+		String messageUser = messageSource.getMessage(INVALID_MESSAGE, null, LocaleContextHolder.getLocale());
 		String messageDeveloper = ex.getCause().toString();
 		
 		Throwable cause = ex.getCause();
 		
 		ErrorData error = null;
 		if(cause instanceof UnrecognizedPropertyException upe) {
-			messageUser = messageSource.getMessage("attribute.Unrecognized", new String[]{upe.getPropertyName()}, "message.invalid", LocaleContextHolder.getLocale());
+			messageUser = messageSource.getMessage("attribute.Unrecognized", new String[]{upe.getPropertyName()}, INVALID_MESSAGE, LocaleContextHolder.getLocale());
 			messageDeveloper = upe.getOriginalMessage();
 			error = new AttributeErrorData(messageUser, messageDeveloper, upe.getPropertyName());
 
@@ -97,7 +99,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		
 		String messageUser = exception.getMostSpecificCause().getMessage();
 		if(messageUser.startsWith("could not resolve property")) {
-			 messageUser = messageSource.getMessage("error.noProperty", getPropertyAndEntity(messageUser), "message.invalid", LocaleContextHolder.getLocale());
+			 messageUser = messageSource.getMessage("error.noProperty", getPropertyAndEntity(messageUser), INVALID_MESSAGE, LocaleContextHolder.getLocale());
 		}
 		ErrorData error = new ErrorData(messageUser, exception.getMostSpecificCause().getMessage());
 		
@@ -118,7 +120,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		
 		List<ErrorData> errors = Stream.of(globalErrors, fieldErrors)
 			.flatMap(Collection::stream)
-			.collect(Collectors.toList());
+			.toList();
 		
 		ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), getRequestUri(request), errors);
 		
@@ -129,12 +131,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		
 		return globalErrors
 			.stream()
-			.map((objectError)->{
+			.map(objectError->{
 				String messageUser = objectError.getDefaultMessage();
 				String messageDeveloper = objectError.toString();
 				
 				return new ErrorData(messageUser, messageDeveloper);
-			}).collect(Collectors.toList());
+			}).toList();
 	}
 	
 	private List<ErrorData> createFieldErrorList(List<FieldError> fieldErrors){
