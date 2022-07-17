@@ -1,5 +1,8 @@
 package br.edu.ifpb.dac.groupd.presentation.controller;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
 
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
+import br.edu.ifpb.dac.groupd.business.service.DateUtilsService;
 import br.edu.ifpb.dac.groupd.business.service.converter.UserConverterService;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.AuthenticationService;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.TokenService;
@@ -22,6 +26,7 @@ import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
 import br.edu.ifpb.dac.groupd.model.entities.User;
 import br.edu.ifpb.dac.groupd.presentation.dto.UserResponse;
 import br.edu.ifpb.dac.groupd.presentation.dto.security.AuthenticationResponse;
+import br.edu.ifpb.dac.groupd.presentation.dto.security.TokenValidResponse;
 import br.edu.ifpb.dac.groupd.presentation.dto.security.UserDetailsRequest;
 
 @RestController
@@ -39,6 +44,9 @@ public class AuthenticationController {
 	
 	@Autowired
 	private TokenService tokenService;
+	
+	@Autowired
+	private DateUtilsService dateService;
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> login(
@@ -59,10 +67,20 @@ public class AuthenticationController {
 	
 	@PostMapping("/isValidToken")
 	public ResponseEntity<?> isTokenValid(@RequestBody AuthenticationResponse dto ){
+		
 		boolean isValidToken = tokenService.isValid(dto.getToken());
-		if(isValidToken) {
-			return ResponseEntity.ok(null);
-		} else {
+		
+		try {
+			Date exp = tokenService.getClaims(dto.getToken()).getExpiration();
+			
+			TokenValidResponse response = new TokenValidResponse();
+			LocalDateTime dateTimeExpiration = dateService.convertDateToLocalDateTime(exp);
+			response.setExpirationTime(dateTimeExpiration);
+			response.setToken(dto.getToken());
+			response.setValid(isValidToken);
+			
+			return ResponseEntity.ok(response);
+		} catch (Exception exception) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}

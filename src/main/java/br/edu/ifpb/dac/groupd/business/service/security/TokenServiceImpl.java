@@ -10,11 +10,13 @@ import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import br.edu.ifpb.dac.groupd.business.service.interfaces.TokenService;
+import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
 import br.edu.ifpb.dac.groupd.model.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -29,6 +31,9 @@ public class TokenServiceImpl implements TokenService{
 	
 	@Value("${jwt.token.expiration}")
 	private String expiration;
+	
+	@Autowired
+	private UserService userService;
 	
 	private static final long EXPIRATION_TIME = 1000L * 60L * 60L * 24L * 7L;  // 1 semana
 	
@@ -79,9 +84,9 @@ public class TokenServiceImpl implements TokenService{
 
 	@Override
 	public String generate(User user) {
-		long expiration = Long.valueOf(this.expiration);
+		long exp = Long.parseLong(this.expiration);
 		
-		LocalDateTime expirationLocalDateTime = LocalDateTime.now().plusDays(expiration);
+		LocalDateTime expirationLocalDateTime = LocalDateTime.now().plusDays(exp);
 		Instant expirationInstant = expirationLocalDateTime.atZone(ZoneId.systemDefault()).toInstant();
 		Date expirationDate = Date.from(expirationInstant);
 		
@@ -101,7 +106,10 @@ public class TokenServiceImpl implements TokenService{
 
 	@Override
 	public Claims getClaims(String token) throws ExpiredJwtException {
-		// TODO Auto-generated method stub
+		if(token == null) {
+			return null;
+		}
+		
 		return Jwts
 			.parser()
 			.setSigningKey(secret)
@@ -116,14 +124,19 @@ public class TokenServiceImpl implements TokenService{
 		}
 		
 		try {
-		Claims claims = getClaims(token);
+			Claims claims = getClaims(token);
 			LocalDateTime expirationDate = claims
 				.getExpiration()
 				.toInstant()
 				.atZone(ZoneId.systemDefault())
 				.toLocalDateTime();
-		
-			return !LocalDateTime.now().isAfter(expirationDate);
+			
+			if(LocalDateTime.now().isAfter(expirationDate)) return false;
+			
+			Long userId = Long.parseLong(claims.getSubject());
+			User user = userService.findById(userId);
+			
+			return user != null;
 		} catch(Exception exception) {
 			return false;
 		}

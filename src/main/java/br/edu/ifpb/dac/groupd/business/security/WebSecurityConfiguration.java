@@ -47,7 +47,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private PasswordEncoderService passwordEncoder;
 	
-	private static final String urlFrontend = "http://localhost:4200";
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -90,7 +89,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 						"/api/fences","/api/fences/**", 
 						"/api/locations", "/api/locations/**", 
 						"/api/alarms/**" ).authenticated()
-					.antMatchers(DELETE, "/api/users").hasRole(ADMIN.getRole())
+					.antMatchers(DELETE, "/api/users").hasRole(ADMIN.toString())
 					.anyRequest().authenticated()
 			.and()
 				.sessionManagement()
