@@ -1,10 +1,15 @@
 package br.edu.ifpb.dac.groupd.business.security;
 
 
-import static org.springframework.http.HttpMethod.*;
-import static org.springframework.http.HttpStatus.*;
-import static br.edu.ifpb.dac.groupd.business.service.RoleService.AVAILABLE_ROLES.*;
-import static org.springframework.security.config.http.SessionCreationPolicy.*;
+import static br.edu.ifpb.dac.groupd.business.service.RoleService.AVAILABLE_ROLES.ADMIN;
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +23,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import br.edu.ifpb.dac.groupd.business.service.interfaces.PasswordEncoderService;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.TokenService;
@@ -82,7 +90,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 						"/api/fences","/api/fences/**", 
 						"/api/locations", "/api/locations/**", 
 						"/api/alarms/**" ).authenticated()
-					.antMatchers(DELETE, "/api/users").hasRole(ADMIN.toString())
+					.antMatchers(DELETE, "/api/users").hasRole(ADMIN.getRole())
 					.anyRequest().authenticated()
 			.and()
 				.sessionManagement()
@@ -98,6 +106,22 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 						.invalidateHttpSession(true)
 						.logoutSuccessHandler((request, response, authentication) -> {})
 				);
+	}
+	
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+	    CorsConfiguration corsConfig = new CorsConfiguration();
+	    
+	    List<String> all = Arrays.asList("*");
+	    corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+	    corsConfig.setAllowedMethods(all);
+	    corsConfig.setAllowedOriginPatterns(all);
+	    corsConfig.setAllowedHeaders(all);
+	    corsConfig.setAllowCredentials(true);
+	    
+	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	    source.registerCorsConfiguration("/**", corsConfig);
+	    return source;
 	}
 	
 }
