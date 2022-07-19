@@ -19,7 +19,7 @@ import br.edu.ifpb.dac.groupd.business.service.security.TokenServiceImpl;
 import br.edu.ifpb.dac.groupd.model.entities.User;
 
 @Component
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class TokenRequestFilter extends OncePerRequestFilter {
 	@Autowired
 	private TokenServiceImpl tokenService;
 	

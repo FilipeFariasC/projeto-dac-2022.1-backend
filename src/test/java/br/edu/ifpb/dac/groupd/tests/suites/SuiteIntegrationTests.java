@@ -11,7 +11,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import br.edu.ifpb.dac.groupd.tests.integration.AlarmRepositoryTest;
 import br.edu.ifpb.dac.groupd.tests.integration.BraceletResourceTests;
-import br.edu.ifpb.dac.groupd.tests.integration.FenceResourcesTestes;
+import br.edu.ifpb.dac.groupd.tests.integration.FenceResourcesTests;
 import br.edu.ifpb.dac.groupd.tests.integration.SecurityTests;
 import br.edu.ifpb.dac.groupd.tests.integration.UserResourceTests;
 
@@ -22,7 +22,7 @@ import br.edu.ifpb.dac.groupd.tests.integration.UserResourceTests;
 	
 	UserResourceTests.class,
 	SecurityTests.class,
-	FenceResourcesTestes.class,
+	FenceResourcesTests.class,
 	BraceletResourceTests.class,
 	AlarmRepositoryTest.class
 })
