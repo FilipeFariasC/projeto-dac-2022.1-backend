@@ -24,7 +24,7 @@ import br.edu.ifpb.dac.groupd.model.entities.Fence;
 
 @Testable
 @DisplayName("Fence")
-public class FenceTests {
+class FenceTests {
 
 	private Fence fence;
 

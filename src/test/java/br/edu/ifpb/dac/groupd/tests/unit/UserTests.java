@@ -49,7 +49,7 @@ import br.edu.ifpb.dac.groupd.presentation.dto.UserRequest;
 @Testable
 @DisplayName("User")
 @TestClassOrder(org.junit.jupiter.api.ClassOrderer.OrderAnnotation.class)
-public class UserTests {
+class UserTests {
 	
 	private User user;
 	private Set<ConstraintViolation<User>> violations;

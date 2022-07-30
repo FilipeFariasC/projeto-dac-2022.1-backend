@@ -34,7 +34,7 @@ import br.edu.ifpb.dac.groupd.model.entities.Location;
 
 @Testable
 @DisplayName("Bracelet")
-public class BraceletTests {
+class BraceletTests {
 	
 	private Bracelet bracelet;
 	@Mock

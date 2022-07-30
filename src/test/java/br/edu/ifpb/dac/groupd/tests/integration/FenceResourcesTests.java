@@ -3,6 +3,7 @@ package br.edu.ifpb.dac.groupd.tests.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -50,7 +51,7 @@ import br.edu.ifpb.dac.groupd.tests.builder.FenceRequestBuilder;
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
 @Testcontainers(disabledWithoutDocker = true)
-public class FenceResourcesTests {
+class FenceResourcesTests {
 	private final String PREFIX = "http://localhost:8080/api";
 	private final String USER_PREFIX = PREFIX+"/users";
 	private final String FENCE_PREFIX = USER_PREFIX+"/fences";
@@ -70,7 +71,7 @@ public class FenceResourcesTests {
 	
 	private BraceletResponse bracelet;
 	
-	private BraceletRequest braceletDto = new BraceletRequest();
+	private BraceletRequest braceletDto = validBracelet();
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -82,6 +83,14 @@ public class FenceResourcesTests {
 		dto.setPassword("admin20221");
 		
 		return dto;
+	}
+	
+	private BraceletRequest validBracelet() {
+		BraceletRequest obj = new BraceletRequest();
+		
+		obj.setName("abc");
+		
+		return obj;
 	}
 
 	@BeforeEach
@@ -96,7 +105,7 @@ public class FenceResourcesTests {
 		this.user = mapper.readValue(userResponse, UserResponse.class);
 		
 		fenceDto = validFence();
-		braceletDto.setName("abc");
+		braceletDto = validBracelet();
 		
 		String braceletResponse = mockMvc.perform(
 			post(BRACELET_PREFIX)
@@ -111,7 +120,7 @@ public class FenceResourcesTests {
 	@AfterEach
 	void tearDown() throws Exception {
 		mockMvc.perform(
-			delete(String.format("%s/%s",FENCE_PREFIX, "user"))
+			delete(String.format("%s/%s",USER_PREFIX, "user"))
 				.with(user(user.getId().toString()))
 		);
 	}
@@ -201,11 +210,11 @@ public class FenceResourcesTests {
 	
 	void equalFence(FenceRequest fenceDto, FenceResponse fenceResponse) {
 		assertAll(
-				()->fenceDto.getName().equals(fenceResponse.getName()),
-				()->fenceDto.getRadius().equals(fenceResponse.getRadius()),
-				()->fenceDto.getCoordinate().equals(fenceResponse.getCoordinate()),
-				()->fenceDto.getStartTime().equals(fenceResponse.getStartTime()),
-				()->fenceDto.getFinishTime().equals(fenceResponse.getFinishTime()));
+				()->assertEquals(fenceDto.getName(), fenceResponse.getName()),
+				()->assertEquals(fenceDto.getRadius(), fenceResponse.getRadius()),
+				()->assertEquals(fenceDto.getCoordinate(), fenceResponse.getCoordinate()),
+				()->assertEquals(fenceDto.getStartTime(), fenceResponse.getStartTime()),
+				()->assertEquals(fenceDto.getFinishTime(), fenceResponse.getFinishTime()));
 	}
 	
 	@Test
@@ -319,6 +328,74 @@ public class FenceResourcesTests {
 		FenceResponse updatedFence = assertDoesNotThrow(()->mapper.readValue(updatedResponse, FenceResponse.class));
 		
 		equalFence(fenceDto, updatedFence);
+	}
+	@Test
+	void testCanMonitorBracelet() {
+		String response = assertDoesNotThrow(()->{
+			return mockMvc.perform(
+			post(FENCE_PREFIX)
+				.header("Accept-Language", "pt-BR")
+				.with(user(user.getId().toString()))
+				.contentType("application/json")
+				.content(mapper.writeValueAsString(fenceDto))
+			).andExpect(status().isCreated())
+			.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+		});
+		
+		FenceResponse fenceResponse = assertDoesNotThrow(()->mapper.readValue(response, FenceResponse.class));
+		
+		String otherResponse = assertDoesNotThrow(()->{
+			return mockMvc.perform(
+			post(FENCE_PREFIX)
+				.header("Accept-Language", "pt-BR")
+				.with(user(user.getId().toString()))
+				.contentType("application/json")
+				.content(mapper.writeValueAsString(fenceDto))
+			).andExpect(status().isCreated())
+			.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+		});
+		
+		FenceResponse otherFenceResponse = assertDoesNotThrow(()->mapper.readValue(otherResponse, FenceResponse.class));
+		
+		String registerBraceletEndpoint = String.format("%s/registerBracelet", FENCE_PREFIX);
+		
+		assertDoesNotThrow(()->{
+			return mockMvc.perform(
+			post(registerBraceletEndpoint)
+				.param("fence", otherFenceResponse.getId().toString())
+				.param("bracelet", bracelet.getId().toString())
+				.header("Accept-Language", "pt-BR")
+				.with(user(user.getId().toString()))
+			).andExpect(status().isOk())
+			.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+		});
+		
+		assertDoesNotThrow(()->{
+			return mockMvc.perform(
+			post(registerBraceletEndpoint)
+				.param("fence", fenceResponse.getId().toString())
+				.param("bracelet", bracelet.getId().toString())
+				.header("Accept-Language", "pt-BR")
+				.with(user(user.getId().toString()))
+			).andExpect(status().isOk())
+			.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+		});
+		
+		String setStatusEndpointFence = String.format("%s/%d/setStatus", FENCE_PREFIX, fenceResponse.getId());
+		
+		assertDoesNotThrow(()->{
+			return mockMvc.perform(
+			patch(setStatusEndpointFence)
+				.param("active","true")
+				.header("Accept-Language", "pt-BR")
+				.with(user(user.getId().toString()))
+				.contentType("application/json")
+				.content(mapper.writeValueAsString(fenceDto))
+			)
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+		});
 	}
 	
 	@Test

@@ -26,4 +26,11 @@ public class CoordinateService {
 		
 		return Math.atan2(Math.sqrt(temp), Math.sqrt(1-temp)) * 2 * earthRadius;
 	}
+	
+	public static void main(String[] args) {
+		CoordinateService service = new CoordinateService();
+		Coordinate initial = new Coordinate(90.0, 180.0);
+		Coordinate finish = new Coordinate(89.99991, 179.99991);
+		System.out.println(String.format("Inicial: %s\nFinal: %s\n=\n%s", initial, finish, service.calculateDistance(initial, finish)));
+	}
 }

@@ -5,10 +5,14 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
+import br.edu.ifpb.dac.groupd.tests.integration.IntegrationTestsSuite;
 import br.edu.ifpb.dac.groupd.tests.unit.UnitTestsSuite;
 
 @Suite
 @Testable
-@SelectClasses(UnitTestsSuite.class)
+@SelectClasses({
+	UnitTestsSuite.class,
+	IntegrationTestsSuite.class
+})
 @SuiteDisplayName("Suite de Testes Unitários")
-public class SuiteUnitTests {}
+class AllTestsSuite {}

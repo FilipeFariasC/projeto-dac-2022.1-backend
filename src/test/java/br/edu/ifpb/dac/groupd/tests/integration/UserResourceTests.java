@@ -3,6 +3,7 @@ package br.edu.ifpb.dac.groupd.tests.integration;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -257,8 +258,8 @@ public class UserResourceTests {
 			return userService.findByEmail(dtoNewUser.getEmail());
 		});
 		
-		equalsDto(dto, userDto);
-		equalsUser(dto, updated);
+		equalsDto(dtoNewUser, userDto);
+		equalsUser(dtoNewUser, updated);
 		
 		deleteUser(newEmail);
 	}
@@ -313,16 +314,15 @@ public class UserResourceTests {
 	}
 	private void equalsDto(UserRequest dto, UserResponse userDto) {
 		assertAll(
-				()->dto.getName().equals(userDto.getName()),
-				()->dto.getEmail().equals(userDto.getEmail())
+				()->assertEquals(dto.getName(), userDto.getName()),
+				()->assertEquals(dto.getEmail(), userDto.getEmail())
 		);
 	}
 	private void equalsUser(UserRequest dto, User user) {
-		
 		assertAll(
-			()->dto.getName().equals(user.getName()),
-			()->dto.getEmail().equals(user.getName()),
-			()->passEncoder.matches(dto.getPassword(), user.getPassword())
+			()->assertEquals(dto.getName(),user.getName()),
+			()->assertEquals(dto.getEmail(),user.getEmail()),
+			()->assertTrue(passEncoder.matches(dto.getPassword(), user.getPassword()))
 		);
 	}
 }

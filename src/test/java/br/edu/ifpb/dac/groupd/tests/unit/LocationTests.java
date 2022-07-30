@@ -22,7 +22,7 @@ import br.edu.ifpb.dac.groupd.model.entities.Location;
 
 @Testable
 @DisplayName("Location")
-public class LocationTests {
+class LocationTests {
 
 	private Location location;
 	

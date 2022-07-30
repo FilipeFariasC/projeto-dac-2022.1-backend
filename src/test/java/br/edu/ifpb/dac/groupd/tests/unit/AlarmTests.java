@@ -20,7 +20,7 @@ import br.edu.ifpb.dac.groupd.model.entities.Alarm;
 
 @Testable
 @DisplayName("Alarm")
-public class AlarmTests {
+class AlarmTests {
 
 	private Alarm alarm;
 	

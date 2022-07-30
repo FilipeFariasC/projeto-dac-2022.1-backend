@@ -13,7 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc
 @DisplayName("Endpoint Security Tests")
-public class SecurityTests {
+class SecurityTests {
 
 	@Test
 	void test() {

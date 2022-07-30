@@ -37,7 +37,7 @@ import br.edu.ifpb.dac.groupd.presentation.dto.LocationResponse;
 import br.edu.ifpb.dac.groupd.presentation.dto.LocationResponseMin;
 
 @RestController
-@RequestMapping("/locations")
+@RequestMapping({"/users/locations", "/locations"})
 public class LocationResource {
 	@Autowired
 	private LocationService locationService;

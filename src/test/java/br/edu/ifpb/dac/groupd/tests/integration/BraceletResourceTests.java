@@ -1,11 +1,13 @@
 package br.edu.ifpb.dac.groupd.tests.integration;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -45,7 +47,6 @@ import br.edu.ifpb.dac.groupd.business.service.BraceletService;
 import br.edu.ifpb.dac.groupd.business.service.UserServiceImpl;
 import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
 import br.edu.ifpb.dac.groupd.model.entities.User;
-import br.edu.ifpb.dac.groupd.model.repository.BraceletRepository;
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.AttributeErrorData;
 import br.edu.ifpb.dac.groupd.presentation.controller.exceptionhandler.errors.ErrorResponse;
 import br.edu.ifpb.dac.groupd.presentation.dto.BraceletRequest;
@@ -59,7 +60,7 @@ import br.edu.ifpb.dac.groupd.presentation.dto.UserRequest;
 @DisplayName("Bracelet Resources Tests")
 @ActiveProfiles("test")
 @TestMethodOrder(OrderAnnotation.class)
-public class BraceletResourceTests {
+class BraceletResourceTests {
 	
 	private final String BRACELETS_PREFIX = "http://localhost:8080/api/bracelets/";
 	
@@ -178,10 +179,12 @@ public class BraceletResourceTests {
 					.contentType("application/json")
 					.content(mapper.writeValueAsString(braceletPostDto))
 				).andExpect(status().isNotFound())
-				.andReturn().getResponse().getContentAsString()
+				.andReturn().getResponse().getContentAsString(UTF_8)
 		);
 		
-		assertThat(response, containsString(new BraceletNotFoundException(0L).getMessage()));
+		ErrorResponse errors = assertDoesNotThrow(()->mapper.readValue(response, ErrorResponse.class));
+		assertThat(errors.getErrors()).hasSize(1);
+		assertThat(errors.getErrors().get(0).getMessageUser()).isEqualTo(new BraceletNotFoundException(0L).getMessage());
 	}
 	@Test
 	@DisplayName("Get Bracelet Id Exist")
@@ -325,10 +328,10 @@ public class BraceletResourceTests {
 	
 	private void equals(BraceletRequest postDto, BraceletResponse dto, Bracelet bracelet) {
 		assertAll(
-			()->postDto.getName().equals(dto.getName()),
-			()->postDto.getName().equals(bracelet.getName()),
-			()->dto.getId().equals(bracelet.getId()),
-			()->dto.getName().equals(bracelet.getName())
+			()->assertEquals(postDto.getName(),dto.getName()),
+			()->assertEquals(postDto.getName(), bracelet.getName()),
+			()->assertEquals(dto.getId(), bracelet.getId()),
+			()->assertEquals(dto.getName(), bracelet.getName())
 		);
 	}
 }

@@ -22,7 +22,7 @@ import br.edu.ifpb.dac.groupd.model.entities.Coordinate;
 
 @Testable
 @DisplayName("Coordinates")
-public class CoordinateTests {
+class CoordinateTests {
 	
 	private Coordinate coordinate;
 	

@@ -1,14 +1,19 @@
-package br.edu.ifpb.dac.groupd.tests.suites;
+package br.edu.ifpb.dac.groupd.tests.unit;
 
 import org.junit.platform.commons.annotation.Testable;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
-import br.edu.ifpb.dac.groupd.tests.unit.UnitTestsSuite;
-
 @Suite
 @Testable
-@SelectClasses(UnitTestsSuite.class)
+@SelectClasses({
+	UserTests.class,
+	BraceletTests.class,
+	CoordinateTests.class,
+	LocationTests.class,
+	FenceTests.class,
+	AlarmTests.class
+})
 @SuiteDisplayName("Suite de Testes Unitários")
-public class SuiteUnitTests {}
+public class UnitTestsSuite {}
