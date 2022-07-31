@@ -68,7 +68,7 @@ class FenceTests {
 	
 	@Test
 	@DisplayName("Valid Creation Time")
-	public void testValidCreationTime() {
+	void testValidCreationTime() {
 		LocalTime time = LocalTime.now();
 
 		fence.setStartTime(time);
@@ -80,7 +80,7 @@ class FenceTests {
 	
 	@Test
 	@DisplayName("Null Creation Time")
-	public void testCreationTimeNull() {
+	void testCreationTimeNull() {
 		
 		fence.setStartTime(null);
 

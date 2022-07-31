@@ -7,6 +7,7 @@ public class AlarmResponseMin {
 	private Long id;
 	private Boolean seen;
 	private Double distance;
+	private Double exceeded;
 	@JsonIgnoreProperties(value="bracelets")
 	private FenceResponse fence;
 	
@@ -34,6 +35,12 @@ public class AlarmResponseMin {
 	}
 	public void setDistance(Double distance) {
 		this.distance = distance;
+	}
+	public Double getExceeded() {
+		return exceeded;
+	}
+	public void setExceeded(Double exceeded) {
+		this.exceeded = exceeded;
 	}
 	
 

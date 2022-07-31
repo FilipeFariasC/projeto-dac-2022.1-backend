@@ -73,10 +73,7 @@ public class LocationService {
 
 		Fence fence = bracelet.getMonitor();
 		if(fence != null) {
-			Double distance = coordinateService.calculateDistance(fence.getCoordinate(), dto.getCoordinate());
-			if(fence.getRadius() < distance ) {
-				alarmService.saveAlarm(location, fence, distance);
-			}
+			alarmService.saveAlarm(location, fence);
 		}
 		
 		return location;

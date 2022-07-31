@@ -92,9 +92,9 @@ public class UserResource {
 	public ResponseEntity<?> updateUserName(Principal principal, 
 			@RequestBody @Valid UserRequest userPostDto) throws UserNotFoundException{
 
-		userService.updateUserName(principal.getName(), userPostDto.getName());
+		userService.updateUserName(Long.parseLong(principal.getName()), userPostDto.getName());
 		
-		return ResponseEntity.ok(String.format("Nome atualizado!", principal.getName()));
+		return ResponseEntity.ok("Nome atualizado!");
 
 	}
 	

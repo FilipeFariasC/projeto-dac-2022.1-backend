@@ -6,13 +6,15 @@ import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
 import br.edu.ifpb.dac.groupd.tests.integration.IntegrationTestsSuite;
+import br.edu.ifpb.dac.groupd.tests.system.SystemTestsSuite;
 import br.edu.ifpb.dac.groupd.tests.unit.UnitTestsSuite;
 
 @Suite
 @Testable
 @SelectClasses({
 	UnitTestsSuite.class,
-	IntegrationTestsSuite.class
+	IntegrationTestsSuite.class,
+	SystemTestsSuite.class
 })
 @SuiteDisplayName("Suite de Testes Unitários")
 class AllTestsSuite {}

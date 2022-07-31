@@ -124,16 +124,6 @@ class LocationResourcesTest {
 		return location;
 	}
 	
-	private LocationRequest invalidLocation() {
-		LocationRequest location = new LocationRequest();
-		
-		location.setBraceletId(bracelet.getId()+1);
-		location.setCoordinate(invalidCoordinate());
-		location.setCreationDate(LocalDateTime.now().plusSeconds(1));
-		
-		return location;
-	}
-	
 	@Autowired
 	private MessageSource messageSource;
 	
@@ -228,13 +218,14 @@ class LocationResourcesTest {
 		
 		errors.getErrors().stream().forEach(error -> assertThat(error.getMessageUser())
 			.isIn(Stream.of(
-				formatCoordinateValidation(longitudeName, -180L),
-				formatCoordinateValidation(latitudeName, -90L)
+				formatCoordinateValidation(longitudeName, 180L),
+				formatCoordinateValidation(latitudeName, 90L)
 			).toList()));
 	}
 	
 	private String formatCoordinateValidation(String property, Long value) {
-		return String.format("%s deve ser no mínimo %s.", property, value);
+		Long abs = Math.abs(value);
+		return String.format("%s deve ser entre %s e %s.", property, -abs, abs);
 	}
 	
 	@Test

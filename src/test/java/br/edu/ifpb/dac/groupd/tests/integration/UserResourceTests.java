@@ -48,7 +48,7 @@ import br.edu.ifpb.dac.groupd.presentation.dto.UserResponse;
 @TestMethodOrder(OrderAnnotation.class)
 @ActiveProfiles("test")
 @Testcontainers(disabledWithoutDocker = true)
-public class UserResourceTests {
+class UserResourceTests {
 	
 	private final String PREFIX = "http://localhost:8080/api/users";
 	
@@ -169,7 +169,7 @@ public class UserResourceTests {
 		dtoNewUser.setEmail(differentEmail);
 		dtoNewUser.setPassword(differentPassword);
 		
-		UserResponse user = assertDoesNotThrow(()->
+		assertDoesNotThrow(()->
 			{
 				return mapper.readValue(mockMvc.perform(
 					post(PREFIX)
@@ -221,7 +221,7 @@ public class UserResourceTests {
 		dtoNewUser.setEmail(differentEmail);
 		dtoNewUser.setPassword(differentPassword);
 		
-		UserResponse user = assertDoesNotThrow(()->{
+		assertDoesNotThrow(()->{
 			return  mapper.readValue(mockMvc.perform(
 				post(PREFIX)
 					.contentType("application/json")

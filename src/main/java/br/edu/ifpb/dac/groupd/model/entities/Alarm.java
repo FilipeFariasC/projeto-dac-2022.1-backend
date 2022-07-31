@@ -45,12 +45,17 @@ public class Alarm implements Serializable{
 	@Column(name="distance", columnDefinition = "NUMERIC")
 	private Double distance;
 	
-	public Fence getFence() {
-		return fence;
+	@Min(0)
+	@Column(name="exceeded", columnDefinition = "NUMERIC")
+	private Double exceeded;
+	
+	
+	public Long getId() {
+		return id;
 	}
 
-	public void setFence(Fence fence) {
-		this.fence = fence;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public boolean isSeen() {
@@ -61,6 +66,14 @@ public class Alarm implements Serializable{
 		this.seen = seen;
 	}
 
+	public Fence getFence() {
+		return fence;
+	}
+
+	public void setFence(Fence fence) {
+		this.fence = fence;
+	}
+
 	public Location getLocation() {
 		return location;
 	}
@@ -68,7 +81,7 @@ public class Alarm implements Serializable{
 	public void setLocation(Location location) {
 		this.location = location;
 	}
-	
+
 	public Double getDistance() {
 		return distance;
 	}
@@ -77,12 +90,12 @@ public class Alarm implements Serializable{
 		this.distance = distance;
 	}
 
-	public Long getId() {
-		return id;
+	public Double getExceeded() {
+		return exceeded;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setExceeded(Double exceeded) {
+		this.exceeded = exceeded;
 	}
 
 	@Override

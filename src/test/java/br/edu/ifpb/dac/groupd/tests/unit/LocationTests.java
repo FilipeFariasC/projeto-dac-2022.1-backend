@@ -42,7 +42,7 @@ class LocationTests {
 	}
 	@Test
 	@DisplayName("Null Creation Date")
-	public void testNullCreationDate() {
+	void testNullCreationDate() {
 		location.setCreationDate(null);
 		
 		violations = validator.validateProperty(location, "creationDate");
@@ -51,7 +51,7 @@ class LocationTests {
 	}
 	@Test
 	@DisplayName("Future Creation Date")
-	public void testFutureCreationDate() {
+	void testFutureCreationDate() {
 		LocalDateTime date = LocalDateTime.now().plusSeconds(1);
 		
 		location.setCreationDate(date);
@@ -62,7 +62,7 @@ class LocationTests {
 	}
 	@Test
 	@DisplayName("Valid Creation Date")
-	public void testValidCreationDate() {
+	void testValidCreationDate() {
 		LocalDateTime date = LocalDateTime.now().minusNanos(1);
 		
 		location.setCreationDate(date);

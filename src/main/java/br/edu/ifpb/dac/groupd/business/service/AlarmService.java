@@ -23,13 +23,23 @@ public class AlarmService {
 	@Autowired
 	private AlarmRepository alarmRepository;
 	
-	public Alarm saveAlarm(Location location, Fence fence, Double distance) {
+	@Autowired
+	private CoordinateService coordinateService;
+	
+	public Alarm saveAlarm(Location location, Fence fence) {
+		Double distance = coordinateService.calculateDistance(fence.getCoordinate(), location.getCoordinate());
+		if(fence.getRadius() > distance ) {
+			return null;
+		}
+
+		Double exceeded = distance - fence.getRadius();
 		Alarm alarm = new Alarm();
 		
 		alarm.setFence(fence);
 		alarm.setLocation(location);
 		alarm.setSeen(false);
 		alarm.setDistance(distance);
+		alarm.setExceeded(exceeded);
 		
 		return alarmRepository.save(alarm);
 

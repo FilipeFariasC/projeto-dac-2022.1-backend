@@ -114,20 +114,6 @@ class BraceletTests {
 		
 	}
 	
-	/**
-	@Test
-	void fenceMock() {
-		fence.addBracelet(bracelet);
-		verify(fence.getBracelets()).add(bracelet);
-		
-	}
-	**/
-	
-	@Test
-	void testAddFence() {
-		
-	}
-	
 	@Test
 	void Location() {
 		Location location = new Location();

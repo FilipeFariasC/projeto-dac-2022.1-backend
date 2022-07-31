@@ -71,7 +71,7 @@ class UserTests {
 	@Nested
 	@DisplayName("Name")
 	@TestMethodOrder(OrderAnnotation.class)
-	public class NameTests{
+	class NameTests{
 		
 		@Order(1)
 		@Test
@@ -144,11 +144,11 @@ class UserTests {
 	@Nested
 	@DisplayName("Email")
 	@TestMethodOrder(OrderAnnotation.class)
-	public class EmailTests{
+	class EmailTests{
 		@Order(1)
 		@DisplayName("Null Email")
 		@Test
-		public void testNullEmail() {
+		void testNullEmail() {
 			user.setEmail(null);
 			
 			violations = validator.validateProperty(user, "email");
@@ -207,7 +207,7 @@ class UserTests {
 	@DisplayName("Bracelets")
 	@TestMethodOrder(OrderAnnotation.class)
 	@ExtendWith(MockitoExtension.class)
-	public class BraceletsTests{
+	class BraceletsTests{
 		
 		@Spy
 		private Set<Bracelet> bracelets;// = spy(Set.class);
@@ -259,7 +259,7 @@ class UserTests {
 	@DisplayName("Fences")
 	@TestMethodOrder(OrderAnnotation.class)
 	@ExtendWith(MockitoExtension.class)
-	public class FencesTests{
+	class FencesTests{
 		
 		@Spy
 		private Set<Fence> fences;// = spy(Set.class);
@@ -322,7 +322,7 @@ class UserTests {
 	@DisplayName("Roles")
 	@TestMethodOrder(OrderAnnotation.class)
 	@ExtendWith(MockitoExtension.class)
-	public class RolesTests{
+	class RolesTests{
 		
 		@Spy
 		private Set<Role> roles;// = spy(Set.class);
@@ -349,13 +349,13 @@ class UserTests {
 	@Nested
 	@DisplayName("Password")
 	@TestMethodOrder(OrderAnnotation.class)
-	public class PasswordTests{
+	class PasswordTests{
 		
 		private UserRequest user = new UserRequest();
 		
 		private Set<ConstraintViolation<UserRequest>> violations;
 		
-		
+		@BeforeEach
 		void setUp() {
 			user = new UserRequest();
 		}

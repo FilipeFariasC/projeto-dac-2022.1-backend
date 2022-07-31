@@ -5,28 +5,26 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Range;
 
 @Embeddable
 public class Coordinate  implements Serializable{
 	private static final long serialVersionUID = 1213024495538646400L;
 
 	@NotNull
-	@Min(-90)
-	@Max(90)
+	@Range(min = -90, max=90)
 	@Column(name="latitude", columnDefinition="NUMERIC(10,8)")
 	private Double latitude;
 	
 	@NotNull
-	@Min(-180)
-	@Max(180)
+	@Range(min = -180, max=180)
 	@Column(name="longitude", columnDefinition="NUMERIC(11,8)")
 	private Double longitude;
 	
 	public Coordinate() {}
-	public Coordinate(@NotNull @Min(-90) @Max(90) Double latitude, @NotNull @Min(-180) @Max(180) Double longitude) {
+	public Coordinate(@NotNull @Range(min=-90, max=90) Double latitude, @NotNull @Range(min=-180, max=180) Double longitude) {
 		super();
 		this.latitude = latitude;
 		this.longitude = longitude;

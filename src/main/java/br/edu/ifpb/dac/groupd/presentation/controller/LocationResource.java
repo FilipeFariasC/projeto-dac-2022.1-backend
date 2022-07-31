@@ -67,6 +67,7 @@ public class LocationResource {
 			Alarm alarm = alarmService.findByLocationId(location.getId());
 			dto.setAlarm(alarmConverter.alarmToResponseMin(alarm));
 		} catch (AlarmNotFoundException e) {
+			dto.setAlarm(null);
 		}
 		
 		URI uri = ServletUriComponentsBuilder

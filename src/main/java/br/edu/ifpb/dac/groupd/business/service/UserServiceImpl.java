@@ -80,10 +80,10 @@ public class UserServiceImpl implements UserService{
 		return userRepo.save(updated);
 	}
 	
-	public User updateUserName(String username, String name) throws UserNotFoundException {
-		Optional<User> user = userRepo.findByEmail(username);
+	public User updateUserName(Long id, String name) throws UserNotFoundException {
+		Optional<User> user = userRepo.findById(id);
 		if(user.isEmpty())
-			throw new UserNotFoundException(username);
+			throw new UserNotFoundException(id);
 		
 		User updated = user.get();
 		updated.setName(name);

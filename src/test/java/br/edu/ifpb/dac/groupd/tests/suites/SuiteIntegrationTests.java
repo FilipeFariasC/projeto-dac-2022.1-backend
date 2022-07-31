@@ -13,7 +13,6 @@ import br.edu.ifpb.dac.groupd.tests.integration.IntegrationTestsSuite;
 
 @Suite
 @Testable
-//@SelectPackages({"br.edu.ifpb.dac.groupd.tests.unittest"})
 @SelectClasses(IntegrationTestsSuite.class)
 @SuiteDisplayName("Suite de Testes de Integração")
 @ActiveProfiles("test")
