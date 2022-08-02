@@ -1,10 +1,12 @@
 package br.edu.ifpb.dac.groupd.tests.system;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThat;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +25,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -119,6 +122,29 @@ class BraceletSystemTest {
 		WebElement botao = driver.findElement(By.cssSelector("button[type='submit']"));
 		botao.click();
 		
-		Thread.sleep(500000);
+		List<WebElement> toastMessages = new WebDriverWait(driver, Duration.ofMillis(500).toMillis())
+				.until(t->t.findElements(By.cssSelector(".toast")));
+		
+		assertThat(toastMessages).isNotEmpty();
+		toastMessages.stream().forEach(t->assertThat(t.getText()).contains("Erro"));
+	}
+	
+	@Test
+	void testRegisterBraceletValid() throws InterruptedException {
+		login();
+		driver.get(buildUrl("bracelets/create"));
+		
+		WebElement braceletName = driver.findElement(By.cssSelector("input[type='text'][name='braceletFormName']#braceletFormName"));
+		braceletName.sendKeys("abc");
+		
+		WebElement botao = driver.findElement(By.cssSelector("button[type='submit']"));
+		botao.click();
+		
+		WebElement toastSuccess = new WebDriverWait(driver, Duration.ofMillis(500).toMillis())
+				.until(t->t.findElement(By.cssSelector(".toast")));
+		
+		assertThat(toastSuccess.getText()).containsSequence("Sucesso");
+		
+		assertThat(driver.getCurrentUrl()).isEqualTo(buildUrl("bracelets"));
 	}
 }

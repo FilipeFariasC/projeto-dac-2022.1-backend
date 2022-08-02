@@ -12,7 +12,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Suite
 @Testable
 @SelectClasses({
-	UserSystemTest.class
+	UserSystemTest.class,
+	BraceletSystemTest.class
 })
 @SuiteDisplayName("Suite de Testes de Sistema")
 @ActiveProfiles("test")
