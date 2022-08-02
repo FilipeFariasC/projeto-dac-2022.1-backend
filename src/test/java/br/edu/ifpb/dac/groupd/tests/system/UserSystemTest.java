@@ -103,6 +103,8 @@ class UserSystemTest {
 		String nome = "ADMIN";
 		String email = "admin@admin.com";
 		String password = "admin20221";
+
+		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 		
 		WebElement nomeElement = driver.findElement(By.cssSelector("input[type='text']#inputName"));
 		WebElement emailElement = driver.findElement(By.cssSelector("input[type='email']#inputEmail"));
@@ -161,6 +163,8 @@ class UserSystemTest {
 		String token = localStorage.getItem("token");
 		assertNull(token);
 	}
+	
+	
 	@Test
 	@Order(4)
 	void testValidLogin() throws InterruptedException {
@@ -193,13 +197,31 @@ class UserSystemTest {
 		assertThat(toastMessages).isNotEmpty();
 		
 		toastMessages.stream().forEach(t->assertThat(t.getText()).contains("Sucesso"));
-
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.MINUTES);
 		
 		WebStorage storage = (WebStorage) new Augmenter().augment(driver);;
 		LocalStorage localStorage = storage.getLocalStorage();
 		String token = localStorage.getItem("token");
-		System.out.println("\n\n\n"+token);
 		assertNotNull(token);
+	}
+	
+	@Test
+	@Order(5)
+	void testLogout() throws InterruptedException {
+		testValidLogin();
+		
+		driver.get(buildUrl(""));
+		
+		WebElement toggleDropdown = driver.findElement(By.cssSelector(".navbar-nav .nav-item.dropdown .dropdown-toggle[role='button']#options-dropdown"));
+		toggleDropdown.click();
+
+		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+		
+		WebElement logoutButton = driver.findElement(By.cssSelector("button[type='reset']#logout"));
+		logoutButton.click();
+		
+		WebStorage storage = (WebStorage) new Augmenter().augment(driver);;
+		LocalStorage localStorage = storage.getLocalStorage();
+		String token = localStorage.getItem("token");
+		assertNull(token);
 	}
 }

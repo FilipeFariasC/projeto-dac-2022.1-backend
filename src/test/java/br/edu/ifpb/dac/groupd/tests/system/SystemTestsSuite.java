@@ -12,8 +12,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Suite
 @Testable
 @SelectClasses({
+	UserSystemTest.class
 })
-@SuiteDisplayName("Suite de Testes de Integração")
+@SuiteDisplayName("Suite de Testes de Sistema")
 @ActiveProfiles("test")
 @Profile("test")
 @Testcontainers(disabledWithoutDocker = true)
