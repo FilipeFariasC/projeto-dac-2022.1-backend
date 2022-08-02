@@ -1,5 +1,6 @@
 package br.edu.ifpb.dac.groupd.tests.system;
 
+import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.os;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThat;
 
@@ -33,6 +34,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import br.edu.ifpb.dac.groupd.business.exception.UserEmailInUseException;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.PasswordEncoderService;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
 import br.edu.ifpb.dac.groupd.model.entities.User;
@@ -42,8 +44,9 @@ import br.edu.ifpb.dac.groupd.model.entities.User;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-@ActiveProfiles("test")
-@Testcontainers(disabledWithoutDocker = true)
+@ActiveProfiles("test-local")
+//@ActiveProfiles("test")
+//@Testcontainers(disabledWithoutDocker = true)
 class BraceletSystemTest {
 
 	private WebDriver driver;
@@ -63,11 +66,22 @@ class BraceletSystemTest {
 	}
 	private boolean enter = false;
 	
+	
 	@BeforeEach
-	@EnabledOnOs(value = OS.LINUX)
 	void setUp() throws Exception {
-		String path = String.format("%s/%s", System.getProperty("user.dir"), "drivers-selenium/linux/chromedriver");
-		System.setProperty("webdriver.chrome.driver", path);
+		String path = "";
+		
+		if(os("Linux")) {
+			path = String.format("%s/%s", System.getProperty("user.dir"), "drivers-selenium/linux/chromedriver");
+		} else if (os("Windows")) {
+			path = String.format("%s/%s", System.getProperty("user.dir"), "drivers-selenium\\windows\\chromedriver.exe");
+		}
+		config(path);
+	}
+	
+	void config(String pathToDriver) throws UserEmailInUseException {
+		System.setProperty("webdriver.chrome.driver", pathToDriver);
+		System.out.println(pathToDriver);
 		driver = new ChromeDriver();
 		
 		if(!enter) {
@@ -146,5 +160,12 @@ class BraceletSystemTest {
 		assertThat(toastSuccess.getText()).containsSequence("Sucesso");
 		
 		assertThat(driver.getCurrentUrl()).isEqualTo(buildUrl("bracelets"));
+	}
+	
+	@Test
+	void testListBraceletRegistered() throws InterruptedException {
+		testRegisterBraceletValid();
+		
+		Thread.sleep(50000);
 	}
 }
