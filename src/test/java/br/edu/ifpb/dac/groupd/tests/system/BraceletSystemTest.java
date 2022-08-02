@@ -2,7 +2,6 @@ package br.edu.ifpb.dac.groupd.tests.system;
 
 import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.os;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThat;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -10,13 +9,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.annotation.Testable;
 import org.openqa.selenium.By;
@@ -32,12 +30,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import br.edu.ifpb.dac.groupd.business.exception.UserEmailInUseException;
+import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
+import br.edu.ifpb.dac.groupd.business.service.BraceletService;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.PasswordEncoderService;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
+import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
 import br.edu.ifpb.dac.groupd.model.entities.User;
+import br.edu.ifpb.dac.groupd.presentation.dto.BraceletRequest;
 
 @Testable
 @DisplayName("Bracelet System Tests")
@@ -49,7 +50,10 @@ import br.edu.ifpb.dac.groupd.model.entities.User;
 //@Testcontainers(disabledWithoutDocker = true)
 class BraceletSystemTest {
 
-	private WebDriver driver;
+	private static WebDriver driver;
+	
+	@Autowired
+	private BraceletService braceletService;
 	
 	@Autowired
 	private UserService userService;
@@ -58,17 +62,36 @@ class BraceletSystemTest {
 	private PasswordEncoderService passEncoder;
 	
 	private User user = createUser();
+	private User created;
+	
+	private Bracelet bracelet = validBracelet();
 	
 	private static final String PREFIX = "http://localhost:3000";
+	
+	private Bracelet validBracelet() {
+		Bracelet bracelet = new Bracelet();
+		bracelet.setName("ABC");
+		
+		return bracelet;
+	}
 	
 	private static String buildUrl(String endpoint) {
 		return String.format("%s/%s", PREFIX, endpoint);
 	}
-	private boolean enter = false;
 	
+	private boolean userExists() {
+		return getUser() != null;
+	}
 	
-	@BeforeEach
-	void setUp() throws Exception {
+	private User getUser() {
+		try {
+			return this.userService.findByEmail(user.getEmail());
+		} catch (UserNotFoundException e) {
+			return null;
+		}
+	}
+	@BeforeAll
+	static void setUpClass() throws Exception {
 		String path = "";
 		
 		if(os("Linux")) {
@@ -76,19 +99,18 @@ class BraceletSystemTest {
 		} else if (os("Windows")) {
 			path = String.format("%s/%s", System.getProperty("user.dir"), "drivers-selenium\\windows\\chromedriver.exe");
 		}
-		config(path);
+		System.setProperty("webdriver.chrome.driver", path);
+		driver = new ChromeDriver();
 	}
 	
-	void config(String pathToDriver) throws UserEmailInUseException {
-		System.setProperty("webdriver.chrome.driver", pathToDriver);
-		System.out.println(pathToDriver);
-		driver = new ChromeDriver();
+	@BeforeEach
+	void setUp() throws UserEmailInUseException {
 		
-		if(!enter) {
-			userService.save(user);
-			user = createUser();
-			enter=true;
+		if(!userExists()) {
+			this.created= userService.save(user);
 		}
+		user = createUser();
+		bracelet = validBracelet();
 //		login();
 	}
 	private void login() {
@@ -149,7 +171,7 @@ class BraceletSystemTest {
 		driver.get(buildUrl("bracelets/create"));
 		
 		WebElement braceletName = driver.findElement(By.cssSelector("input[type='text'][name='braceletFormName']#braceletFormName"));
-		braceletName.sendKeys("abc");
+		braceletName.sendKeys(bracelet.getName());
 		
 		WebElement botao = driver.findElement(By.cssSelector("button[type='submit']"));
 		botao.click();
@@ -161,11 +183,42 @@ class BraceletSystemTest {
 		
 		assertThat(driver.getCurrentUrl()).isEqualTo(buildUrl("bracelets"));
 	}
+	private void registerBracelet() throws UserNotFoundException {
+		BraceletRequest bracelet = new BraceletRequest();
+		bracelet.setName(this.bracelet.getName());
+		this.bracelet = braceletService.createBracelet(getUser().getId(), bracelet);
+	}
 	
 	@Test
-	void testListBraceletRegistered() throws InterruptedException {
+	void testListBraceletRegistered() throws InterruptedException, UserNotFoundException {
+		login();
 		testRegisterBraceletValid();
 		
+		List<WebElement> braceletDetailsButton = driver.findElements(By.cssSelector("a.bracelets"));
+		assertThat(braceletDetailsButton).isNotEmpty();
+		
+		WebElement lastBracelet = braceletDetailsButton.get(braceletDetailsButton.size()-1);
+		
+		assertThat(lastBracelet.getText()).isEqualTo(bracelet.getName());
+		
+		lastBracelet.click();
+		
+		WebElement braceletNameElement = driver.findElement(By.cssSelector(".bracelet-name"));
+		
+		assertThat(bracelet.getName()).isEqualTo(braceletNameElement.getText());
+		Thread.sleep(50000);
+	}
+	
+	@Test
+	void testListBraceletAlreadyRegistered() throws InterruptedException, UserNotFoundException {
+		login();
+		registerBracelet();
+		
+		driver.get(buildUrl(String.format("bracelets/%d", bracelet.getId())));
+		
+		WebElement braceletNameElement = driver.findElement(By.cssSelector(".bracelet-name"));
+		
+		assertThat(bracelet.getName()).isEqualTo(braceletNameElement.getText());
 		Thread.sleep(50000);
 	}
 }
