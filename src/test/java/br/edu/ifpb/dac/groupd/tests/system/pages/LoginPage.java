@@ -1,0 +1,54 @@
+package br.edu.ifpb.dac.groupd.tests.system.pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.How;
+import org.openqa.selenium.support.PageFactory;
+
+import br.edu.ifpb.dac.groupd.tests.utils.TestUtils;
+
+public class LoginPage extends AbstractPageToastr{
+	
+	@FindBy(how=How.CSS,css = "form button[type='submit']")
+	private WebElement loginButton;
+	
+	@FindBy(how=How.CSS,css = "form input[type='email']#inputEmail")
+	private WebElement inputEmail;
+	
+	@FindBy(how=How.CSS,css = "form input[type='password']#inputPassword")
+	private WebElement inputPassword;
+	
+	public LoginPage(WebDriver driver) {
+		super(driver);
+		
+		driver.get(TestUtils.buildFrontendUrl("login"));
+		
+		PageFactory.initElements(driver, this);
+	}
+	
+	public void email(String email) {
+		this.inputEmail.sendKeys(email);
+	}
+	public boolean emailHasErrors() {
+		return this.inputEmail.getAttribute("class").contains("is-invalid") || !emailDoesNotHasErrors();
+	}
+	public boolean emailDoesNotHasErrors() {
+		return this.inputEmail.getAttribute("class").contains("is-valid");
+	}
+	
+	public void password(String password) {
+		this.inputPassword.sendKeys(password);
+	}
+	
+	public boolean passwordHasErrors() {
+		return this.inputPassword.getAttribute("class").contains("is-invalid") || !passwordDoesNotHasErrors();
+	}
+	public boolean passwordDoesNotHasErrors() {
+		return this.inputPassword.getAttribute("class").contains("is-valid");
+	}
+	
+	public void submit() {
+		loginButton.click();
+	}
+}

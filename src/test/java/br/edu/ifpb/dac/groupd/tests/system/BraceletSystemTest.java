@@ -1,6 +1,6 @@
 package br.edu.ifpb.dac.groupd.tests.system;
 
-import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.os;
+import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
@@ -8,6 +8,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import br.edu.ifpb.dac.groupd.business.exception.UserEmailInUseException;
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
@@ -45,9 +47,9 @@ import br.edu.ifpb.dac.groupd.presentation.dto.BraceletRequest;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-@ActiveProfiles("test-local")
-//@ActiveProfiles("test")
-//@Testcontainers(disabledWithoutDocker = true)
+//@ActiveProfiles("test-local")
+@ActiveProfiles("test")
+@Testcontainers(disabledWithoutDocker = true)
 class BraceletSystemTest {
 
 	private static WebDriver driver;
@@ -75,10 +77,6 @@ class BraceletSystemTest {
 		return bracelet;
 	}
 	
-	private static String buildUrl(String endpoint) {
-		return String.format("%s/%s", PREFIX, endpoint);
-	}
-	
 	private boolean userExists() {
 		return getUser() != null;
 	}
@@ -100,12 +98,11 @@ class BraceletSystemTest {
 			path = String.format("%s/%s", System.getProperty("user.dir"), "drivers-selenium\\windows\\chromedriver.exe");
 		}
 		System.setProperty("webdriver.chrome.driver", path);
-		driver = new ChromeDriver();
 	}
 	
 	@BeforeEach
 	void setUp() throws UserEmailInUseException {
-		
+		driver = new ChromeDriver();
 		if(!userExists()) {
 			this.created= userService.save(user);
 		}
@@ -114,7 +111,7 @@ class BraceletSystemTest {
 //		login();
 	}
 	private void login() {
-		driver.get(buildUrl("login"));
+		driver.get(buildFrontendUrl("login"));
 		
 		WebElement emailElement = driver.findElement(By.cssSelector("input[type='email']#inputEmail"));
 		WebElement passwordElement = driver.findElement(By.cssSelector("input[type='password']#inputPassword"));
@@ -143,15 +140,14 @@ class BraceletSystemTest {
 		
 		return user;
 	}
-	
-	@AfterEach
-	void tearDown() throws Exception {
+	@AfterAll
+	static void tearDownClass() throws Exception {
 		driver.quit();
 	}
 	@Test
 	void testRegisterBraceletInvalid() throws InterruptedException {
 		login();
-		driver.get(buildUrl("bracelets/create"));
+		driver.get(buildFrontendUrl("bracelets/create"));
 		
 		WebElement braceletName = driver.findElement(By.cssSelector("input[type='text'][name='braceletFormName']#braceletFormName"));
 		
@@ -168,7 +164,7 @@ class BraceletSystemTest {
 	@Test
 	void testRegisterBraceletValid() throws InterruptedException {
 		login();
-		driver.get(buildUrl("bracelets/create"));
+		driver.get(buildFrontendUrl("bracelets/create"));
 		
 		WebElement braceletName = driver.findElement(By.cssSelector("input[type='text'][name='braceletFormName']#braceletFormName"));
 		braceletName.sendKeys(bracelet.getName());
@@ -181,7 +177,7 @@ class BraceletSystemTest {
 		
 		assertThat(toastSuccess.getText()).containsSequence("Sucesso");
 		
-		assertThat(driver.getCurrentUrl()).isEqualTo(buildUrl("bracelets"));
+		assertThat(driver.getCurrentUrl()).isEqualTo(buildFrontendUrl("bracelets"));
 	}
 	private void registerBracelet() throws UserNotFoundException {
 		BraceletRequest bracelet = new BraceletRequest();
@@ -206,7 +202,6 @@ class BraceletSystemTest {
 		WebElement braceletNameElement = driver.findElement(By.cssSelector(".bracelet-name"));
 		
 		assertThat(bracelet.getName()).isEqualTo(braceletNameElement.getText());
-		Thread.sleep(50000);
 	}
 	
 	@Test
@@ -214,11 +209,10 @@ class BraceletSystemTest {
 		login();
 		registerBracelet();
 		
-		driver.get(buildUrl(String.format("bracelets/%d", bracelet.getId())));
+		driver.get(buildFrontendUrl(String.format("bracelets/%d", bracelet.getId())));
 		
 		WebElement braceletNameElement = driver.findElement(By.cssSelector(".bracelet-name"));
 		
 		assertThat(bracelet.getName()).isEqualTo(braceletNameElement.getText());
-		Thread.sleep(50000);
 	}
 }

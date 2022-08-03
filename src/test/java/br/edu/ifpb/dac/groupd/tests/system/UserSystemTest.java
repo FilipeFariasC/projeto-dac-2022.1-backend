@@ -1,5 +1,7 @@
 package br.edu.ifpb.dac.groupd.tests.system;
 
+import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.buildFrontendUrl;
+import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.os;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -12,14 +14,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.annotation.Testable;
 import org.openqa.selenium.By;
@@ -40,6 +41,10 @@ import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.PasswordEncoderService;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
 import br.edu.ifpb.dac.groupd.model.entities.User;
+import br.edu.ifpb.dac.groupd.tests.system.pages.LoginPage;
+import br.edu.ifpb.dac.groupd.tests.system.pages.NavbarObject;
+import br.edu.ifpb.dac.groupd.tests.system.pages.UserProfilePage;
+import br.edu.ifpb.dac.groupd.tests.system.pages.UserRegisterPage;
 
 @Testable
 @DisplayName("User System Tests")
@@ -50,7 +55,7 @@ import br.edu.ifpb.dac.groupd.model.entities.User;
 @Testcontainers(disabledWithoutDocker = true)
 class UserSystemTest {
 
-	private WebDriver driver;
+	private static WebDriver driver;
 	
 	@Autowired
 	private UserService userService;
@@ -60,17 +65,21 @@ class UserSystemTest {
 	
 	private User user;
 	
-	private static final String PREFIX = "http://localhost:3000";
 	
-	private static String buildUrl(String endpoint) {
-		return String.format("%s/%s", PREFIX, endpoint);
+	@BeforeAll
+	static void setUpClass() {
+		String path = "";
+		
+		if(os("Linux")) {
+			path = String.format("%s/%s", System.getProperty("user.dir"), "drivers-selenium/linux/chromedriver");
+		} else if (os("Windows")) {
+			path = String.format("%s/%s", System.getProperty("user.dir"), "drivers-selenium\\windows\\chromedriver.exe");
+		}
+		System.setProperty("webdriver.chrome.driver", path);
 	}
 	
 	@BeforeEach
-	@EnabledOnOs(value = OS.LINUX)
 	void setUp() throws Exception {
-		String path = String.format("%s/%s", System.getProperty("user.dir"), "drivers-selenium/linux/chromedriver");
-		System.setProperty("webdriver.chrome.driver", path);
 		driver = new ChromeDriver();
 	}
 	
@@ -81,24 +90,24 @@ class UserSystemTest {
 	@Test
 	@Order(1)
 	void testInvalidRegister() throws InterruptedException {
-		driver.get(buildUrl("signIn"));
+		UserRegisterPage registerUser = new UserRegisterPage(driver);
 		
-		WebElement botao = driver.findElement(By.cssSelector("button[type='submit']"));
-		botao.click();
+		registerUser.submit();
 
 		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 		
-		List<WebElement> toastMessages = driver.findElements(By.cssSelector(".toast"));
-		
-		assertThat(toastMessages).isNotEmpty();
-		toastMessages.stream().forEach(t->assertThat(t.getText()).contains("Erro"));
+		assertTrue(registerUser.nameHasErrors());
+		assertTrue(registerUser.emailHasErrors());
+		assertTrue(registerUser.passwordHasErrors());
 
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.MINUTES);
+		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+		
+		assertTrue(registerUser.hasToastrErrors());
 	}
 	@Test
 	@Order(2)
 	void testValidRegister() throws InterruptedException {
-		driver.get(buildUrl("signIn"));
+		
 		
 		String nome = "ADMIN";
 		String email = "admin@admin.com";
@@ -106,26 +115,23 @@ class UserSystemTest {
 
 		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 		
-		WebElement nomeElement = driver.findElement(By.cssSelector("input[type='text']#inputName"));
-		WebElement emailElement = driver.findElement(By.cssSelector("input[type='email']#inputEmail"));
-		WebElement passwordElement = driver.findElement(By.cssSelector("input[type='password']#inputPassword"));
-		
-		nomeElement.sendKeys(nome);
-		emailElement.sendKeys(email);
-		passwordElement.sendKeys(password);
-		
+		UserRegisterPage registerUser = new UserRegisterPage(driver);
+
+		registerUser.name(nome);
+		registerUser.email(email);
+		registerUser.password(password);
+
+		assertTrue(registerUser.nameDoesNotHasErrors());
+		assertTrue(registerUser.emailDoesNotHasErrors());
+		assertTrue(registerUser.passwordDoesNotHasErrors());
 
 		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 		
-		WebElement botao = driver.findElement(By.cssSelector("button[type='submit']"));
-		botao.click();
+		registerUser.submit();
 
 		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 		
-		List<WebElement> toastMessages = driver.findElements(By.cssSelector(".toast"));
-		
-		assertThat(toastMessages).isNotEmpty();
-		toastMessages.stream().forEach(t->assertThat(t.getText()).contains("Sucesso"));
+		assertTrue(registerUser.hasToastrSuccess());
 		
 		try {
 			user = userService.findByEmail(email);
@@ -141,28 +147,22 @@ class UserSystemTest {
 	@Test
 	@Order(3)
 	void testInvalidLogin() throws InterruptedException {
-		driver.get(buildUrl("login"));
+		LoginPage login = new LoginPage(driver);
+		
+		login.submit();
 		
 		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 		
-		WebElement botao = driver.findElement(By.cssSelector("button[type='submit']"));
-		botao.click();
+		assertTrue(login.emailHasErrors());
+		assertTrue(login.passwordHasErrors());
 
 		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 		
-		List<WebElement> toastMessages = driver.findElements(By.cssSelector(".toast"));
+		assertTrue(login.hasToastrErrors());
 		
-		assertThat(toastMessages).isNotEmpty();
-		
-		toastMessages.stream().forEach(t->assertThat(t.getText()).contains("Erro"));
-
-		driver.manage().timeouts().implicitlyWait(5, TimeUnit.MINUTES);
-		
-		WebStorage storage = (WebStorage) new Augmenter().augment(driver);;
-		LocalStorage localStorage = storage.getLocalStorage();
-		String token = localStorage.getItem("token");
-		assertNull(token);
+		assertNull(login.getToken());
 	}
+	
 	
 	
 	@Test
@@ -177,31 +177,18 @@ class UserSystemTest {
 			testValidRegister();
 		}
 
-		driver.get(buildUrl("login"));
+		LoginPage login = new LoginPage(driver);
 		
-		WebElement emailElement = driver.findElement(By.cssSelector("input[type='email']#inputEmail"));
-		WebElement passwordElement = driver.findElement(By.cssSelector("input[type='password']#inputPassword"));
+		login.email(email);
+		login.password(password);
 		
-		emailElement.sendKeys(email);
-		passwordElement.sendKeys(password);
+		login.submit();
+		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
 		
-		driver.manage().timeouts().implicitlyWait(5000, TimeUnit.MILLISECONDS);
+		assertTrue(login.hasToastrSuccess());
+		assertEquals(driver.getCurrentUrl(), buildFrontendUrl("profile"));
 		
-		WebElement botao = driver.findElement(By.cssSelector("button[type='submit']"));
-		botao.click();
-
-		driver.manage().timeouts().implicitlyWait(5000, TimeUnit.MILLISECONDS);
-		
-		List<WebElement> toastMessages = driver.findElements(By.cssSelector(".toast"));
-		
-		assertThat(toastMessages).isNotEmpty();
-		
-		toastMessages.stream().forEach(t->assertThat(t.getText()).contains("Sucesso"));
-		
-		WebStorage storage = (WebStorage) new Augmenter().augment(driver);;
-		LocalStorage localStorage = storage.getLocalStorage();
-		String token = localStorage.getItem("token");
-		assertNotNull(token);
+		assertNotNull(login.getToken());
 	}
 	
 	@Test
@@ -209,19 +196,21 @@ class UserSystemTest {
 	void testLogout() throws InterruptedException {
 		testValidLogin();
 		
-		driver.get(buildUrl(""));
+		NavbarObject navbar = new NavbarObject(driver);
 		
-		WebElement toggleDropdown = driver.findElement(By.cssSelector(".navbar-nav .nav-item.dropdown .dropdown-toggle[role='button']#options-dropdown"));
-		toggleDropdown.click();
-
-		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+		navbar.logout();
 		
-		WebElement logoutButton = driver.findElement(By.cssSelector("button[type='reset']#logout"));
-		logoutButton.click();
+		assertNull(navbar.getToken());
+	}
+	@Test
+	@Order(6)
+	void testUserProfile() throws InterruptedException {
+		testValidLogin();
 		
-		WebStorage storage = (WebStorage) new Augmenter().augment(driver);;
-		LocalStorage localStorage = storage.getLocalStorage();
-		String token = localStorage.getItem("token");
-		assertNull(token);
+		UserProfilePage profile = new UserProfilePage(driver);
+		
+		assertEquals(profile.userName(), user.getName());
+		
+		assertEquals(profile.userEmail(), user.getEmail());
 	}
 }
