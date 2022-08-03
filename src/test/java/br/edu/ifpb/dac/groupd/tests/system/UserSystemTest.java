@@ -2,7 +2,6 @@ package br.edu.ifpb.dac.groupd.tests.system;
 
 import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.buildFrontendUrl;
 import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.os;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -10,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
@@ -23,13 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.annotation.Testable;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.html5.LocalStorage;
-import org.openqa.selenium.html5.WebStorage;
-import org.openqa.selenium.remote.Augmenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -41,10 +34,11 @@ import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.PasswordEncoderService;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
 import br.edu.ifpb.dac.groupd.model.entities.User;
-import br.edu.ifpb.dac.groupd.tests.system.pages.LoginPage;
 import br.edu.ifpb.dac.groupd.tests.system.pages.NavbarObject;
-import br.edu.ifpb.dac.groupd.tests.system.pages.UserProfilePage;
-import br.edu.ifpb.dac.groupd.tests.system.pages.UserRegisterPage;
+import br.edu.ifpb.dac.groupd.tests.system.pages.user.LoginPage;
+import br.edu.ifpb.dac.groupd.tests.system.pages.user.UserProfilePage;
+import br.edu.ifpb.dac.groupd.tests.system.pages.user.UserRegisterPage;
+import br.edu.ifpb.dac.groupd.tests.system.pages.user.UserUpdatePage;
 
 @Testable
 @DisplayName("User System Tests")
@@ -210,6 +204,43 @@ class UserSystemTest {
 		UserProfilePage profile = new UserProfilePage(driver);
 		
 		assertEquals(profile.userName(), user.getName());
+		
+		assertEquals(profile.userEmail(), user.getEmail());
+	}
+	
+	@Test
+	@Order(7)
+	void testUserInvalidUpdate() throws InterruptedException {
+		testValidLogin();
+		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+		UserUpdatePage update = new UserUpdatePage(driver);
+		
+		update.clearName();
+		
+		assertTrue(update.nameHasErrors());
+		
+		update.submit();
+		driver.manage().timeouts().implicitlyWait(1500, TimeUnit.MILLISECONDS);
+		
+		assertTrue(update.hasToastrErrors());
+	}
+	@Test
+	@Order(7)
+	void testUserValidUpdate() throws InterruptedException {
+		testValidLogin();
+		UserUpdatePage update = new UserUpdatePage(driver);
+		String newName= user.getName()+"-UPDATE";
+		update.name(newName);
+		
+		assertTrue(update.nameDoesNotHasErrors());
+		
+		update.submit();
+		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
+		assertTrue(update.hasToastrSuccess());
+		
+		UserProfilePage profile = new UserProfilePage(driver);
+		
+		assertEquals(profile.userName(), newName);
 		
 		assertEquals(profile.userEmail(), user.getEmail());
 	}

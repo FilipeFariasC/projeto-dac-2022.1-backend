@@ -1,6 +1,7 @@
 package br.edu.ifpb.dac.groupd.tests.system.pages;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -43,5 +44,18 @@ public class AbstractPageToastr {
 		LocalStorage localStorage = storage.getLocalStorage();
 		
 		return localStorage.getItem("token");
+	}
+	
+	public void sleepWait() {
+		sleepWait(500L);
+	}
+	public void sleepWait(Long quantidade) {
+		this.getDriver().manage().timeouts().implicitlyWait(quantidade, TimeUnit.MILLISECONDS);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

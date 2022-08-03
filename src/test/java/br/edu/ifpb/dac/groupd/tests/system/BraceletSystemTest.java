@@ -2,6 +2,9 @@ package br.edu.ifpb.dac.groupd.tests.system;
 
 import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -13,6 +16,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -41,6 +45,9 @@ import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
 import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
 import br.edu.ifpb.dac.groupd.model.entities.User;
 import br.edu.ifpb.dac.groupd.presentation.dto.BraceletRequest;
+import br.edu.ifpb.dac.groupd.tests.system.pages.bracelet.BraceletRegisterPage;
+import br.edu.ifpb.dac.groupd.tests.system.pages.bracelet.BraceletUpdatePage;
+import br.edu.ifpb.dac.groupd.tests.system.pages.user.LoginPage;
 
 @Testable
 @DisplayName("Bracelet System Tests")
@@ -110,25 +117,27 @@ class BraceletSystemTest {
 		bracelet = validBracelet();
 //		login();
 	}
-	private void login() {
-		driver.get(buildFrontendUrl("login"));
+	@AfterEach
+	void teardown() throws Exception {
+		driver.close();
+	}
+	@AfterAll
+	static void tearDownClass() throws Exception {
+		driver.quit();
+	}
+	void login() throws InterruptedException {
+		LoginPage login = new LoginPage(driver);
 		
-		WebElement emailElement = driver.findElement(By.cssSelector("input[type='email']#inputEmail"));
-		WebElement passwordElement = driver.findElement(By.cssSelector("input[type='password']#inputPassword"));
+		login.email(user.getEmail());
+		login.password(user.getPassword());
 		
-		emailElement.sendKeys(user.getEmail());
-		passwordElement.sendKeys(user.getPassword());
-		
-		WebElement botao = driver.findElement(By.cssSelector("button[type='submit']"));
-		botao.click();
-		
+		login.submit();
 		driver.manage().timeouts().implicitlyWait(500, TimeUnit.MILLISECONDS);
-		Wait<WebDriver> fluentWait = new FluentWait<WebDriver>(driver)
-				.withTimeout(Duration.of(1500, ChronoUnit.MILLIS))
-			    .ignoring(NoSuchElementException.class); // this defines the exception to ignore 
-		fluentWait.until(t -> {
-			return t.findElement(By.cssSelector("#bracelet-dropdown"));
-		});
+		
+		assertTrue(login.hasToastrSuccess());
+		assertEquals(driver.getCurrentUrl(), buildFrontendUrl("profile"));
+		
+		assertNotNull(login.getToken());
 	}
 	
 	private User createUser() {
@@ -140,45 +149,37 @@ class BraceletSystemTest {
 		
 		return user;
 	}
-	@AfterAll
-	static void tearDownClass() throws Exception {
-		driver.quit();
-	}
+	
 	@Test
-	void testRegisterBraceletInvalid() throws InterruptedException {
+	void testRegisterBraceletInvalid() throws InterruptedException{
 		login();
-		driver.get(buildFrontendUrl("bracelets/create"));
+		BraceletRegisterPage register = new BraceletRegisterPage(driver);
 		
-		WebElement braceletName = driver.findElement(By.cssSelector("input[type='text'][name='braceletFormName']#braceletFormName"));
+		register.submit();
 		
-		WebElement botao = driver.findElement(By.cssSelector("button[type='submit']"));
-		botao.click();
+		register.sleepWait();
 		
-		List<WebElement> toastMessages = new WebDriverWait(driver, Duration.ofMillis(500).toMillis())
-				.until(t->t.findElements(By.cssSelector(".toast")));
-		
-		assertThat(toastMessages).isNotEmpty();
-		toastMessages.stream().forEach(t->assertThat(t.getText()).contains("Erro"));
+		assertTrue(register.hasToastrErrors());
 	}
 	
 	@Test
 	void testRegisterBraceletValid() throws InterruptedException {
 		login();
-		driver.get(buildFrontendUrl("bracelets/create"));
+		BraceletRegisterPage register = new BraceletRegisterPage(driver);
 		
-		WebElement braceletName = driver.findElement(By.cssSelector("input[type='text'][name='braceletFormName']#braceletFormName"));
-		braceletName.sendKeys(bracelet.getName());
+		register.name(bracelet.getName());
 		
-		WebElement botao = driver.findElement(By.cssSelector("button[type='submit']"));
-		botao.click();
+		assertTrue(register.nameDoesNotHasErrors());
 		
-		WebElement toastSuccess = new WebDriverWait(driver, Duration.ofMillis(500).toMillis())
-				.until(t->t.findElement(By.cssSelector(".toast")));
+		register.submit();
 		
-		assertThat(toastSuccess.getText()).containsSequence("Sucesso");
+		register.sleepWait();
+		
+		assertTrue(register.hasToastrSuccess());
 		
 		assertThat(driver.getCurrentUrl()).isEqualTo(buildFrontendUrl("bracelets"));
 	}
+	
 	private void registerBracelet() throws UserNotFoundException {
 		BraceletRequest bracelet = new BraceletRequest();
 		bracelet.setName(this.bracelet.getName());
@@ -186,7 +187,7 @@ class BraceletSystemTest {
 	}
 	
 	@Test
-	void testListBraceletRegistered() throws InterruptedException, UserNotFoundException {
+	void testListBraceletRegistered() throws InterruptedException {
 		login();
 		testRegisterBraceletValid();
 		
@@ -215,4 +216,37 @@ class BraceletSystemTest {
 		
 		assertThat(bracelet.getName()).isEqualTo(braceletNameElement.getText());
 	}
+	
+	@Test
+	void testEditBraceletRegisteredInvalid() throws InterruptedException, UserNotFoundException {
+		login();
+		registerBracelet();
+		
+		BraceletUpdatePage update = new BraceletUpdatePage(driver, bracelet.getId());
+		
+		update.name(" ");
+		
+		assertTrue(update.nameHasErrors());
+		
+		update.submit();
+		
+		assertTrue(update.hasToastrErrors());
+		
+		update.name("");
+		
+		assertTrue(update.nameHasErrors());
+		
+		update.submit();
+		
+		assertTrue(update.hasToastrErrors());
+		
+	}
+	@Test
+	void testEditBraceletRegisteredValid() {}
+	@Test
+	void testDeleteBraceletRegistered() {}
+	@Test
+	void testBraceletRegisteredDoesNotHaveFences() {}
+	@Test
+	void testBraceletRegisteredHaveFences() {}
 }

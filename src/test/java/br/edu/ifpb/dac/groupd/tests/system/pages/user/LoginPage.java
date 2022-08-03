@@ -1,4 +1,4 @@
-package br.edu.ifpb.dac.groupd.tests.system.pages;
+package br.edu.ifpb.dac.groupd.tests.system.pages.user;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -6,6 +6,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
 
+import br.edu.ifpb.dac.groupd.tests.system.pages.AbstractPageToastr;
 import br.edu.ifpb.dac.groupd.tests.utils.TestUtils;
 
 public class LoginPage extends AbstractPageToastr{
