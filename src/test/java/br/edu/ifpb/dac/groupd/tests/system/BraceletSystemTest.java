@@ -1,13 +1,12 @@
 package br.edu.ifpb.dac.groupd.tests.system;
 
-import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.*;
+import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.buildFrontendUrl;
+import static br.edu.ifpb.dac.groupd.tests.utils.TestUtils.os;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -16,20 +15,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.annotation.Testable;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -40,7 +34,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import br.edu.ifpb.dac.groupd.business.exception.UserEmailInUseException;
 import br.edu.ifpb.dac.groupd.business.exception.UserNotFoundException;
 import br.edu.ifpb.dac.groupd.business.service.BraceletService;
-import br.edu.ifpb.dac.groupd.business.service.interfaces.PasswordEncoderService;
 import br.edu.ifpb.dac.groupd.business.service.interfaces.UserService;
 import br.edu.ifpb.dac.groupd.model.entities.Bracelet;
 import br.edu.ifpb.dac.groupd.model.entities.User;
@@ -67,15 +60,9 @@ class BraceletSystemTest {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private PasswordEncoderService passEncoder;
-	
 	private User user = createUser();
-	private User created;
 	
 	private Bracelet bracelet = validBracelet();
-	
-	private static final String PREFIX = "http://localhost:3000";
 	
 	private Bracelet validBracelet() {
 		Bracelet bracelet = new Bracelet();
@@ -111,7 +98,7 @@ class BraceletSystemTest {
 	void setUp() throws UserEmailInUseException {
 		driver = new ChromeDriver();
 		if(!userExists()) {
-			this.created= userService.save(user);
+			userService.save(user);
 		}
 		user = createUser();
 		bracelet = validBracelet();

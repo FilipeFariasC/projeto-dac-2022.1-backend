@@ -1,7 +1,5 @@
 package br.edu.ifpb.dac.groupd.tests.system.pages.bracelet;
 
-import java.util.concurrent.TimeUnit;
-
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;

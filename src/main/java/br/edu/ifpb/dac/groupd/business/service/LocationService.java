@@ -40,9 +40,6 @@ public class LocationService {
 	private AlarmService alarmService;
 	
 	@Autowired
-	private CoordinateService coordinateService;
-	
-	@Autowired
 	private LocationConverterService locationConverter;
 	
 	public Location create(Long id, LocationRequest dto) throws BraceletNotFoundException, LocationCreationDateInFutureException, UserNotFoundException {

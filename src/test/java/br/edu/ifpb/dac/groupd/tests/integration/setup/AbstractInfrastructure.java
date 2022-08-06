@@ -41,6 +41,10 @@ public class AbstractInfrastructure {
     	
     	postgresDb.start();
     }
+    
+    private static void finish() {
+    	postgresDb.close();
+    }
    
 	@DynamicPropertySource
 	public static void properties(DynamicPropertyRegistry registry) {
