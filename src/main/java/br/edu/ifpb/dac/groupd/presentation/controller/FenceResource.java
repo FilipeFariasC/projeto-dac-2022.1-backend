@@ -113,7 +113,7 @@ public class FenceResource {
 		FenceNotFoundException, 
 		UserNotFoundException, 
 		NoBraceletAvailableException{
-		
+		System.out.println(active);
 		Fence fence = fenceService.setActive(getPrincipalId(principal), fenceId, active);
 		
 		FenceResponse dto = converter.fenceToResponse(fence);

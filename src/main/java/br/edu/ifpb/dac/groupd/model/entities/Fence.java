@@ -122,17 +122,19 @@ public class Fence implements Serializable, Timer{
 	}
 
 	public void setActive(boolean active) throws FenceEmptyException, NoBraceletAvailableException {
-		if(active && bracelets.isEmpty()){
-			throw new FenceEmptyException(id);
-		}
 		if(!active) {
 			for(Bracelet bracelet : bracelets) {
 				if(bracelet.getMonitor() == this) {
 					bracelet.setMonitor(null);
 				}
 			}
+			this.active = active;
 			return;
-		} 
+		}
+		if(bracelets.isEmpty()){
+			throw new FenceEmptyException(id);
+		}
+		
 		boolean hasBraceletAvailable = false;
 		for(Bracelet bracelet : bracelets) {
 			if(bracelet.getMonitor() == null) {
